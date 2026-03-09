@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: agentos
+      POSTGRES_PASSWORD: agentos
+      POSTGRES_DB: agentos
+
+  redis:
+    image: redis
+
+  backend:
+    image: python:3.11
