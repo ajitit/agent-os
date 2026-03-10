@@ -46,6 +46,7 @@ from backend.api import (
     supervisor,
     tasks,
     knowledge,
+    llm,
 )
 from backend.core.config import get_settings
 from backend.core.exceptions import (
@@ -111,6 +112,7 @@ def create_app() -> FastAPI:
     app.include_router(supervisor.router, prefix=prefix)
     app.include_router(tasks.router, prefix=prefix)
     app.include_router(chat.router, prefix=prefix)
+    app.include_router(llm.router, prefix=prefix)
 
     @app.get("/api/health")
     def api_health_alias():

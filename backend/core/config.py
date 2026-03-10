@@ -51,22 +51,21 @@ class Settings(BaseSettings):
         description="Allowed CORS origins",
     )
 
-    # Database
     database_url: str = Field(
         default="postgresql://agentos:agentos@localhost:5432/agentos",
         description="PostgreSQL connection URL",
     )
 
-    # Redis
-    redis_url: str = Field(
-        default="redis://localhost:6379/0",
-        description="Redis connection URL",
-    )
-
     # Security
+    jwt_secret_key: str = Field(default="secret", description="JWT secret key")
+    jwt_algorithm: str = Field(default="HS256", description="JWT algorithm")
     rate_limit_per_minute: int = Field(
         default=60, description="API rate limit per minute per IP"
     )
+
+    # LLM Integrations
+    openai_api_key: str | None = Field(default=None, description="OpenAI API Key")
+    anthropic_api_key: str | None = Field(default=None, description="Anthropic API Key")
 
     # Skills (Progressive Disclosure)
     skills_dir: str = Field(
