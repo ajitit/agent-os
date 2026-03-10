@@ -311,4 +311,4 @@ MIT License
 
 # Author
 
-AgentOS Architecture Concept Enterprise AI Agent Platform
+Ajit Kumar
