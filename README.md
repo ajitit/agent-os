@@ -1,314 +1,265 @@
 # AgentOS v1.0
 
-## Enterprise Multi‑Agent AI Operating System
+## Enterprise Multi-Agent AI Operating System
 
-AgentOS is a **full‑stack AI agent platform** designed to run autonomous
-multi‑agent workflows using modern AI infrastructure.\
-It provides orchestration, memory, knowledge retrieval (RAG), tools, and
-a web console to build and operate intelligent agents.
+AgentOS is a **full-stack AI agent platform** designed to run autonomous multi-agent workflows using modern AI infrastructure. It provides orchestration, crews, agents, MCP tools, conversations, storage, and a web console to build and operate intelligent agents.
 
-------------------------------------------------------------------------
+---
 
-# Vision
+## Key Capabilities
 
-AgentOS aims to become an **AI Operating System** where agents, skills,
-tools, and knowledge interact to complete complex tasks autonomously.
+- **Supervisor + Human-in-the-Loop** – Coordinate multi-agent workflows; pause for human approval
+- **Progressive Disclosure Skills** – Load instructions/resources on-demand, framework agnostic
+- **Crews & Agents** – Create and manage agent crews with tool assignments
+- **MCP Servers & Tools** – Model Context Protocol server and tool management
+- **Conversations** – Multi-turn chat with streaming support
+- **Storage** – File upload, download, presigned URLs
+- **Tasks** – Goal-based task creation and queuing
+- **Health & Observability** – Request tracing, structured logging
 
-Example:
+---
 
-User goal:
+## Technology Stack
 
-"Create a market research report for EV batteries"
+| Layer        | Technologies                          |
+| ------------ | ------------------------------------- |
+| Backend      | Python 3.11+, FastAPI, Pydantic       |
+| Frontend     | Next.js 16, React 19, Tailwind v4     |
+| Data         | PostgreSQL, Redis (Docker)            |
+| Infrastructure | Docker, Docker Compose              |
 
-AgentOS execution:
+---
 
-Planner Agent → Research Agent → Data Agent → Analysis Agent → Writer
-Agent → Final report
+## Repository Structure
 
-------------------------------------------------------------------------
-
-# Key Capabilities
-
-• Multi‑agent orchestration\
-• Autonomous task planning\
-• RAG knowledge retrieval\
-• Skill and tool marketplace\
-• Agent memory (short‑term + long‑term)\
-• Streaming chat with agents\
-• Visual workflow builder (future module)\
-• Observability and tracing
-
-------------------------------------------------------------------------
-
-# Technology Stack
-
-Backend - Python 3.10+ - FastAPI - LangGraph - LangChain
-
-Data Layer - PostgreSQL - pgvector (vector embeddings) - Redis (working
-memory)
-
-Frontend - Next.js - React - TailwindCSS - Zustand
-
-Infrastructure - Docker - Kubernetes (optional deployment) - Cloud
-object storage (S3/R2)
-
-------------------------------------------------------------------------
-
-# Repository Structure
-
+```
 agent-os/
+├── backend/
+│   ├── api/              # Route handlers
+│   ├── app/
+│   ├── core/
+│   ├── skills/           # Progressive disclosure loader (Level 1–3)
+│   └── tests/
+├── skills/               # Skill definitions (metadata.json, SKILL.md, resources/)
+│   └── web_research/     # Example skill
+├── frontend/agentos-ui/
+├── docs/skills/          # Skill system docs
+├── docker-compose.yml
+└── .env.example
+```
+
+---
+
+## API Endpoints
+
+All API routes are prefixed with `/api/v1`. Interactive docs: **http://localhost:8000/api/docs**
+
+### Crews & Agents
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/crews | Get all crews |
+| POST | /api/v1/crews | Create a crew |
+| GET | /api/v1/crews/{crew_id} | Get a crew |
+| PUT | /api/v1/crews/{crew_id} | Update a crew |
+| DELETE | /api/v1/crews/{crew_id} | Delete a crew |
+| GET | /api/v1/agents | Get all agents |
+| POST | /api/v1/agents | Create an agent |
+| GET | /api/v1/agents/{agent_id} | Get an agent |
+| PUT | /api/v1/agents/{agent_id} | Update an agent |
+| DELETE | /api/v1/agents/{agent_id} | Delete an agent |
+| POST | /api/v1/agents/{agent_id}/tools/{tool_id} | Assign tool to agent |
+| DELETE | /api/v1/agents/{agent_id}/tools/{tool_id} | Remove tool from agent |
+
+### MCP Servers & Tools
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/mcp-servers | Get all MCP servers |
+| POST | /api/v1/mcp-servers | Create MCP server |
+| GET | /api/v1/mcp-servers/{server_id} | Get MCP server |
+| PUT | /api/v1/mcp-servers/{server_id} | Update MCP server |
+| DELETE | /api/v1/mcp-servers/{server_id} | Delete MCP server |
+| GET | /api/v1/mcp-servers/{server_id}/tools | Get tools |
+| POST | /api/v1/mcp-servers/{server_id}/tools | Add tool |
+| DELETE | /api/v1/mcp-servers/{server_id}/tools/{tool_id} | Remove tool |
+
+### Conversations & Chat
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/conversations | Get all conversations |
+| POST | /api/v1/conversations | Create conversation |
+| GET | /api/v1/conversations/{id} | Get conversation |
+| PUT | /api/v1/conversations/{id} | Update conversation |
+| DELETE | /api/v1/conversations/{id} | Delete conversation |
+| GET | /api/v1/conversations/{id}/messages | Get messages |
+| POST | /api/v1/conversations/{id}/messages | Add message |
+| POST | /api/v1/conversations/{id}/chat | Send message, get response |
+| POST | /api/v1/conversations/{id}/chat/stream | Send message, stream response |
+
+### Storage
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | /api/v1/storage/upload | Upload file |
+| GET | /api/v1/storage/files/{key} | Download file |
+| GET | /api/v1/storage/urls/{key} | Get presigned URL |
+| DELETE | /api/v1/storage/files/{key} | Delete file |
+| GET | /api/v1/storage/files | List files |
+
+### Supervisor & Human-in-the-Loop
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/supervisor/workflows | List workflows |
+| POST | /api/v1/supervisor/workflows | Start workflow |
+| GET | /api/v1/supervisor/workflows/{id} | Get workflow + approvals |
+| POST | /api/v1/supervisor/workflows/{id}/pause | Pause for human approval |
+| GET | /api/v1/supervisor/approvals | List pending approvals |
+| GET | /api/v1/supervisor/approvals/{id} | Get approval details |
+| POST | /api/v1/supervisor/approvals/{id}/respond | Submit human decision |
+
+### Skills (Progressive Disclosure)
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/skills | List metadata (Level 1) |
+| GET | /api/v1/skills/{skill_id} | Get full skill + instructions (Level 2) |
+| GET | /api/v1/skills/{skill_id}/resources/{path} | Get resource file (Level 3) |
+
+See [docs/skills/QUICKSTART.md](docs/skills/QUICKSTART.md) for the Progressive Disclosure pattern.
+
+### Tasks & Health
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | /api/v1/tasks | Create task |
+| GET | /api/v1/health | Health check |
+| GET | /api/v1/health/ready | Readiness check |
+| GET | /api/health | Health alias (no version prefix) |
 
-backend/ app/ main.py api/ agents.py tasks.py chat.py agents/
-base_agent.py kernel/ runtime.py supervisor.py memory/ redis_memory.py
+---
 
-frontend/ agentos-ui/ app/ page.tsx
+## Installation
 
-workers/ task_worker.py
+### Prerequisites
 
-infra/ docker-compose.yml
+- Python 3.11+
+- Node.js 20+
+- Docker (for PostgreSQL, Redis)
 
-scripts/ generate_full_project.py
+### 1. Backend Setup
 
-------------------------------------------------------------------------
+From project root:
 
-# Core System Architecture
+```bash
+python -m venv backend/venv
 
-System Layers
+# Windows
+backend\venv\Scripts\activate
 
-1.  Web Console Next.js frontend used to manage agents, tasks, skills,
-    and marketplace.
+# Linux/macOS
+source backend/venv/bin/activate
 
-2.  API Gateway FastAPI service exposing endpoints.
+pip install -r backend/requirements.txt
+```
 
-3.  Agent Runtime Responsible for agent execution loop.
+### 2. Frontend Setup
 
-4.  Intelligence Layer Includes RAG retrieval, skill loading, tool
-    execution.
-
-5.  Data Layer Stores documents, embeddings, tasks, and memory.
-
-------------------------------------------------------------------------
-
-# Agent Execution Loop
-
-Every agent runs this lifecycle:
-
-Observe Retrieve memory Load relevant skills Plan next action Execute
-tools Reflect Update memory
-
-------------------------------------------------------------------------
-
-# Agent Types
-
-Supervisor Agent Coordinates multi‑agent workflows.
-
-Planner Agent Breaks goals into actionable plans.
-
-Research Agent Performs document and web research.
-
-Coding Agent Writes and executes code.
-
-Analysis Agent Processes structured data.
-
-Writer Agent Generates reports and summaries.
-
-Self‑Improving Agent Optimizes skills and prompts using feedback.
-
-------------------------------------------------------------------------
-
-# Skill System
-
-AgentOS uses a progressive skill architecture.
-
-Each skill contains:
-
-metadata.json instructions.md resources/
-
-Skills load dynamically based on context.
-
-Benefits
-
-• reduces LLM token usage\
-• enables reusable capabilities\
-• allows marketplace distribution
-
-------------------------------------------------------------------------
-
-# Tool System
-
-Agents interact with external systems using tools.
-
-Supported tool types:
-
-HTTP APIs Python functions Database queries MCP tools Skill-based tools
-
-Example
-
-Web search tool Database query tool Code execution tool
-
-------------------------------------------------------------------------
-
-# Memory System
-
-Working Memory Redis
-
-Stores - conversation context - temporary task state
-
-Long-Term Memory PostgreSQL + pgvector
-
-Stores - embeddings - historical tasks - knowledge chunks
-
-------------------------------------------------------------------------
-
-# RAG Knowledge System
-
-Pipeline
-
-Documents → Chunking → Embedding → Vector Store → Retrieval
-
-Supported documents
-
-PDF Markdown CSV Text
-
-Agents can query the knowledge base to augment reasoning.
-
-------------------------------------------------------------------------
-
-# Marketplace
-
-AgentOS includes a skill marketplace.
-
-Users can:
-
-publish skills install skills rate skills update versions
-
-Marketplace enables collaborative AI capability development.
-
-------------------------------------------------------------------------
-
-# Observability
-
-AgentOS tracks execution events:
-
-Agent decisions Tool calls Skill loading Memory retrieval Token usage
-Latency
-
-This information is visible in the console dashboard.
-
-------------------------------------------------------------------------
-
-# API Endpoints
-
-Agents
-
-GET /agents
-
-Tasks
-
-POST /tasks
-
-Example
-
-POST /tasks { "goal": "Write a market research report" }
-
-Chat
-
-GET /chat/stream
-
-Provides streaming responses from agents.
-
-------------------------------------------------------------------------
-
-# Installation
-
-Prerequisites
-
-Python 3.10+ Node.js 18+ Docker
-
-------------------------------------------------------------------------
-
-# Run Infrastructure
-
-docker compose up
-
-Starts
-
-PostgreSQL Redis
-
-------------------------------------------------------------------------
-
-# Run Backend
-
-uvicorn backend.app.main:app --reload
-
-Backend available at
-
-http://localhost:8000
-
-------------------------------------------------------------------------
-
-# Run Frontend
-
+```bash
 cd frontend/agentos-ui
-
 npm install
+```
 
+### 3. Environment
+
+```bash
+cp .env.example .env
+# Edit .env as needed
+```
+
+---
+
+## Running the Project
+
+### Option A: Docker (full stack)
+
+```bash
+docker compose up
+```
+
+- Backend: http://localhost:8000  
+- API docs: http://localhost:8000/api/docs
+
+### Option B: Local development
+
+**Terminal 1 – Backend**
+
+```bash
+uvicorn backend.app.main:app --reload
+```
+
+**Terminal 2 – Frontend**
+
+```bash
+cd frontend/agentos-ui
 npm run dev
+```
 
-Frontend available at
+**Terminal 3 – Infrastructure (optional)**
 
-http://localhost:3000
+```bash
+docker compose up postgres redis
+```
 
-------------------------------------------------------------------------
+---
 
-# Example Workflow
+## Testing
 
-User request
+### Backend
 
-"Analyze EV battery market and create report"
+```bash
+# Ensure venv is activated and deps installed
+pip install -r backend/requirements.txt
 
-Execution
+cd backend
+pytest tests/ -v
+```
 
-Planner Agent creates plan Research Agent gathers information Analysis
-Agent processes data Writer Agent generates report
+### Frontend
 
-Final output returned to user.
+```bash
+cd frontend/agentos-ui
+npm run lint
+npm run test
+npm run build
+```
 
-------------------------------------------------------------------------
+---
 
-# Deployment
+## Roadmap
 
-Recommended production deployment
+- Visual agent workflow builder
+- LangGraph/LangChain integration
+- PostgreSQL persistence
+- Redis-backed memory
+- RAG knowledge retrieval
 
-Docker containers Kubernetes cluster Managed PostgreSQL Redis cache
-Object storage (S3)
+---
 
-------------------------------------------------------------------------
+## Contributing
 
-# Roadmap
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and code standards.
 
-Future capabilities
+---
 
-Visual agent workflow builder Autonomous research agents Agent
-collaboration protocols Self‑optimizing skill marketplace Distributed
-agent clusters
-
-------------------------------------------------------------------------
-
-# Contributing
-
-Steps
-
-Fork repository Create feature branch Commit changes Submit pull request
-
-------------------------------------------------------------------------
-
-# License
+## License
 
 MIT License
 
-------------------------------------------------------------------------
+---
 
-# Author
+## Author
 
 Ajit Kumar

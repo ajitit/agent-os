@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv
+backend/.venv
+*.egg-info
+.eggs
+
+# Node
+node_modules
+frontend/agentos-ui/.next
+frontend/agentos-ui/out
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Env and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Tests and coverage
+backend/.pytest_cache
+backend/.coverage
+backend/htmlcov
+coverage
+*.lcov
+
+# Docs and misc
+*.md
+!README.md
