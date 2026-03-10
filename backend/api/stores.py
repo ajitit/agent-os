@@ -38,6 +38,9 @@ _conversation_messages: dict[str, list[dict[str, Any]]] = defaultdict(list)
 _storage_files: dict[str, bytes] = {}
 _sources: dict[str, dict[str, Any]] = {}
 _code_examples: dict[str, dict[str, Any]] = {}
+_users: dict[str, dict[str, Any]] = {}
+_preferences: dict[str, dict[str, Any]] = {}
+_api_keys: dict[str, dict[str, Any]] = {}
 
 
 def generate_id() -> str:
@@ -388,3 +391,71 @@ def approval_list_by_workflow(workflow_id: str) -> list[dict]:
         for aid in _workflow_approvals.get(workflow_id, [])
         if aid in _approval_requests
     ]
+
+
+# Users
+def user_get_by_email(email: str) -> dict | None:
+    for u in _users.values():
+        if u.get("email") == email:
+            return u
+    return None
+
+
+def user_get(user_id: str) -> dict | None:
+    return _users.get(user_id)
+
+
+def user_create(data: dict) -> dict:
+    user_id = generate_id()
+    user = {"id": user_id, **data}
+    _users[user_id] = user
+    # Initialize default preferences
+    preference_update(
+        user_id,
+        {
+            "theme": "system",
+            "accentColor": "#007bff",
+            "fontSize": "md",
+            "streamingEnabled": True,
+            "showAgentThinking": True,
+        },
+    )
+    return user
+
+
+# Preferences
+def preference_get(user_id: str) -> dict | None:
+    return _preferences.get(user_id)
+
+
+def preference_update(user_id: str, data: dict) -> dict:
+    if user_id not in _preferences:
+        _preferences[user_id] = {"userId": user_id}
+    _preferences[user_id].update(data)
+    return _preferences[user_id]
+
+
+# API Keys
+def api_key_create(user_id: str, name: str) -> dict:
+    key_id = generate_id()
+    # In a real app, internal_key would be hashed
+    key = {
+        "id": key_id,
+        "userId": user_id,
+        "name": name,
+        "key": f"sk_{generate_id().replace('-', '')}",
+        "createdAt": "2024-03-10T00:00:00Z",  # Mock timestamp
+    }
+    _api_keys[key_id] = key
+    return key
+
+
+def api_key_list(user_id: str) -> list[dict]:
+    return [k for k in _api_keys.values() if k.get("userId") == user_id]
+
+
+def api_key_delete(key_id: str) -> bool:
+    if key_id in _api_keys:
+        del _api_keys[key_id]
+        return True
+    return False

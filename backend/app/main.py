@@ -35,6 +35,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api import (
     agents,
+    auth,
     chat,
     conversations,
     crews,
@@ -47,6 +48,7 @@ from backend.api import (
     tasks,
     knowledge,
     llm,
+    preferences,
 )
 from backend.core.config import get_settings
 from backend.core.exceptions import (
@@ -101,6 +103,8 @@ def create_app() -> FastAPI:
     # API v1 routes
     prefix = cfg.api_v1_prefix
     app.include_router(health.router, prefix=prefix)
+    app.include_router(auth.router, prefix=prefix)
+    app.include_router(preferences.router, prefix=prefix)
     app.include_router(settings_api.router, prefix=prefix)
     app.include_router(crews.router, prefix=prefix)
     app.include_router(agents.router, prefix=prefix)
