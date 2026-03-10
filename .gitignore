@@ -6,16 +6,12 @@ __pycache__/
 venv/
 backend/venv/
 
-# Environment variables
+# environment
 .env
 
-# Database
+# database
 *.sqlite3
 chroma_db/
 
-# Node
+# node
 node_modules/
-
-# OS
-.DS_Store
-Thumbs.db
