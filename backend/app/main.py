@@ -45,6 +45,7 @@ from backend.api import (
     storage,
     supervisor,
     tasks,
+    knowledge,
 )
 from backend.core.config import get_settings
 from backend.core.exceptions import (
@@ -105,6 +106,7 @@ def create_app() -> FastAPI:
     app.include_router(mcp_servers.router, prefix=prefix)
     app.include_router(conversations.router, prefix=prefix)
     app.include_router(storage.router, prefix=prefix)
+    app.include_router(knowledge.router, prefix=prefix)
     app.include_router(skills.router, prefix=prefix)
     app.include_router(supervisor.router, prefix=prefix)
     app.include_router(tasks.router, prefix=prefix)

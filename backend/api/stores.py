@@ -36,6 +36,8 @@ _mcp_tools: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
 _conversations: dict[str, dict[str, Any]] = {}
 _conversation_messages: dict[str, list[dict[str, Any]]] = defaultdict(list)
 _storage_files: dict[str, bytes] = {}
+_sources: dict[str, dict[str, Any]] = {}
+_code_examples: dict[str, dict[str, Any]] = {}
 
 
 def generate_id() -> str:
@@ -245,6 +247,61 @@ def storage_delete(key: str) -> bool:
     del _storage_files[key]
     return True
 
+
+# Knowledge Sources
+def source_list() -> list[dict]:
+    return list(_sources.values())
+
+
+def source_get(source_id: str) -> dict | None:
+    return _sources.get(source_id)
+
+
+def source_create(data: dict) -> dict:
+    source_id = data.get("id") or generate_id()
+    _sources[source_id] = {"id": source_id, **data}
+    return _sources[source_id]
+
+
+def source_update(source_id: str, data: dict) -> dict | None:
+    if source_id not in _sources:
+        return None
+    _sources[source_id].update(data)
+    return _sources[source_id]
+
+
+def source_delete(source_id: str) -> bool:
+    if source_id not in _sources:
+        return False
+    del _sources[source_id]
+    
+    # Cascade delete code examples
+    code_ids = [c["id"] for c in _code_examples.values() if c.get("sourceId") == source_id]
+    for cid in code_ids:
+        del _code_examples[cid]
+    return True
+
+
+# Code Examples
+def code_example_list() -> list[dict]:
+    return list(_code_examples.values())
+
+
+def code_example_get(code_id: str) -> dict | None:
+    return _code_examples.get(code_id)
+
+
+def code_example_create(data: dict) -> dict:
+    code_id = data.get("id") or generate_id()
+    _code_examples[code_id] = {"id": code_id, **data}
+    return _code_examples[code_id]
+
+
+def code_example_delete(code_id: str) -> bool:
+    if code_id not in _code_examples:
+        return False
+    del _code_examples[code_id]
+    return True
 
 # Supervisor + Human-in-the-Loop
 _workflows: dict[str, dict[str, Any]] = {}
