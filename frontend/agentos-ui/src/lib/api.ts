@@ -1,5 +1,24 @@
 /**
- * Typed API client for AgentOS backend.
+ * File: api.ts
+ * 
+ * Purpose:
+ * Provides a highly-typed HTTP API client for interacting with the AgentOS backend,
+ * centralizing fetch logic, error handling, and type definitions.
+ * 
+ * Key Functionalities:
+ * - Implement API wrapper methods (get, post, put, delete) with standardized JSON handling
+ * - Custom `APIError` class for consistent error mapping and request tracing
+ * - Export TypeScript types corresponding to backend models (Agent, MCPServer, Task, etc.)
+ * 
+ * Inputs:
+ * - HTTP request paths, payloads, and options
+ * 
+ * Outputs:
+ * - Parsed JSON object responses typed as Generics
+ * - Standardized APIError exceptions
+ * 
+ * Interacting Files / Modules:
+ * - src.lib.env
  */
 
 import { env } from "./env";

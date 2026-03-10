@@ -1,3 +1,27 @@
+/**
+ * File: page.tsx
+ * 
+ * Purpose:
+ * Provides a dedicated form for human-in-the-loop users to submit structured
+ * evaluation metrics for individual agent runs.
+ * 
+ * Key Functionalities:
+ * - Fetch and list available agents from the backend
+ * - Render an interactive form capturing Likert-scale metrics (Task Success, Hallucination, Tool Accuracy, Intent Resolution) 
+ * - Submit the evaluation payload to the backend API (`/evaluations`)
+ * - Display success toasts or error messages, and handles loading states
+ * 
+ * Inputs:
+ * - User input via form controls
+ * - Agent list requested from API
+ * 
+ * Outputs:
+ * - Evaluation submission payload
+ * - React page component for `/evaluations`
+ * 
+ * Interacting Files / Modules:
+ * - src.lib.api
+ */
 "use client";
 
 import React from "react";

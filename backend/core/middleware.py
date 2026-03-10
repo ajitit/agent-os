@@ -1,4 +1,24 @@
-"""Custom middleware for request processing."""
+"""
+File: middleware.py
+
+Purpose:
+Defines custom FastAPI middleware to process incoming HTTP requests before they
+reach route handlers, specifically for request tracing.
+
+Key Functionalities:
+- Extract or generate an `X-Request-ID` for each incoming request
+- Store the request ID in a context variable for use in logging/error handling
+- Attach the request ID to the outgoing HTTP response
+
+Inputs:
+- Incoming FastAPI HTTP requests
+
+Outputs:
+- Outgoing FastAPI HTTP responses with appended correlation headers
+
+Interacting Files / Modules:
+- backend.core.logging_config
+"""
 
 import uuid
 

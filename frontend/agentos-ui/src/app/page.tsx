@@ -1,3 +1,23 @@
+/**
+ * File: page.tsx
+ * 
+ * Purpose:
+ * Acts as the main landing page/dashboard for the AgentOS frontend application.
+ * 
+ * Key Functionalities:
+ * - Render an introductory hero section with a high-level product description
+ * - Provide quick-access summary cards linking to Agent Management, MCP Marketplace, and Chat
+ * - Include basic navigation structure
+ * 
+ * Inputs:
+ * - None
+ * 
+ * Outputs:
+ * - Main Next.js React page component for the root (`/`) route
+ * 
+ * Interacting Files / Modules:
+ * - None
+ */
 import Link from "next/link";
 
 export default function Home() {

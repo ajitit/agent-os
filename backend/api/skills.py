@@ -1,4 +1,29 @@
-"""Skills API - Progressive Disclosure (Level 1, 2, 3)."""
+"""
+File: skills.py
+
+Purpose:
+Implements a Progressive Disclosure API for retrieving AI skills, organizing them
+by detail level (metadata, instructions, resources) to optimize context length.
+
+Key Functionalities:
+- Level 1: List all available skills and metadata
+- Level 2: Retrieve detailed specific skill instructions
+- Level 3: Fetch related resource files for a skill
+
+Inputs:
+- HTTP GET requests
+- Application settings (skills directory)
+
+Outputs:
+- JSON responses with skill lists and details
+- Raw file content (resources) with appropriate media types
+
+Interacting Files / Modules:
+- backend.core.config
+- backend.skills.loader
+- backend.skills.models
+- backend.core.exceptions
+"""
 
 from pathlib import Path
 

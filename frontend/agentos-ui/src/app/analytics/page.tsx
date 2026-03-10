@@ -1,3 +1,26 @@
+/**
+ * File: page.tsx
+ * 
+ * Purpose:
+ * Displays a comprehensive analytics dashboard visualizing agent and model performance
+ * metrics over time.
+ * 
+ * Key Functionalities:
+ * - Render top-level summary statistics (Success rate, latency, token costs)
+ * - Display comparative charts using Recharts (Radar traits, time-series trends)
+ * - Render an Intent Confusion Matrix heat-map using HTML tables
+ * - Provide an interactive evaluation log list showing individual runs
+ * - Support toggling the primary provider and comparative overlay
+ * 
+ * Inputs:
+ * - Currently uses mocked analytics/evaluation data for visualization
+ * 
+ * Outputs:
+ * - React page component for `/analytics`
+ * 
+ * Interacting Files / Modules:
+ * - None
+ */
 "use client";
 
 import { useMemo, useState } from "react";

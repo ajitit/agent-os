@@ -1,4 +1,26 @@
-"""Custom exceptions and error handlers."""
+"""
+File: exceptions.py
+
+Purpose:
+Defines custom application exceptions and FastAPI exception handlers to provide
+consistent, structured error responses across the API.
+
+Key Functionalities:
+- Define `AgentOSException`, `NotFoundError`, `ValidationError`
+- Define standardized `APIError` response model
+- Provide exception handlers for FastAPI integration
+
+Inputs:
+- Caught exceptions during API request processing
+- FastAPI Request objects
+
+Outputs:
+- Standardized JSON error responses (APIError format)
+- Correct HTTP status codes
+
+Interacting Files / Modules:
+- backend.core.logging_config
+"""
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError

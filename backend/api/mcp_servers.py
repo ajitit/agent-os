@@ -1,4 +1,26 @@
-"""MCP Servers API - CRUD and tools management."""
+"""
+File: mcp_servers.py
+
+Purpose:
+Manages Model Context Protocol (MCP) servers and their associated tools via REST API,
+enabling external tool integration for agents.
+
+Key Functionalities:
+- CRUD operations for MCP servers
+- Managing tools provided by MCP servers
+- Testing MCP server connections
+
+Inputs:
+- HTTP requests with MCP server configuration
+- Tool definitions and states
+
+Outputs:
+- JSON responses with server and tool metadata
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field

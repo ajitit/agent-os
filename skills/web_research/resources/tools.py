@@ -1,4 +1,23 @@
-"""Example tool integration for Web Research skill - framework agnostic."""
+"""
+File: tools.py
+
+Purpose:
+Provides a placeholder (Level 3 resource) example of a framework-agnostic tool 
+implementation for the Web Research skill.
+
+Key Functionalities:
+- Define the `web_search` function signature and basic documentation
+- Illustrate how developers should integrate search tools via LangChain, LlamaIndex, or raw APIs
+
+Inputs:
+- String search queries
+
+Outputs:
+- Dummy list (intended to be list of web search result dictionaries)
+
+Interacting Files / Modules:
+- None
+"""
 
 # This file demonstrates the resource pattern (Level 3).
 # Implement web_search using your preferred framework:

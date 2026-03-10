@@ -1,9 +1,25 @@
 """
-Skill loader - Progressive Disclosure implementation.
+File: loader.py
 
-Level 1: Metadata only (~100 tokens) - for system prompt
-Level 2: Full instructions (SKILL.md) - loaded when agent selects skill
-Level 3: Resources - loaded when instructions reference them
+Purpose:
+Implements the Progressive Disclosure pattern for loading AI skills from the filesystem
+at different levels of detail (Level 1: Metadata, Level 2: Instructions, Level 3: Resources).
+
+Key Functionalities:
+- Load skill metadata for system prompts (Level 1)
+- Load complete skill instructions from SKILL.md (Level 2)
+- Load specific resource files securely, preventing path traversal (Level 3)
+
+Inputs:
+- Base directory path containing skills
+- Skill IDs and specific resource paths
+
+Outputs:
+- `SkillMetadata` and `Skill` pydantic models
+- Raw bytes and content types for resource files
+
+Interacting Files / Modules:
+- backend.skills.models
 """
 
 import json

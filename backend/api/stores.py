@@ -1,4 +1,28 @@
-"""In-memory stores for API resources. Replace with DB layer in production."""
+"""
+File: stores.py
+
+Purpose:
+Provides in-memory data structures and functions for basic CRUD operations across
+all primary resources (crews, agents, MCP servers, conversations, etc.).
+Serves as a placeholder for a true database layer.
+
+Key Functionalities:
+- Generating unique IDs for new records
+- Create, Read, Update, Delete for Crews, Agents, MCP Servers, Conversations
+- Tool assignment mapping for agents and MCP servers
+- File storage and workflow/approval mapping
+
+Inputs:
+- Dictionaries representing updated or new resource data
+- String IDs for record lookups
+
+Outputs:
+- Dictionary representations of stored records
+- Booleans indicating success/failure of deletion
+
+Interacting Files / Modules:
+- None
+"""
 
 from collections import defaultdict
 from typing import Any

@@ -1,4 +1,32 @@
-"""AgentOS FastAPI application entry point."""
+"""
+File: main.py
+
+Purpose:
+Serves as the main entry point for the AgentOS FastAPI application, initializing
+the app, configuring middleware, and routing all API endpoints.
+
+Key Functionalities:
+- Initialize FastAPI application instance
+- Configure CORS and request ID middleware
+- Register exception handlers
+- Include all API routers
+- Define health and root endpoints
+
+Inputs:
+- HTTP requests
+- Environment variables via configuration settings
+
+Outputs:
+- Configured FastAPI application instance
+- HTTP responses for all registered routes
+
+Interacting Files / Modules:
+- backend.api.*
+- backend.core.config
+- backend.core.exceptions
+- backend.core.logging_config
+- backend.core.middleware
+"""
 
 from contextlib import asynccontextmanager
 

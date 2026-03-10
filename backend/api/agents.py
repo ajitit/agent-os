@@ -1,4 +1,27 @@
-"""Agents API - CRUD and tool assignment."""
+"""
+File: agents.py
+
+Purpose:
+Defines the REST API endpoints for managing the lifecycle of agents, including
+creation, retrieval, updating, deletion, and tool assignment.
+
+Key Functionalities:
+- CRUD operations for agents
+- Assigning and removing tools from agents
+- Pydantic models for request validation (AgentCreate, AgentUpdate)
+
+Inputs:
+- HTTP requests with agent configuration data
+- Tool IDs for assignment operations
+
+Outputs:
+- JSON responses containing agent metadata
+- HTTP status codes for operation results
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field

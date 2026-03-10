@@ -1,3 +1,24 @@
+# File: docker-compose.yml
+# 
+# Purpose:
+# Defines the multi-container Docker application environment for local development
+# and deployment of AgentOS.
+# 
+# Key Functionalities:
+# - Orchestrate the PostgreSQL database, Redis cache, and Python backend services
+# - Map ports for local access and configure persistent volumes
+# - Set environment variables connecting the services
+# - Define health checks for resilient startup
+# 
+# Inputs:
+# - Docker configuration blocks and local .env files (if any)
+# 
+# Outputs:
+# - Running Docker container network
+# 
+# Interacting Files / Modules:
+# - backend/Dockerfile
+
 services:
   postgres:
     image: postgres:15-alpine

@@ -1,4 +1,28 @@
-"""Storage API - file upload, download, presigned URLs, list, delete."""
+"""
+File: storage.py
+
+Purpose:
+Defines API endpoints for file storage operations, including uploading, downloading,
+generating presigned URLs, listing, and deleting files.
+
+Key Functionalities:
+- Upload files to storage
+- Download files directly
+- Generate presigned URLs for secure temporary access
+- List and delete files
+
+Inputs:
+- HTTP requests with file uploads / metadata
+- Storage keys (file identifiers)
+
+Outputs:
+- JSON responses with file metadata and presigned URLs
+- Binary streams (application/octet-stream) for file downloads
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter, File, Query, UploadFile
 from fastapi.responses import Response

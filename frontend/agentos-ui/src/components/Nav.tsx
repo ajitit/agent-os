@@ -1,3 +1,23 @@
+/**
+ * File: Nav.tsx
+ * 
+ * Purpose:
+ * Renders the primary top navigation bar for the AgentOS frontend application.
+ * 
+ * Key Functionalities:
+ * - Provide client-side routing links (Next.js) to major sections: Agents, MCP Services, Evaluations, Analytics, Chat
+ * - Highlight the active route
+ * - Embed the `ModelSelector` component for global model switching
+ * 
+ * Inputs:
+ * - Current URL pathname via `usePathname`
+ * 
+ * Outputs:
+ * - React navigation component
+ * 
+ * Interacting Files / Modules:
+ * - src.components.ModelSelector
+ */
 "use client";
 
 import Link from "next/link";

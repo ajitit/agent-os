@@ -1,4 +1,25 @@
-"""Pydantic models for the skill system - type safe throughout."""
+"""
+File: models.py
+
+Purpose:
+Defines Pydantic models for the Progressive Disclosure skill system, ensuring
+type safety and validation when loading or serving skills.
+
+Key Functionalities:
+- Define `SkillMetadata` for Level 1 concise representations
+- Define `Skill` for complete Level 2 + 3 representations
+- Define `SkillResource` to represent specific file resources
+- Enforce validation, preventing path traversal attacks on resources
+
+Inputs:
+- Dictionaries or JSON objects containing parsed skill data
+
+Outputs:
+- Robust Pydantic model instances
+
+Interacting Files / Modules:
+- None
+"""
 
 from pathlib import Path
 from typing import Any

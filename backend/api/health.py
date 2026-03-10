@@ -1,4 +1,24 @@
-"""Health check endpoints for load balancers and orchestration."""
+"""
+File: health.py
+
+Purpose:
+Exposes health and readiness check endpoints for load balancers, orchestrators
+(like Kubernetes), and general monitoring.
+
+Key Functionalities:
+- Liveness probe (`/health`)
+- Readiness probe (`/health/ready`)
+
+Inputs:
+- HTTP GET requests
+- Application settings
+
+Outputs:
+- JSON health status responses
+
+Interacting Files / Modules:
+- backend.core.config
+"""
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel

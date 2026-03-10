@@ -1,4 +1,26 @@
-"""Supervisor + Human-in-the-Loop API for multi-agent systems."""
+"""
+File: supervisor.py
+
+Purpose:
+Implements a Supervisor API enabling Human-in-the-Loop workflows, allowing execution
+to pause for human approval before proceeding.
+
+Key Functionalities:
+- Creating and managing workflows
+- Creating approval checkpoints during execution
+- Submitting responses (approve/reject/modify) to checkpoints
+
+Inputs:
+- HTTP requests with workflow goals
+- Approval decisions and unstructured/structured feedback
+
+Outputs:
+- JSON responses showing workflow and approval states
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field

@@ -1,4 +1,26 @@
-"""Tests for Progressive Disclosure skill system."""
+"""
+File: test_skills.py
+
+Purpose:
+Extensive test suite for verifying the Progressive Disclosure skill loader
+functionalities.
+
+Key Functionalities:
+- Create fixtures for temporary simulated skills directories
+- Verify successful listing, retrieval, and parsing of skill metadata
+- Ensure resource loading works correctly
+- Validate security boundaries by attempting and rejecting path traversal attacks
+
+Inputs:
+- Pytest fixtures (tmp_path)
+
+Outputs:
+- Passing or failing test assertions
+
+Interacting Files / Modules:
+- backend.skills.loader
+- backend.skills.models
+"""
 
 import tempfile
 from pathlib import Path

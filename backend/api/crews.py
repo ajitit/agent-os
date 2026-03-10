@@ -1,4 +1,23 @@
-"""Crews API - CRUD for agent crews."""
+"""
+File: crews.py
+
+Purpose:
+Provides REST API endpoints for managing multi-agent crews, which coordinate
+multiple agents to execute complex tasks.
+
+Key Functionalities:
+- CRUD operations for agent crews
+
+Inputs:
+- HTTP requests with crew configuration data
+
+Outputs:
+- JSON responses containing crew metadata
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field

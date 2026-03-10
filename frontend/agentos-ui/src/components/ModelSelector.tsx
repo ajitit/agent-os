@@ -1,3 +1,27 @@
+/**
+ * File: ModelSelector.tsx
+ * 
+ * Purpose:
+ * Provides a UI dropdown control for users to select their active/primary AI model 
+ * globally across the application.
+ * 
+ * Key Functionalities:
+ * - Fetch current model settings on mount via backend API
+ * - Render a selectable list of available models
+ * - Update backend settings when a user changes their primary model
+ * - Automatically reflect the active model in the UI
+ * 
+ * Inputs:
+ * - User interaction (clicks)
+ * - API response from `/settings/models`
+ * 
+ * Outputs:
+ * - React dropdown component
+ * - API put request to update model preferences
+ * 
+ * Interacting Files / Modules:
+ * - src.lib.api
+ */
 "use client";
 
 import { useEffect, useState } from "react";

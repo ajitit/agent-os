@@ -1,6 +1,23 @@
 /**
- * Validated environment configuration.
- * NEXT_PUBLIC_* vars are exposed to the browser.
+ * File: env.ts
+ * 
+ * Purpose:
+ * Validates and exposes environment variables to the frontend application,
+ * ensuring required values are present before the app runs.
+ * 
+ * Key Functionalities:
+ * - Check for required environment variables (NEXT_PUBLIC_API_URL)
+ * - Throw errors in production if keys are missing
+ * - Export a strongly-typed `env` object with validated endpoints
+ * 
+ * Inputs:
+ * - process.env (specifically NEXT_PUBLIC_* variables)
+ * 
+ * Outputs:
+ * - Validated `env` configuration object
+ * 
+ * Interacting Files / Modules:
+ * - src.lib.api
  */
 
 const REQUIRED_KEYS = ["NEXT_PUBLIC_API_URL"] as const;

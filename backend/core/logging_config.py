@@ -1,4 +1,25 @@
-"""Structured logging configuration."""
+"""
+File: logging_config.py
+
+Purpose:
+Configures structured application logging to ensure traceability, injecting
+request correlation IDs into log records.
+
+Key Functionalities:
+- Define a structured log formatter
+- Attach request IDs from context variables to log output
+- Configure global root logger and Uvicorn loggers
+
+Inputs:
+- Log level configuration string (e.g., 'INFO', 'DEBUG')
+- Application log events
+
+Outputs:
+- Formatted log messages emitted to stdout
+
+Interacting Files / Modules:
+- None
+"""
 
 import logging
 import sys

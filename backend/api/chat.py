@@ -1,3 +1,22 @@
+"""
+File: chat.py
+
+Purpose:
+Provides API endpoints for chat interactions, including streaming responses
+from agents.
+
+Key Functionalities:
+- Stream chat interactions to the client
+
+Inputs:
+- HTTP GET requests for the stream endpoint
+
+Outputs:
+- Server-Sent Events (SSE) or streaming text responses
+
+Interacting Files / Modules:
+- None
+"""
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 

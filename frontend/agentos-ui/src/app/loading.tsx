@@ -1,3 +1,22 @@
+/**
+ * File: loading.tsx
+ * 
+ * Purpose:
+ * Serves as the default Next.js loading UI, automatically shown by the router
+ * during route transitions or while fetching data.
+ * 
+ * Key Functionalities:
+ * - Render a centered, animated loading spinner fallback
+ * 
+ * Inputs:
+ * - None
+ * 
+ * Outputs:
+ * - Next.js React loading component
+ * 
+ * Interacting Files / Modules:
+ * - None
+ */
 export default function Loading() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">

@@ -1,3 +1,26 @@
+/**
+ * File: page.tsx
+ * 
+ * Purpose:
+ * Provides a CRUD interface for managing autonomous AI agents within the platform.
+ * 
+ * Key Functionalities:
+ * - Fetch and display a tabular list of existing agents
+ * - Filter functionality by agent name or role
+ * - Render a modal form for creating new agents or editing existing ones
+ * - Handle API interactions for creation (POST), updates (PUT), and deletion (DELETE)
+ * 
+ * Inputs:
+ * - API responses from `/agents` endpoint
+ * - User input via forms and UI actions
+ * 
+ * Outputs:
+ * - React administration page component for `/admin/agents`
+ * - API requests modifying the agent data store
+ * 
+ * Interacting Files / Modules:
+ * - src.lib.api
+ */
 "use client";
 
 import { useCallback, useEffect, useState } from "react";

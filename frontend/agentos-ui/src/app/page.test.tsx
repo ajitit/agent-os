@@ -1,3 +1,22 @@
+/**
+ * File: page.test.tsx
+ * 
+ * Purpose:
+ * Contains unit and integration tests for the root landing page (`src/app/page.tsx`).
+ * 
+ * Key Functionalities:
+ * - Mock Next.js internal components (like `next/image`) to isolate tests
+ * - Verify that critical UI elements like the main heading and chat links render correctly
+ * 
+ * Inputs:
+ * - Rendered DOM from the `Home` component
+ * 
+ * Outputs:
+ * - Test assertions and results
+ * 
+ * Interacting Files / Modules:
+ * - src.app.page
+ */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Home from "./page";

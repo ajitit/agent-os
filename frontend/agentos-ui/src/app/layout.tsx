@@ -1,3 +1,25 @@
+/**
+ * File: layout.tsx
+ * 
+ * Purpose:
+ * Defines the root HTML and body structure for the entire Next.js application,
+ * integrating global fonts, styles, and persistent UI components like the Navbar.
+ * 
+ * Key Functionalities:
+ * - Configure global fonts (Geist Sans, Geist Mono)
+ * - Define default application metadata (title, description) for SEO/sharing
+ * - Wrap all child pages with the root `html`, `body`, and `<Nav />` component
+ * 
+ * Inputs:
+ * - Child page components rendered by Next.js router
+ * 
+ * Outputs:
+ * - Persistent root React layout
+ * 
+ * Interacting Files / Modules:
+ * - src.components.Nav
+ * - globals.css
+ */
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/Nav";

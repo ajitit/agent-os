@@ -1,3 +1,24 @@
+/**
+ * File: globals.css
+ * 
+ * Purpose:
+ * Defines global and foundational CSS styles for the React application, incorporating
+ * Tailwind CSS.
+ * 
+ * Key Functionalities:
+ * - Import base Tailwind styles (`@import "tailwindcss"`)
+ * - Define foundational custom properties (CSS variables) for light and dark themes
+ * - Configure the root `body` element with global fonts, background, and text colors
+ * 
+ * Inputs:
+ * - System theme preferences (prefers-color-scheme)
+ * 
+ * Outputs:
+ * - Rendered global styles in the browser
+ * 
+ * Interacting Files / Modules:
+ * - src.app.layout
+ */
 @import "tailwindcss";
 
 :root {

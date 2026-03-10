@@ -1,3 +1,22 @@
+/**
+ * File: next.config.ts
+ * 
+ * Purpose:
+ * Configures the Next.js application, including compiler settings and security headers.
+ * 
+ * Key Functionalities:
+ * - Enable React Compiler
+ * - Configure strict HTTP security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+ * 
+ * Inputs:
+ * - Next.js build and runtime environments
+ * 
+ * Outputs:
+ * - NextConfig object
+ * 
+ * Interacting Files / Modules:
+ * - None
+ */
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {

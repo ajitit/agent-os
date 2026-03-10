@@ -1,3 +1,22 @@
+"""
+File: tasks.py
+
+Purpose:
+Defines API endpoints for task creation and management for agent execution.
+
+Key Functionalities:
+- Submitting new tasks with specific goals
+- (Future) querying task status
+
+Inputs:
+- HTTP requests with task goals and constraints
+
+Outputs:
+- JSON responses indicating queued task status
+
+Interacting Files / Modules:
+- None
+"""
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 

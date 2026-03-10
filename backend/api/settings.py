@@ -1,4 +1,23 @@
-"""Global settings API - model selection, etc."""
+"""
+File: settings.py
+
+Purpose:
+Provides API endpoints to retrieve and update global system settings, such as
+the primary orchestration LLM.
+
+Key Functionalities:
+- Get available models and current settings
+- Update the primary model for the system
+
+Inputs:
+- HTTP requests to update settings Configuration
+
+Outputs:
+- JSON responses with global system settings
+
+Interacting Files / Modules:
+- None
+"""
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field

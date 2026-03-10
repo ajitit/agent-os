@@ -1,3 +1,26 @@
+"""
+File: test_api.py
+
+Purpose:
+Comprehensive integration tests for the FastAPI application routes, encompassing 
+all primary modules like agents, crews, storage, supervisor, and chat.
+
+Key Functionalities:
+- Spin up a `TestClient` instance against the main `app`
+- Test full CRUD lifecycles for Agent, Crew, Storage, Task, and MCP Server endpoints
+- Verify health check, missing route (404), and error handling formats
+- Validate the complex supervisor workflows including pause and respond mechanics
+
+Inputs:
+- Mocked or temporary database connections (in-memory app state)
+
+Outputs:
+- Extensive test assertions against HTTP status codes and JSON payloads
+
+Interacting Files / Modules:
+- backend.app.main
+"""
+
 from fastapi.testclient import TestClient
 
 from backend.app.main import app

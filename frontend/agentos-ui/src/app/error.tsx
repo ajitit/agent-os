@@ -1,3 +1,25 @@
+/**
+ * File: error.tsx
+ * 
+ * Purpose:
+ * Defines a global error boundary for the Next.js application, catching unhandled
+ * runtime exceptions to prevent full app crashes.
+ * 
+ * Key Functionalities:
+ * - Render a user-friendly error fallback screen
+ * - Log errors to the browser console for debugging
+ * - Provide a "Try again" button to attempt a route reset
+ * 
+ * Inputs:
+ * - `error`: The caught JavaScript Error object
+ * - `reset`: Function to clear the error boundary and re-render the segment
+ * 
+ * Outputs:
+ * - React error boundary component
+ * 
+ * Interacting Files / Modules:
+ * - None
+ */
 "use client";
 
 import { useEffect } from "react";

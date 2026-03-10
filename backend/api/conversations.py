@@ -1,4 +1,27 @@
-"""Conversations API - CRUD, messages, and chat."""
+"""
+File: conversations.py
+
+Purpose:
+Defines REST API endpoints for managing conversations and integrating chat functionality,
+allowing users to interact with agents and crews.
+
+Key Functionalities:
+- CRUD operations for conversations
+- Managing messages within a conversation
+- Synchronous and streaming chat endpoints
+
+Inputs:
+- HTTP requests with conversation metadata
+- Chat messages (user input)
+
+Outputs:
+- JSON responses with conversation and message data
+- Streaming responses for chat interactions
+
+Interacting Files / Modules:
+- backend.api.stores
+- backend.core.exceptions
+"""
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
