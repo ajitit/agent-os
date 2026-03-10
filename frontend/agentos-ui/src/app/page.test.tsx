@@ -17,12 +17,14 @@ describe("Home", () => {
   it("renders the main heading", () => {
     render(<Home />);
     expect(
-      screen.getByText("To get started, edit the page.tsx file.")
+      screen.getByRole("heading", {
+        name: /enterprise multi-agent ai platform/i,
+      })
     ).toBeInTheDocument();
   });
 
-  it("renders the Documentation link", () => {
+  it("renders the Chat link", () => {
     render(<Home />);
-    expect(screen.getByRole("link", { name: /documentation/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /chat/i })).toBeInTheDocument();
   });
 });
