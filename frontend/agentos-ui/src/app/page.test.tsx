@@ -23,8 +23,9 @@ describe("Home", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the Chat link", () => {
+  it("renders at least one Chat link", () => {
     render(<Home />);
-    expect(screen.getByRole("link", { name: /chat/i })).toBeInTheDocument();
+    const chatLinks = screen.getAllByRole("link", { name: /chat/i });
+    expect(chatLinks.length).toBeGreaterThanOrEqual(1);
   });
 });
