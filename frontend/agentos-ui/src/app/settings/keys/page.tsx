@@ -1,118 +1,137 @@
 /**
- * File: page.tsx (API Keys)
- * 
- * Purpose:
- * Provides an interface for users to generate, view, and revoke personal API keys
- * for programmatic access to the AgentOS platform.
+ * File: settings/keys/page.tsx
+ * API Key management — create, list, revoke named API keys.
  */
 "use client";
 
-import { useState, useEffect } from "react";
-import { api, APIKey, APIResponse } from "@/lib/api";
+import { useEffect, useState } from "react";
+
+type APIKey = { id: string; name: string; key: string; createdAt: string };
 
 export default function APIKeysPage() {
   const [keys, setKeys] = useState<APIKey[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newKeyName, setNewKeyName] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [revealed, setRevealed] = useState<string | null>(null);
+  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
 
-  useEffect(() => {
-    api.get<APIResponse<APIKey[]>>("/auth/keys")
-      .then(res => setKeys(res.data))
-      .finally(() => setLoading(false));
-  }, []);
+  async function loadKeys() {
+    if (!token) return;
+    const res = await fetch("/api/v1/auth/keys", { headers: { Authorization: `Bearer ${token}` } });
+    if (res.ok) { const j = await res.json(); setKeys(j.data || []); }
+  }
 
-  const createKey = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newKeyName) return;
-    setIsCreating(true);
+  useEffect(() => { loadKeys(); }, [token]);
+
+  async function createKey() {
+    if (!token || !newName.trim()) return;
+    setCreating(true);
     try {
-      const res = await api.post<APIResponse<APIKey>>("/auth/keys", { name: newKeyName });
-      setKeys([...keys, res.data]);
-      setNewKeyName("");
-    } catch {
-      alert("Failed to create API key");
-    } finally {
-      setIsCreating(false);
-    }
-  };
+      const res = await fetch("/api/v1/auth/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ name: newName.trim() }),
+      });
+      if (res.ok) {
+        const j = await res.json();
+        setKeys((prev) => [...prev, j.data]);
+        setRevealed(j.data.id);
+        setNewName("");
+      }
+    } finally { setCreating(false); }
+  }
 
-  const deleteKey = async (id: string) => {
-    if (!confirm("Are you sure you want to revoke this API key?")) return;
-    try {
-      await api.delete(`/auth/keys/${id}`);
-      setKeys(keys.filter(k => k.id !== id));
-    } catch {
-      alert("Failed to delete API key");
-    }
-  };
+  async function deleteKey(id: string) {
+    if (!token) return;
+    await fetch(`/api/v1/auth/keys/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setKeys((prev) => prev.filter((k) => k.id !== id));
+    if (revealed === id) setRevealed(null);
+  }
 
-  if (loading) return <div className="p-8 text-center text-zinc-500">Loading API keys...</div>;
+  if (!token) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+        <p className="text-zinc-600 dark:text-zinc-400">Please <a href="/profile" className="underline text-zinc-900 dark:text-zinc-100">sign in</a> to manage API keys.</p>
+      </div>
+    );
+  }
 
   return (
-    <main className="mx-auto max-w-5xl p-8">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">API Keys</h1>
-        <p className="mt-2 text-zinc-500">Manage keys for programmatic access to your agents and workflows.</p>
-      </div>
+    <div className="mx-auto max-w-2xl px-6 py-10">
+      <h1 className="mb-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">API Keys</h1>
+      <p className="mb-8 text-sm text-zinc-500">Create named keys for programmatic access to the AgentOS API.</p>
 
-      <div className="mb-12 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <h2 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Create New Key</h2>
-        <form onSubmit={createKey} className="flex gap-3">
+      {/* Create new key */}
+      <div className="mb-8 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <h2 className="mb-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">Create New Key</h2>
+        <div className="flex gap-3">
           <input
-            type="text"
-            placeholder="Key Name (e.g. Production-Backend)"
-            value={newKeyName}
-            onChange={(e) => setNewKeyName(e.target.value)}
-            className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:border-zinc-800 dark:bg-zinc-950 dark:focus:ring-zinc-100/10"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && createKey()}
+            placeholder="Key name (e.g. production-api)"
+            className="flex-1 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
           <button
-            type="submit"
-            disabled={isCreating}
-            className="rounded-lg bg-zinc-900 px-6 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+            onClick={createKey}
+            disabled={creating || !newName.trim()}
+            className="rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
           >
-            {isCreating ? "Generating..." : "Generate Key"}
+            {creating ? "Creating…" : "Create"}
           </button>
-        </form>
+        </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-            <tr>
-              <th className="px-6 py-4 font-semibold text-zinc-900 dark:text-zinc-100">Name</th>
-              <th className="px-6 py-4 font-semibold text-zinc-900 dark:text-zinc-100">Secret Key</th>
-              <th className="px-6 py-4 font-semibold text-zinc-900 dark:text-zinc-100">Created</th>
-              <th className="px-6 py-4 font-semibold text-zinc-900 dark:text-zinc-100">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {keys.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-10 text-center text-zinc-500">No API keys found.</td>
-              </tr>
-            ) : (
-              keys.map((key) => (
-                <tr key={key.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-950">
-                  <td className="px-6 py-4 font-medium text-zinc-900 dark:text-zinc-100">{key.name}</td>
-                  <td className="px-6 py-4">
-                    <code className="rounded bg-zinc-100 px-2 py-0.5 font-mono text-xs dark:bg-zinc-800">{key.key}</code>
-                  </td>
-                  <td className="px-6 py-4 text-zinc-500">{new Date(key.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => deleteKey(key.id)}
-                      className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                    >
-                      Revoke
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* Key list */}
+      <div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Your API Keys ({keys.length})</p>
+        </div>
+        {keys.length === 0 ? (
+          <p className="px-6 py-8 text-center text-sm text-zinc-400">No API keys yet</p>
+        ) : (
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            {keys.map((key) => (
+              <div key={key.id} className="px-6 py-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{key.name}</p>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Created {new Date(key.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => deleteKey(key.id)}
+                    className="rounded-lg border border-red-200 px-3 py-1 text-xs text-red-500 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-900/20"
+                  >
+                    Revoke
+                  </button>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <code className="flex-1 rounded-lg bg-zinc-50 px-3 py-1.5 text-xs font-mono text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 truncate">
+                    {revealed === key.id ? key.key : `${key.key.slice(0, 12)}${"•".repeat(24)}`}
+                  </code>
+                  <button
+                    onClick={() => setRevealed(revealed === key.id ? null : key.id)}
+                    className="shrink-0 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  >
+                    {revealed === key.id ? "Hide" : "Show"}
+                  </button>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(key.key)}
+                    className="shrink-0 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </main>
+    </div>
   );
 }

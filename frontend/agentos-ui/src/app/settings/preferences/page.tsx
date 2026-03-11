@@ -1,149 +1,166 @@
 /**
- * File: page.tsx (Preferences)
- * 
- * Purpose:
- * Renders the user preferences page, allowing customization of UI themes, 
- * behavior, and notification settings with real-time optimistic updates.
+ * File: settings/preferences/page.tsx
+ * Full preferences UI — appearance, chat, workflow builder, observability, notifications.
  */
 "use client";
 
-import { useState, useEffect } from "react";
-import { api, UserPreferences, APIResponse } from "@/lib/api";
+import { useEffect, useState } from "react";
+
+type Prefs = {
+  theme: "light" | "dark" | "system";
+  accentColor: string;
+  fontSize: "sm" | "md" | "lg";
+  defaultPriority: "low" | "normal" | "high";
+  streamingEnabled: boolean;
+  showAgentThinking: boolean;
+  defaultSupervisorBehavior: "auto_route" | "confirm_routing" | "manual_select";
+  emailOnFailure: boolean;
+  emailDigestFrequency: "never" | "daily" | "weekly";
+};
+
+const DEFAULTS: Prefs = {
+  theme: "system",
+  accentColor: "#18181b",
+  fontSize: "md",
+  defaultPriority: "normal",
+  streamingEnabled: true,
+  showAgentThinking: true,
+  defaultSupervisorBehavior: "auto_route",
+  emailOnFailure: false,
+  emailDigestFrequency: "never",
+};
 
 export default function PreferencesPage() {
-  const [prefs, setPrefs] = useState<UserPreferences | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [prefs, setPrefs] = useState<Prefs>(DEFAULTS);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
 
   useEffect(() => {
-    api.get<APIResponse<UserPreferences>>("/preferences")
-      .then(res => setPrefs(res.data))
-      .finally(() => setLoading(false));
-  }, []);
+    if (!token) return;
+    fetch("/api/v1/preferences", { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((j) => { if (j.data && Object.keys(j.data).length > 0) setPrefs({ ...DEFAULTS, ...j.data }); })
+      .catch(() => {});
+  }, [token]);
 
-  const updatePref = async (updates: Partial<UserPreferences>) => {
-    if (!prefs) return;
-    const previous = { ...prefs };
-    setPrefs({ ...prefs, ...updates });
+  async function save() {
+    if (!token) return;
     setSaving(true);
     try {
-      await api.put<APIResponse<UserPreferences>>("/preferences", updates);
-    } catch {
-      setPrefs(previous);
-      alert("Failed to save preference");
-    } finally {
-      setSaving(false);
-    }
-  };
+      await fetch("/api/v1/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(prefs),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally { setSaving(false); }
+  }
 
-  if (loading) return <div className="p-8 text-center">Loading preferences...</div>;
-  if (!prefs) return <div className="p-8 text-center text-red-500">Failed to load preferences.</div>;
+  function set<K extends keyof Prefs>(key: K, value: Prefs[K]) {
+    setPrefs((p) => ({ ...p, [key]: value }));
+  }
 
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <section className="mb-10">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">{title}</h2>
-      <div className="rounded-2xl border border-zinc-200 bg-white/30 p-6 shadow-sm backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/30">
-        {children}
+  const section = (title: string, children: React.ReactNode) => (
+    <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+      <h2 className="mb-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">{title}</h2>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+
+  const row = (label: string, children: React.ReactNode) => (
+    <div className="flex items-center justify-between">
+      <span className="text-sm text-zinc-600 dark:text-zinc-400">{label}</span>
+      {children}
+    </div>
+  );
+
+  const toggle = (key: keyof Prefs) => (
+    <button
+      onClick={() => set(key, !prefs[key] as Prefs[typeof key])}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+        prefs[key] ? "bg-zinc-900 dark:bg-zinc-100" : "bg-zinc-300 dark:bg-zinc-700"
+      }`}
+    >
+      <span className={`inline-block h-4 w-4 rounded-full bg-white transition ${prefs[key] ? "translate-x-6" : "translate-x-1"}`} />
+    </button>
+  );
+
+  if (!token) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+        <p className="text-zinc-600 dark:text-zinc-400">Please <a href="/profile" className="underline text-zinc-900 dark:text-zinc-100">sign in</a> to manage preferences.</p>
       </div>
-    </section>
-  );
-
-  const Toggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
-    <div className="flex items-center justify-between py-3">
-      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</span>
-      <button
-        onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          value ? "bg-zinc-900 dark:bg-zinc-100" : "bg-zinc-200 dark:bg-zinc-800"
-        }`}
-      >
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform dark:bg-zinc-500 ${
-            value ? "translate-x-6" : "translate-x-1"
-          }`}
-        />
-      </button>
-    </div>
-  );
-
-  const Select = ({ label, options, value, onChange }: { label: string; options: { id: string; name: string }[]; value: string; onChange: (v: string) => void }) => (
-    <div className="flex items-center justify-between py-3">
-      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-zinc-200 bg-transparent px-2 py-1 text-sm dark:border-zinc-800"
-      >
-        {options.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-      </select>
-    </div>
-  );
+    );
+  }
 
   return (
-    <main className="mx-auto max-w-3xl p-8 pb-20">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Preferences</h1>
-          <p className="mt-1 text-zinc-500">Personalize your AgentOS experience</p>
-        </div>
-        {saving && <span className="text-xs text-zinc-400 animate-pulse">Saving changes...</span>}
+    <div className="mx-auto max-w-2xl px-6 py-10">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Preferences</h1>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="rounded-xl bg-zinc-900 px-5 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        >
+          {saved ? "✓ Saved" : saving ? "Saving…" : "Save"}
+        </button>
       </div>
 
-      <Section title="Appearance">
-        <Select
-          label="Theme"
-          value={prefs.theme}
-          options={[{ id: "light", name: "Light" }, { id: "dark", name: "Dark" }, { id: "system", name: "System" }]}
-          onChange={(v) => updatePref({ theme: v as UserPreferences["theme"] })}
-        />
-        <Select
-          label="Font Size"
-          value={prefs.fontSize}
-          options={[{ id: "sm", name: "Small" }, { id: "md", name: "Medium" }, { id: "lg", name: "Large" }]}
-          onChange={(v) => updatePref({ fontSize: v as UserPreferences["fontSize"] })}
-        />
-      </Section>
+      <div className="space-y-4">
+        {section("Appearance", <>
+          {row("Theme", (
+            <select value={prefs.theme} onChange={(e) => set("theme", e.target.value as Prefs["theme"])}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          ))}
+          {row("Font Size", (
+            <select value={prefs.fontSize} onChange={(e) => set("fontSize", e.target.value as Prefs["fontSize"])}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <option value="sm">Small</option>
+              <option value="md">Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          ))}
+        </>)}
 
-      <Section title="Chat Behavior">
-        <Toggle
-          label="Enable Streaming Output"
-          value={prefs.streamingEnabled}
-          onChange={(v) => updatePref({ streamingEnabled: v })}
-        />
-        <Toggle
-          label="Show Agent Thinking Process"
-          value={prefs.showAgentThinking}
-          onChange={(v) => updatePref({ showAgentThinking: v })}
-        />
-        <Select
-          label="Supervisor Strategy"
-          value={prefs.defaultSupervisorBehavior}
-          options={[
-            { id: "auto_route", name: "Auto Route" },
-            { id: "confirm_routing", name: "Confirm Routing" },
-            { id: "manual_select", name: "Manual Select" }
-          ]}
-          onChange={(v) => updatePref({ defaultSupervisorBehavior: v as UserPreferences["defaultSupervisorBehavior"] })}
-        />
-      </Section>
+        {section("Chat UI", <>
+          {row("Streaming Enabled", toggle("streamingEnabled"))}
+          {row("Show Agent Thinking", toggle("showAgentThinking"))}
+          {row("Default Priority", (
+            <select value={prefs.defaultPriority} onChange={(e) => set("defaultPriority", e.target.value as Prefs["defaultPriority"])}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+            </select>
+          ))}
+          {row("Supervisor Routing", (
+            <select value={prefs.defaultSupervisorBehavior} onChange={(e) => set("defaultSupervisorBehavior", e.target.value as Prefs["defaultSupervisorBehavior"])}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <option value="auto_route">Auto Route</option>
+              <option value="confirm_routing">Confirm Routing</option>
+              <option value="manual_select">Manual Select</option>
+            </select>
+          ))}
+        </>)}
 
-      <Section title="Notifications">
-        <Toggle
-          label="Email on Run Failure"
-          value={prefs.emailOnFailure}
-          onChange={(v) => updatePref({ emailOnFailure: v })}
-        />
-        <Select
-          label="Digest Frequency"
-          value={prefs.emailDigestFrequency}
-          options={[
-            { id: "never", name: "Never" },
-            { id: "daily", name: "Daily" },
-            { id: "weekly", name: "Weekly" }
-          ]}
-          onChange={(v) => updatePref({ emailDigestFrequency: v as UserPreferences["emailDigestFrequency"] })}
-        />
-      </Section>
-    </main>
+        {section("Notifications", <>
+          {row("Email on Failure", toggle("emailOnFailure"))}
+          {row("Email Digest", (
+            <select value={prefs.emailDigestFrequency} onChange={(e) => set("emailDigestFrequency", e.target.value as Prefs["emailDigestFrequency"])}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+              <option value="never">Never</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          ))}
+        </>)}
+      </div>
+    </div>
   );
 }

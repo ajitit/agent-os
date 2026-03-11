@@ -2,6 +2,7 @@
 Integration tests for the LLM API router.
 """
 
+<<<<<<< HEAD
 import pytest
 from fastapi.testclient import TestClient
 from backend.app.main import app
@@ -9,6 +10,16 @@ from backend.adapters.llm.base import LLMResponse, BaseLLMAdapter
 from backend.api.llm import get_llm_adapter
 import os
 
+=======
+import os
+
+import pytest
+from backend.adapters.llm.base import BaseLLMAdapter, LLMResponse
+from backend.api.llm import get_llm_adapter
+from backend.app.main import app
+from fastapi.testclient import TestClient
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
 os.environ["OPENAI_API_KEY"] = "test-key" # Set dummy key for tests
 
 client = TestClient(app)
@@ -32,7 +43,11 @@ def test_generate_endpoint_no_auth():
 def test_generate_endpoint_with_auth():
     """Test successful API call with auth and mocked adapter."""
     app.dependency_overrides[get_llm_adapter] = get_mock_llm_adapter
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     try:
         headers = {"Authorization": "Bearer fake-token"}
         # Note: We might need to mock get_current_user as well if it validates the token
@@ -42,11 +57,19 @@ def test_generate_endpoint_with_auth():
             json={"prompt": "Hello"},
             headers=headers
         )
+<<<<<<< HEAD
         
         # If get_current_user fails, it will return 401
         if response.status_code == 401:
             pytest.skip("Auth validation failed, need to mock get_current_user")
             
+=======
+
+        # If get_current_user fails, it will return 401
+        if response.status_code == 401:
+            pytest.skip("Auth validation failed, need to mock get_current_user")
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
         assert response.status_code == 200
         data = response.json()
         assert "data" in data

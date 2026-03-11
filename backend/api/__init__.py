@@ -1,36 +1,34 @@
 """
-File: __init__.py
+Package: backend.api
 
-Purpose:
-Marks the backend.api directory as a Python package, organizing all API route modules.
+Exports all FastAPI router modules for registration in the main application factory.
 
-Key Functionalities:
-- Package initialization for API routes
-
-Inputs:
-- None
-
-Outputs:
-- None
-
-Interacting Files / Modules:
-- None
+New routers added in this version:
+- audit: Immutable audit log query and export
+- plans: Supervisor plan CRUD with task management
+- marketplace: Skill / Model / Tool registry
 """
 
 __all__ = [
     "agents",
+    "audit",
+    "auth",
     "chat",
     "conversations",
     "crews",
     "health",
+    "knowledge",
+    "llm",
+    "marketplace",
     "mcp_servers",
+    "observability",
+    "pipeline",
+    "plans",
+    "preferences",
     "settings",
     "skills",
     "storage",
     "supervisor",
     "tasks",
-    "knowledge",
-    "llm",
-    "auth",
-    "preferences",
+    "workflows",
 ]

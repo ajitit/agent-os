@@ -9,7 +9,12 @@ Key Functionalities:
 - Metadata models for request identification and versioning.
 """
 
+<<<<<<< HEAD
 from typing import Generic, TypeVar, Any
+=======
+from typing import Generic, TypeVar
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
 from pydantic import BaseModel, Field
 
 T = TypeVar("T")
@@ -22,4 +27,8 @@ class ResponseMeta(BaseModel):
 class APIResponse(BaseModel, Generic[T]):
     """Standard API response envelope."""
     data: T
+<<<<<<< HEAD
     meta: ResponseMeta = Field(default_factory=ResponseMeta)
+=======
+    meta: ResponseMeta = Field(default_factory=ResponseMeta)  # type: ignore[arg-type]
+>>>>>>> c952205 (Initial upload of AgentOS code)

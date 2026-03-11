@@ -6,13 +6,27 @@ Defines the REST API endpoints for user authentication.
 """
 
 from typing import Annotated
+<<<<<<< HEAD
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
 
 from backend.api.stores import user_create, user_get_by_email
+<<<<<<< HEAD
 from backend.core.security import hash_password, verify_password, create_access_token, get_current_user
 from backend.core.schemas import APIResponse
+=======
+from backend.core.schemas import APIResponse
+from backend.core.security import (
+    create_access_token,
+    get_current_user,
+    hash_password,
+    verify_password,
+)
+>>>>>>> c952205 (Initial upload of AgentOS code)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -74,7 +88,11 @@ async def delete_key(key_id: str, user: Annotated[dict, Depends(get_current_user
     user_keys = api_key_list(user["id"])
     if not any(k["id"] == key_id for k in user_keys):
         raise HTTPException(status_code=404, detail="API Key not found or access denied")
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     success = api_key_delete(key_id)
     return APIResponse(data={"success": success})
 

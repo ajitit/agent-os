@@ -2,8 +2,10 @@
 File: base.py
 """
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+
 from pydantic import BaseModel, Field
+
 
 class LLMRequest(BaseModel):
     prompt: str

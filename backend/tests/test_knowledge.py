@@ -6,6 +6,10 @@ Integration and unit tests for the Knowledge Management RAG feature.
 """
 
 from fastapi.testclient import TestClient
+<<<<<<< HEAD
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
 from backend.app.main import app
 
 client = TestClient(app)
@@ -34,7 +38,11 @@ def test_add_source_and_list():
     sources = resp.json()
     assert len(sources) >= 1
     assert any(s["id"] == sid for s in sources)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     # Filter list
     resp = client.get(f"{API_PREFIX}/sources?type=web")
     assert resp.status_code == 200
@@ -51,11 +59,19 @@ def test_delete_source():
         }
     )
     sid = resp.json()["id"]
+<<<<<<< HEAD
     
     # Delete
     del_resp = client.delete(f"{API_PREFIX}/sources/{sid}")
     assert del_resp.status_code == 200
     
+=======
+
+    # Delete
+    del_resp = client.delete(f"{API_PREFIX}/sources/{sid}")
+    assert del_resp.status_code == 200
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     # Verify
     list_resp = client.get(f"{API_PREFIX}/sources")
     assert not any(s["id"] == sid for s in list_resp.json())
@@ -73,7 +89,11 @@ def test_search_endpoint():
 def test_extract_code_unit():
     from backend.knowledge.extractor import CodeExtractor
     extractor = CodeExtractor()
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     sample_text = """
 This is some context leading up to the code.
 It explains what the code does.
@@ -94,13 +114,21 @@ Some trailing text.
 def test_document_processor_chunking():
     from backend.knowledge.parser import DocumentProcessor
     parser = DocumentProcessor(max_chunk_size=100, overlap=10)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     text = (
         "This is the first paragraph. It is somewhat long to test the boundaries. "
         "We need it to split properly.\n\n"
         "This is the second paragraph. It should end up in the second chunk if the size allows."
     )
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c952205 (Initial upload of AgentOS code)
     chunks = parser._chunk_content(text, "test_id", {"title": "Doc"})
     assert len(chunks) > 0
     assert chunks[0]["sourceId"] == "test_id"

@@ -31,9 +31,15 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
 from backend.core.config import Settings, get_settings
+<<<<<<< HEAD
 from backend.skills.loader import SkillLoader
 from backend.skills.models import SkillListResponse
 from backend.core.exceptions import NotFoundError
+=======
+from backend.core.exceptions import NotFoundError
+from backend.skills.loader import SkillLoader
+from backend.skills.models import SkillListResponse
+>>>>>>> c952205 (Initial upload of AgentOS code)
 
 router = APIRouter(prefix="/skills", tags=["Skills"])
 

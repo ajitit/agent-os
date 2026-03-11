@@ -13,6 +13,9 @@ backend/venv/
 *.sqlite3
 chroma_db/
 
+#Claude
+.claude/*
+
 # node
 node_modules/
 # Temporary output files
