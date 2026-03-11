@@ -1,0 +1,6 @@
+{
+  "name": "Web Research",
+  "description": "Performs web search and document retrieval. Use when the agent needs to gather information from the internet or external sources.",
+  "version": "1.0.0",
+  "tags": ["research", "web", "search"]
+}

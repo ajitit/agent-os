@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+backend/venv/
+
+# environment
+.env
+
+# database
+*.sqlite3
+chroma_db/
+
+# node
+node_modules/
+# Temporary output files
+text_out*.txt
+verification_out*.txt
+pytest_out*.txt
+code_files.txt
+remove-files.txt

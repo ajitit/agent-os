@@ -1,0 +1,5 @@
+{
+  "name": "Knowledge Management",
+  "description": "Provides tools for ingesting, managing, and searching the agentic knowledge base (RAG layer). Use this skill to give agents memory and context.",
+  "version": "1.0.0"
+}

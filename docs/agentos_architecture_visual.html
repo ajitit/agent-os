@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOS v1.0 — Architecture Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --surface2: #131a24;
+    --border: #1e2d3d;
+    --border2: #243447;
+    --accent: #00d4ff;
+    --accent2: #0ea5e9;
+    --accent3: #38bdf8;
+    --green: #22d3a0;
+    --purple: #a78bfa;
+    --orange: #fb923c;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --glow: 0 0 20px rgba(0,212,255,0.15);
+    --glow2: 0 0 40px rgba(0,212,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 56px;
+    gap: 32px;
+  }
+
+  .header-left { flex: 1; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--text2);
+    font-weight: 400;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+  .badge-blue  { background: rgba(0,212,255,0.1);  color: var(--accent);  border: 1px solid rgba(0,212,255,0.25); }
+  .badge-green { background: rgba(34,211,160,0.1); color: var(--green);   border: 1px solid rgba(34,211,160,0.25); }
+  .badge-purple{ background: rgba(167,139,250,0.1);color: var(--purple);  border: 1px solid rgba(167,139,250,0.25); }
+
+  .header-meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 2;
+  }
+  .header-meta strong { color: var(--text2); }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .legend-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    align-self: center;
+    margin-right: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── MAIN DIAGRAM GRID ── */
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* ── CONNECTOR LINE ── */
+  .connector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    position: relative;
+    gap: 4px;
+  }
+  .connector::before {
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .connector-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    background: var(--bg);
+    padding: 2px 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── TIER ── */
+  .tier {
+    border-radius: 14px;
+    border: 1px solid;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tier:hover { transform: translateY(-1px); }
+
+  .tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid;
+  }
+  .tier-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tier-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .tier-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .tier-desc {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+  .tier-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tier-body {
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  /* ── COMPONENT CARD ── */
+  .comp {
+    flex: 1;
+    min-width: 160px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 14px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .comp:hover {
+    border-color: var(--border2);
+    box-shadow: var(--glow2);
+  }
+
+  .comp-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .comp-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .comp-detail {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+  .comp-detail code {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--text2);
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── TIER COLOR THEMES ── */
+
+  /* Presentation — Blue */
+  .tier-pres {
+    border-color: rgba(0,212,255,0.25);
+    background: linear-gradient(135deg, rgba(0,212,255,0.04) 0%, rgba(7,9,15,0.01) 100%);
+    box-shadow: 0 0 40px rgba(0,212,255,0.05);
+  }
+  .tier-pres .tier-header { border-bottom-color: rgba(0,212,255,0.15); }
+  .tier-pres .tier-name { color: var(--accent); }
+  .tier-pres .tier-icon { background: rgba(0,212,255,0.12); }
+  .tier-pres .tier-tag { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.2); color: var(--accent3); }
+  .tier-pres .comp::before { background: var(--accent); }
+  .tier-pres .comp-name { color: var(--accent3); }
+  .tier-pres .comp-dot { background: var(--accent); }
+  .tier-pres .chip { background: rgba(0,212,255,0.1); color: var(--accent3); }
+
+  /* API — Teal */
+  .tier-api {
+    border-color: rgba(14,165,233,0.25);
+    background: linear-gradient(135deg, rgba(14,165,233,0.04) 0%, transparent 100%);
+    box-shadow: 0 0 40px rgba(14,165,233,0.04);
+  }
+  .tier-api .tier-header { border-bottom-color: rgba(14,165,233,0.15); }
+  .tier-api .tier-name { color: var(--accent2); }
+  .tier-api .tier-icon { background: rgba(14,165,233,0.12); }
+  .tier-api .tier-tag { background: rgba(14,165,233,0.08); border-color: rgba(14,165,233,0.2); color: var(--accent2); }
+  .tier-api .comp::before { background: var(--accent2); }
+  .tier-api .comp-name { color: var(--accent2); }
+  .tier-api .comp-dot { background: var(--accent2); }
+  .tier-api .chip { background: rgba(14,165,233,0.1); color: var(--accent2); }
+
+  /* Orchestration — Purple */
+  .tier-orch {
+    border-color: rgba(167,139,250,0.25);
+    background: linear-gradient(135deg, rgba(167,139,250,0.04) 0%, transparent 100%);
+    box-shadow: 0 0 40px rgba(167,139,250,0.04);
+  }
+  .tier-orch .tier-header { border-bottom-color: rgba(167,139,250,0.15); }
+  .tier-orch .tier-name { color: var(--purple); }
+  .tier-orch .tier-icon { background: rgba(167,139,250,0.12); }
+  .tier-orch .tier-tag { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); color: var(--purple); }
+  .tier-orch .comp::before { background: var(--purple); }
+  .tier-orch .comp-name { color: var(--purple); }
+  .tier-orch .comp-dot { background: var(--purple); }
+  .tier-orch .chip { background: rgba(167,139,250,0.1); color: var(--purple); }
+
+  /* Tool — Orange */
+  .tier-tool {
+    border-color: rgba(251,146,60,0.25);
+    background: linear-gradient(135deg, rgba(251,146,60,0.04) 0%, transparent 100%);
+    box-shadow: 0 0 40px rgba(251,146,60,0.04);
+  }
+  .tier-tool .tier-header { border-bottom-color: rgba(251,146,60,0.15); }
+  .tier-tool .tier-name { color: var(--orange); }
+  .tier-tool .tier-icon { background: rgba(251,146,60,0.12); }
+  .tier-tool .tier-tag { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.2); color: var(--orange); }
+  .tier-tool .comp::before { background: var(--orange); }
+  .tier-tool .comp-name { color: var(--orange); }
+  .tier-tool .comp-dot { background: var(--orange); }
+  .tier-tool .chip { background: rgba(251,146,60,0.1); color: var(--orange); }
+
+  /* Data — Green */
+  .tier-data {
+    border-color: rgba(34,211,160,0.25);
+    background: linear-gradient(135deg, rgba(34,211,160,0.04) 0%, transparent 100%);
+    box-shadow: 0 0 40px rgba(34,211,160,0.04);
+  }
+  .tier-data .tier-header { border-bottom-color: rgba(34,211,160,0.15); }
+  .tier-data .tier-name { color: var(--green); }
+  .tier-data .tier-icon { background: rgba(34,211,160,0.12); }
+  .tier-data .tier-tag { background: rgba(34,211,160,0.08); border-color: rgba(34,211,160,0.2); color: var(--green); }
+  .tier-data .comp::before { background: var(--green); }
+  .tier-data .comp-name { color: var(--green); }
+  .tier-data .comp-dot { background: var(--green); }
+  .tier-data .chip { background: rgba(34,211,160,0.1); color: var(--green); }
+
+  /* CI/CD — Yellow */
+  .tier-cicd {
+    border-color: rgba(251,191,36,0.25);
+    background: linear-gradient(135deg, rgba(251,191,36,0.04) 0%, transparent 100%);
+  }
+  .tier-cicd .tier-header { border-bottom-color: rgba(251,191,36,0.15); }
+  .tier-cicd .tier-name { color: var(--yellow); }
+  .tier-cicd .tier-icon { background: rgba(251,191,36,0.12); }
+  .tier-cicd .tier-tag { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2); color: var(--yellow); }
+  .tier-cicd .comp::before { background: var(--yellow); }
+  .tier-cicd .comp-name { color: var(--yellow); }
+  .tier-cicd .comp-dot { background: var(--yellow); }
+  .tier-cicd .chip { background: rgba(251,191,36,0.1); color: var(--yellow); }
+
+  /* ── DATA FLOW ROW ── */
+  .flow-section {
+    margin-top: 48px;
+  }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .flow-step {
+    padding: 20px 16px;
+    border-right: 1px solid var(--border);
+    position: relative;
+    background: var(--surface);
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 14px;
+    z-index: 2;
+    background: var(--surface);
+    padding: 2px;
+  }
+  .flow-step:last-child::after { display: none; }
+
+  .flow-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .flow-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .flow-desc {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+
+  /* ── PORTS TABLE ── */
+  .ports-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .port-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .port-num {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .port-info { flex: 1; }
+  .port-service {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .port-desc {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 16px;
+  }
+  footer .left {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  footer .right {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .tier { animation: fadeUp 0.5s ease both; }
+  .tier:nth-child(1) { animation-delay: 0.05s; }
+  .tier:nth-child(3) { animation-delay: 0.1s; }
+  .tier:nth-child(5) { animation-delay: 0.15s; }
+  .tier:nth-child(7) { animation-delay: 0.2s; }
+  .tier:nth-child(9) { animation-delay: 0.25s; }
+  .tier:nth-child(11){ animation-delay: 0.30s; }
+
+  @media (max-width: 900px) {
+    .tier-body { flex-direction: column; }
+    .flow-grid { grid-template-columns: 1fr 1fr; }
+    .ports-grid { grid-template-columns: 1fr 1fr; }
+    header { flex-direction: column; }
+    .header-meta { text-align: left; }
+  }
+  @media (max-width: 600px) {
+    .page { padding: 24px 16px 48px; }
+    .flow-grid { grid-template-columns: 1fr; }
+    .ports-grid { grid-template-columns: 1fr; }
+    .flow-step::after { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="eyebrow">System Architecture</div>
+      <h1>Agent<span>OS</span> v1.0</h1>
+      <p class="subtitle">Enterprise Multi-Agent AI Operating System — full-stack platform for autonomous multi-agent workflows with orchestration, crews, MCP tools, and human-in-the-loop control.</p>
+      <div class="badges">
+        <span class="badge badge-blue">Python 3.11+</span>
+        <span class="badge badge-blue">FastAPI</span>
+        <span class="badge badge-blue">Next.js 16</span>
+        <span class="badge badge-green">PostgreSQL</span>
+        <span class="badge badge-green">Redis</span>
+        <span class="badge badge-purple">Docker Compose</span>
+        <span class="badge badge-purple">MCP Protocol</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div><strong>Repo</strong> github.com/ajitit/agent-os</div>
+      <div><strong>License</strong> MIT</div>
+      <div><strong>Author</strong> Ajit Kumar</div>
+      <div><strong>Version</strong> 1.0 · main branch</div>
+    </div>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-title">Layer Key</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#00d4ff"></span> Presentation</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#0ea5e9"></span> API Gateway</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#a78bfa"></span> Orchestration</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#fb923c"></span> Tool / MCP</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#22d3a0"></span> Data &amp; Storage</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#fbbf24"></span> CI/CD &amp; DevOps</span>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram">
+
+    <!-- LAYER 1: PRESENTATION -->
+    <div class="tier tier-pres">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">🖥</div>
+          <div>
+            <div class="tier-name">Presentation Layer</div>
+            <div class="tier-desc">Web console — Next.js 16 App Router · React 19 · Tailwind v4</div>
+          </div>
+        </div>
+        <div class="tier-tag">PORT 3000</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Agent Console</div>
+          <div class="comp-detail">CRUD interface for agents and crews. Tool assignment UI. Live status indicators.</div>
+          <div class="chip-row"><span class="chip">React 19</span><span class="chip">TypeScript</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Chat Interface</div>
+          <div class="comp-detail">Multi-turn conversation UI. Supports both sync response and SSE streaming via <code>/chat/stream</code>.</div>
+          <div class="chip-row"><span class="chip">SSE Stream</span><span class="chip">Tailwind v4</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Supervisor Dashboard</div>
+          <div class="comp-detail">Workflow visualiser. Pending approval queue. One-click approve/reject for HITL steps.</div>
+          <div class="chip-row"><span class="chip">HITL</span><span class="chip">Realtime</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Skill Browser</div>
+          <div class="comp-detail">Progressive disclosure skill explorer. Loads metadata → instructions → resources on demand.</div>
+          <div class="chip-row"><span class="chip">Level 1–3</span><span class="chip">Lazy Load</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>MCP Server Registry UI</div>
+          <div class="comp-detail">Register and manage external MCP servers. Browse and assign tools to agents.</div>
+          <div class="chip-row"><span class="chip">MCP</span><span class="chip">Next.js 16</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="connector-label">HTTPS / REST + SSE</span></div>
+
+    <!-- LAYER 2: API GATEWAY -->
+    <div class="tier tier-api">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">⚡</div>
+          <div>
+            <div class="tier-name">API Gateway Layer</div>
+            <div class="tier-desc">FastAPI · Pydantic · OpenAPI auto-docs · Async request handling · <code style="font-size:11px;font-family:monospace">/api/v1/*</code></div>
+          </div>
+        </div>
+        <div class="tier-tag">PORT 8000</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Crews &amp; Agents Router</div>
+          <div class="comp-detail"><code>/api/v1/crews</code><br><code>/api/v1/agents</code><br>Full CRUD + tool assignment endpoints</div>
+          <div class="chip-row"><span class="chip">REST</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Conversations Router</div>
+          <div class="comp-detail"><code>/api/v1/conversations</code><br>Messages, sync chat, streaming chat endpoints.</div>
+          <div class="chip-row"><span class="chip">SSE</span><span class="chip">REST</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Supervisor Router</div>
+          <div class="comp-detail"><code>/api/v1/supervisor</code><br>Workflows, pause, approval response endpoints.</div>
+          <div class="chip-row"><span class="chip">HITL</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>MCP Servers Router</div>
+          <div class="comp-detail"><code>/api/v1/mcp-servers</code><br>Server registry + per-server tool management.</div>
+          <div class="chip-row"><span class="chip">MCP</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Skills Router</div>
+          <div class="comp-detail"><code>/api/v1/skills</code><br>Three-level progressive disclosure API endpoints.</div>
+          <div class="chip-row"><span class="chip">L1 L2 L3</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Storage &amp; Health</div>
+          <div class="comp-detail"><code>/api/v1/storage</code> · <code>/api/v1/health</code><br>File ops, presigned URLs, liveness &amp; readiness probes.</div>
+          <div class="chip-row"><span class="chip">S3-style</span><span class="chip">Probes</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="connector-label">Internal Python calls · Dependency Injection</span></div>
+
+    <!-- LAYER 3: ORCHESTRATION -->
+    <div class="tier tier-orch">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">🧠</div>
+          <div>
+            <div class="tier-name">Orchestration Layer</div>
+            <div class="tier-desc">Agent runtime · Supervisor engine · Skill loader · Crew manager — <code style="font-size:11px;font-family:monospace">backend/core/</code></div>
+          </div>
+        </div>
+        <div class="tier-tag">CORE LOGIC</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Supervisor Engine</div>
+          <div class="comp-detail">Manages directed workflow graphs. Tracks execution state. Inserts HITL pause points. Resumes or terminates on human decision.</div>
+          <div class="chip-row"><span class="chip">Workflow DAG</span><span class="chip">State Machine</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Crew Manager</div>
+          <div class="comp-detail">Creates and manages agent crews. Resolves crew membership and coordinates multi-agent task delegation.</div>
+          <div class="chip-row"><span class="chip">Multi-agent</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Agent Runtime</div>
+          <div class="comp-detail">Executes individual agent turns. Injects tool context, conversation history, and skill instructions into LLM calls.</div>
+          <div class="chip-row"><span class="chip">LLM calls</span><span class="chip">Context</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Skill Loader</div>
+          <div class="comp-detail">Progressive disclosure resolver: Level 1 (metadata.json), Level 2 (SKILL.md), Level 3 (resources/). Framework-agnostic.</div>
+          <div class="chip-row"><span class="chip">Lazy</span><span class="chip">On-demand</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Task Queue</div>
+          <div class="comp-detail">Goal-based task creation via <code>/api/v1/tasks</code>. Backed by Redis queue. Supports async execution pipelines.</div>
+          <div class="chip-row"><span class="chip">Redis-backed</span><span class="chip">Async</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="connector-label">MCP Protocol · Tool Invocation</span></div>
+
+    <!-- LAYER 4: TOOL -->
+    <div class="tier tier-tool">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">🔧</div>
+          <div>
+            <div class="tier-name">Tool / MCP Layer</div>
+            <div class="tier-desc">Model Context Protocol — framework-agnostic external tool integration</div>
+          </div>
+        </div>
+        <div class="tier-tag">MCP SPEC</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>MCP Server Registry</div>
+          <div class="comp-detail">Persistent registry of connected MCP servers. Stores connection config, auth, and status per server.</div>
+          <div class="chip-row"><span class="chip">PostgreSQL</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Tool Assignment Engine</div>
+          <div class="comp-detail">Maps tools to agents via <code>POST /agents/{id}/tools/{tool_id}</code>. Enforces per-agent tool scope.</div>
+          <div class="chip-row"><span class="chip">RBAC-style</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>External Tool Adapters</div>
+          <div class="comp-detail">Pluggable adapters for external services (APIs, databases, file systems) exposed as MCP-compliant tool endpoints.</div>
+          <div class="chip-row"><span class="chip">Pluggable</span><span class="chip">HTTP</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Skill: web_research</div>
+          <div class="comp-detail">Built-in example skill. Packages <code>metadata.json</code> + <code>SKILL.md</code> + <code>resources/</code>. Template for custom skill authoring.</div>
+          <div class="chip-row"><span class="chip">Example</span><span class="chip">skills/</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="connector-label">SQL · Redis commands · File I/O</span></div>
+
+    <!-- LAYER 5: DATA -->
+    <div class="tier tier-data">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">🗄</div>
+          <div>
+            <div class="tier-name">Data &amp; Storage Layer</div>
+            <div class="tier-desc">PostgreSQL · Redis · File storage — all containerised via Docker Compose</div>
+          </div>
+        </div>
+        <div class="tier-tag">PERSISTENCE</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>PostgreSQL</div>
+          <div class="comp-detail">Primary relational store. Tables: agents, crews, conversations, messages, workflows, approvals, mcp_servers, tools.</div>
+          <div class="chip-row"><span class="chip">PORT 5432</span><span class="chip">Internal</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Redis</div>
+          <div class="comp-detail">Speed layer: session cache, task queue backing, pub/sub for real-time streaming to frontend SSE connections.</div>
+          <div class="chip-row"><span class="chip">PORT 6379</span><span class="chip">Internal</span><span class="chip">Pub/Sub</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>File Storage</div>
+          <div class="comp-detail">Upload/download via <code>/api/v1/storage</code>. Presigned URL generation. List and delete operations.</div>
+          <div class="chip-row"><span class="chip">Presigned</span><span class="chip">S3-compatible</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Environment Config</div>
+          <div class="comp-detail">All secrets via <code>.env</code> (from <code>.env.example</code>). DB URLs, Redis, LLM API keys, CORS, app secrets.</div>
+          <div class="chip-row"><span class="chip">.env</span><span class="chip">12-factor</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="connector-label">Git hooks · GitHub Actions triggers</span></div>
+
+    <!-- LAYER 6: CI/CD -->
+    <div class="tier tier-cicd">
+      <div class="tier-header">
+        <div class="tier-header-left">
+          <div class="tier-icon">🚀</div>
+          <div>
+            <div class="tier-name">CI/CD &amp; DevOps Layer</div>
+            <div class="tier-desc">Docker Compose · GitHub Actions · pre-commit — <code style="font-size:11px;font-family:monospace">.github/workflows/</code></div>
+          </div>
+        </div>
+        <div class="tier-tag">INFRA</div>
+      </div>
+      <div class="tier-body">
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Docker Compose</div>
+          <div class="comp-detail">Orchestrates all 4 services: backend, frontend, postgres, redis. Single <code>docker compose up</code> for full stack.</div>
+          <div class="chip-row"><span class="chip">Full stack</span><span class="chip">docker-compose.yml</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>GitHub Actions</div>
+          <div class="comp-detail">Automated CI pipelines on push/PR. Runs pytest (backend), eslint + build (frontend), pre-commit hooks.</div>
+          <div class="chip-row"><span class="chip">pytest</span><span class="chip">eslint</span><span class="chip">build</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>Pre-commit Hooks</div>
+          <div class="comp-detail">Code quality gates. Python linting/formatting and file hygiene checks on every commit via <code>.pre-commit-config.yaml</code>.</div>
+          <div class="chip-row"><span class="chip">Lint</span><span class="chip">Format</span></div>
+        </div>
+        <div class="comp">
+          <div class="comp-name"><span class="comp-dot"></span>.dockerignore</div>
+          <div class="comp-detail">Optimised Docker build context. Excludes venvs, node_modules, test artifacts, and local config from image builds.</div>
+          <div class="chip-row"><span class="chip">Build opt.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /diagram -->
+
+  <!-- DATA FLOW -->
+  <div class="flow-section">
+    <div class="section-title">Chat Request Data Flow</div>
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-title">User Input</div>
+        <div class="flow-desc">User sends message via web console chat interface (Next.js).</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-title">API Route</div>
+        <div class="flow-desc">FastAPI receives POST to <code>/conversations/{id}/chat</code> or <code>/chat/stream</code>.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-title">Agent Runtime</div>
+        <div class="flow-desc">Orchestration layer resolves agent config, loads skills, injects tool context.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-title">LLM + Tools</div>
+        <div class="flow-desc">Agent calls LLM provider. Invokes MCP tools as needed. Supervisor may pause for approval.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">05</div>
+        <div class="flow-title">Response</div>
+        <div class="flow-desc">Result persisted to PostgreSQL. Streamed or returned to frontend. Redis updates cache.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTS -->
+  <div class="flow-section">
+    <div class="section-title">Service Ports</div>
+    <div class="ports-grid">
+      <div class="port-card">
+        <div class="port-num" style="color:#0ea5e9">8000</div>
+        <div class="port-info">
+          <div class="port-service" style="color:#0ea5e9">Backend API</div>
+          <div class="port-desc">FastAPI · REST + SSE · /api/docs</div>
+        </div>
+      </div>
+      <div class="port-card">
+        <div class="port-num" style="color:#00d4ff">3000</div>
+        <div class="port-info">
+          <div class="port-service" style="color:#00d4ff">Frontend</div>
+          <div class="port-desc">Next.js 16 Web Console</div>
+        </div>
+      </div>
+      <div class="port-card">
+        <div class="port-num" style="color:#22d3a0">5432</div>
+        <div class="port-info">
+          <div class="port-service" style="color:#22d3a0">PostgreSQL</div>
+          <div class="port-desc">Internal only · Docker network</div>
+        </div>
+      </div>
+      <div class="port-card">
+        <div class="port-num" style="color:#22d3a0">6379</div>
+        <div class="port-info">
+          <div class="port-service" style="color:#22d3a0">Redis</div>
+          <div class="port-desc">Internal only · Cache + Queue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="left">
+      <span>AgentOS v1.0 · Architecture Diagram</span>
+      <span>·</span>
+      <a href="https://github.com/ajitit/agent-os" target="_blank">github.com/ajitit/agent-os</a>
+      <span>·</span>
+      <span>MIT License</span>
+    </div>
+    <div class="right">GENERATED · MARCH 2025</div>
+  </footer>
+
+</div>
+</body>
+</html>

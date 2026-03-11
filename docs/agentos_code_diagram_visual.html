@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOS — Code Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:       #080b10;
+  --s1:       #0c1018;
+  --s2:       #111722;
+  --s3:       #161e2c;
+  --border:   #1c2738;
+  --border2:  #243040;
+  --text:     #cdd9e5;
+  --text2:    #8b9bb4;
+  --text3:    #4a5a72;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Syne', sans-serif;
+
+  --py:   #3b82f6;   /* python/backend  – blue   */
+  --ts:   #06b6d4;   /* typescript/front – cyan  */
+  --db:   #10b981;   /* data layer       – green */
+  --mcp:  #f59e0b;   /* mcp/tools        – amber */
+  --test: #8b5cf6;   /* tests            – violet*/
+  --cfg:  #6b7280;   /* config/infra     – gray  */
+  --skill:#ec4899;   /* skills           – pink  */
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--mono);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ─── scanline overlay ─── */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events:none;
+  z-index:9999;
+}
+
+.wrap { max-width:1480px; margin:0 auto; padding:48px 36px 80px; }
+
+/* ─── HEADER ─── */
+.hdr {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:40px; gap:24px; flex-wrap:wrap;
+}
+.hdr-title { font-family:var(--sans); font-size:clamp(22px,3vw,36px); font-weight:800; color:#fff; letter-spacing:-0.03em; line-height:1.1; }
+.hdr-title em { color:var(--py); font-style:normal; }
+.hdr-sub { font-size:11px; color:var(--text2); margin-top:8px; line-height:1.8; }
+.hdr-meta { font-size:10px; color:var(--text3); text-align:right; line-height:2.2; }
+.hdr-meta b { color:var(--text2); }
+
+/* ─── LEGEND ─── */
+.legend {
+  display:flex; flex-wrap:wrap; gap:6px; margin-bottom:36px;
+  padding:12px 16px; background:var(--s1); border:1px solid var(--border); border-radius:8px;
+}
+.leg { display:flex; align-items:center; gap:6px; font-size:10px; color:var(--text2); padding:3px 10px; border-radius:4px; background:var(--s2); border:1px solid var(--border); }
+.leg-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+/* ─── MAIN LAYOUT: 3 columns ─── */
+.main { display:grid; grid-template-columns:260px 1fr 260px; gap:16px; align-items:start; }
+
+/* ─── FILE TREE ─── */
+.tree-panel {
+  background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  position:sticky; top:24px;
+}
+.panel-title {
+  padding:12px 16px; background:var(--s2); border-bottom:1px solid var(--border);
+  font-size:10px; letter-spacing:0.14em; color:var(--text3); text-transform:uppercase;
+  display:flex; align-items:center; gap:8px;
+}
+.panel-title svg { opacity:.5; }
+
+.tree { padding:12px 0; }
+.tree-item {
+  display:flex; align-items:center; gap:0;
+  font-size:11px; line-height:1;
+  padding:5px 16px;
+  cursor:default;
+  transition:background .15s;
+  white-space:nowrap;
+}
+.tree-item:hover { background:var(--s2); }
+
+.ti-indent { display:inline-block; width:16px; flex-shrink:0; }
+.ti-icon { width:18px; flex-shrink:0; font-size:12px; }
+.ti-name { color:var(--text); }
+.ti-name.dir { color:#e2e8f0; font-weight:500; }
+.ti-badge {
+  margin-left:auto; font-size:9px; padding:1px 6px; border-radius:3px; letter-spacing:.04em;
+}
+.ti-line { height:1px; background:var(--border); margin:4px 16px; }
+
+/* ─── CENTRE: MODULE GRAPH ─── */
+.centre { display:flex; flex-direction:column; gap:12px; }
+
+/* ─── MODULE GROUPS ─── */
+.mod-group {
+  border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  background:var(--s1);
+}
+.mg-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px; border-bottom:1px solid var(--border);
+  background:var(--s2);
+}
+.mg-path { font-size:10px; color:var(--text3); }
+.mg-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+.mg-body { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:10px; padding:14px; }
+
+/* ─── MODULE CARD ─── */
+.mod {
+  background:var(--s3); border:1px solid var(--border2); border-radius:8px;
+  padding:12px 14px; position:relative; overflow:hidden;
+  transition:border-color .2s, transform .15s;
+}
+.mod:hover { border-color:var(--border2); transform:translateY(-1px); }
+.mod::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+
+.mod-file { font-size:10px; font-weight:700; color:#fff; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.mod-file-icon { font-size:13px; }
+.mod-section { margin-bottom:8px; }
+.mod-section-title { font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); margin-bottom:4px; }
+
+.class-block {
+  background:var(--s1); border:1px solid var(--border); border-radius:5px;
+  margin-bottom:4px; overflow:hidden;
+}
+.class-name {
+  padding:4px 8px; font-size:10px; font-weight:700; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:5px;
+}
+.class-name span { font-weight:400; color:var(--text3); font-size:9px; }
+.method-list { padding:4px 8px; }
+.method { font-size:10px; color:var(--text2); padding:2px 0; display:flex; align-items:center; gap:5px; line-height:1.5; }
+.method::before { content:'›'; color:var(--text3); font-size:12px; }
+
+.import-list { display:flex; flex-wrap:wrap; gap:3px; }
+.imp {
+  font-size:9px; padding:2px 7px; border-radius:3px; border:1px solid;
+  display:flex; align-items:center; gap:3px;
+}
+
+/* ─── ARROW SVG CANVAS ─── */
+.arrow-row {
+  display:flex; justify-content:center; align-items:center;
+  padding:4px 0; position:relative;
+}
+.arrow-row svg { overflow:visible; }
+
+/* ─── RIGHT PANEL: API Routes ─── */
+.routes-panel {
+  background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  position:sticky; top:24px;
+}
+.route { display:flex; align-items:flex-start; gap:8px; padding:8px 14px; border-bottom:1px solid var(--border); transition:background .15s; }
+.route:last-child { border-bottom:none; }
+.route:hover { background:var(--s2); }
+.method-badge {
+  font-size:9px; font-weight:700; padding:2px 6px; border-radius:3px; min-width:34px;
+  text-align:center; flex-shrink:0; margin-top:1px;
+}
+.GET    { background:rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.3); }
+.POST   { background:rgba(59,130,246,.15); color:#60a5fa; border:1px solid rgba(59,130,246,.3); }
+.PUT    { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+.DELETE { background:rgba(239,68,68,.15);  color:#f87171; border:1px solid rgba(239,68,68,.3); }
+
+.route-info {}
+.route-path { font-size:10px; color:var(--text); word-break:break-all; }
+.route-desc { font-size:9px; color:var(--text3); margin-top:2px; line-height:1.5; }
+
+.route-group-title {
+  padding:8px 14px 4px; font-size:9px; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--text3); background:var(--bg); border-bottom:1px solid var(--border);
+}
+
+/* ─── DEPENDENCY FLOW ─── */
+.dep-section { margin-top:20px; }
+.dep-title {
+  font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text3);
+  margin-bottom:12px; display:flex; align-items:center; gap:10px;
+}
+.dep-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.dep-flow {
+  display:grid; grid-template-columns:repeat(6,1fr);
+  background:var(--s1); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+}
+.dep-node {
+  padding:14px 10px; text-align:center; border-right:1px solid var(--border);
+  position:relative;
+}
+.dep-node:last-child { border-right:none; }
+.dep-node::after {
+  content:'→'; position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+  color:var(--text3); font-size:14px; z-index:2; background:var(--s1); padding:2px 0;
+}
+.dep-node:last-child::after { display:none; }
+.dep-icon { font-size:22px; margin-bottom:6px; }
+.dep-name { font-size:10px; font-weight:700; color:var(--text); }
+.dep-sub  { font-size:9px; color:var(--text3); margin-top:3px; line-height:1.5; }
+
+/* color helpers */
+.c-py   { color:var(--py);   } .b-py   { background:rgba(59,130,246,.12); border-color:rgba(59,130,246,.3); }
+.c-ts   { color:var(--ts);   } .b-ts   { background:rgba(6,182,212,.12);  border-color:rgba(6,182,212,.3);  }
+.c-db   { color:var(--db);   } .b-db   { background:rgba(16,185,129,.12); border-color:rgba(16,185,129,.3); }
+.c-mcp  { color:var(--mcp);  } .b-mcp  { background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3); }
+.c-test { color:var(--test); } .b-test { background:rgba(139,92,246,.12); border-color:rgba(139,92,246,.3); }
+.c-cfg  { color:var(--cfg);  } .b-cfg  { background:rgba(107,114,128,.12);border-color:rgba(107,114,128,.3);}
+.c-sk   { color:var(--skill);} .b-sk   { background:rgba(236,72,153,.12); border-color:rgba(236,72,153,.3); }
+
+.mod.py-mod::before  { background:var(--py);   }
+.mod.ts-mod::before  { background:var(--ts);   }
+.mod.db-mod::before  { background:var(--db);   }
+.mod.mcp-mod::before { background:var(--mcp);  }
+.mod.test-mod::before{ background:var(--test); }
+.mod.cfg-mod::before { background:var(--cfg);  }
+.mod.sk-mod::before  { background:var(--skill);}
+
+footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:10px; color:var(--text3); flex-wrap:wrap; gap:8px; }
+footer a { color:var(--py); text-decoration:none; }
+
+@media(max-width:1100px){ .main { grid-template-columns:1fr; } .tree-panel,.routes-panel { position:static; } }
+@media(max-width:700px){ .dep-flow { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="hdr-title"><em>AgentOS</em> v1.0 — Code Diagram</div>
+    <div class="hdr-sub">
+      Module structure · Class hierarchy · Import graph · API routes · Dependency flow<br>
+      Source: github.com/ajitit/agent-os · Branch: main · 9 commits
+    </div>
+  </div>
+  <div class="hdr-meta">
+    <div><b>Backend</b> Python 3.11+ · FastAPI · Pydantic</div>
+    <div><b>Frontend</b> Next.js 16 · React 19 · TypeScript</div>
+    <div><b>Data</b> PostgreSQL · Redis</div>
+    <div><b>Infra</b> Docker Compose · GitHub Actions</div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <span style="font-size:10px;color:var(--text3);align-self:center;margin-right:4px;">MODULE TYPE</span>
+  <div class="leg"><div class="leg-dot" style="background:var(--py)"></div> Python / Backend</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--ts)"></div> TypeScript / Frontend</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--db)"></div> Data Layer</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--mcp)"></div> MCP / Tools</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--test)"></div> Tests</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--skill)"></div> Skills</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--cfg)"></div> Config / Infra</div>
+</div>
+
+<!-- MAIN 3-COLUMN -->
+<div class="main">
+
+  <!-- LEFT: FILE TREE -->
+  <div class="tree-panel">
+    <div class="panel-title">
+      <svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="4" x2="8" y2="4" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="6.5" x2="8" y2="6.5" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="9" x2="6.5" y2="9" stroke="currentColor" stroke-width="1.2"/></svg>
+      Repository Structure
+    </div>
+    <div class="tree">
+
+      <div class="tree-item"><span class="ti-icon">📁</span><span class="ti-name dir">agent-os/</span></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">backend/</span><span class="ti-badge b-py c-py">.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">api/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">agents.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">crews.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">conversations.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">supervisor.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">mcp_servers.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">skills.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">storage.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">health.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">tasks.py</span></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">app/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">main.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">config.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">dependencies.py</span></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">core/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">agent_runtime.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">supervisor_engine.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">crew_manager.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">skill_loader.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">storage_adapter.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">models.py</span></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">skills/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">loader.py</span></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">tests/</span><span class="ti-badge b-test c-test">test</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">test_agents.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">test_crews.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">test_supervisor.py</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">🐍</span><span class="ti-name">conftest.py</span></div>
+
+      <div class="ti-line"></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">frontend/agentos-ui/</span><span class="ti-badge b-ts c-ts">.tsx</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">app/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">layout.tsx</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">page.tsx</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">components/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">lib/</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">package.json</span></div>
+
+      <div class="ti-line"></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">skills/web_research/</span><span class="ti-badge b-sk c-sk">skill</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">metadata.json</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">SKILL.md</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">resources/</span></div>
+
+      <div class="ti-line"></div>
+
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📁</span><span class="ti-name dir">.github/workflows/</span><span class="ti-badge b-cfg c-cfg">CI</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">docker-compose.yml</span><span class="ti-badge b-cfg c-cfg">infra</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">.env.example</span><span class="ti-badge b-cfg c-cfg">cfg</span></div>
+      <div class="tree-item"><span class="ti-indent"></span><span class="ti-icon">📄</span><span class="ti-name">.pre-commit-config.yaml</span></div>
+    </div>
+  </div>
+
+  <!-- CENTRE: MODULE GRAPH -->
+  <div class="centre">
+
+    <!-- APP ENTRY -->
+    <div class="mod-group">
+      <div class="mg-header">
+        <span class="mg-label c-py">backend/app/ — Application Entry</span>
+        <span class="mg-path">FastAPI factory · middleware · lifespan</span>
+      </div>
+      <div class="mg-body">
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>main.py</div>
+          <div class="mod-section">
+            <div class="mod-section-title">FastAPI App</div>
+            <div class="class-block">
+              <div class="class-name c-py">app <span>= FastAPI()</span></div>
+              <div class="method-list">
+                <div class="method">include_router(agents_router)</div>
+                <div class="method">include_router(crews_router)</div>
+                <div class="method">include_router(conversations_router)</div>
+                <div class="method">include_router(supervisor_router)</div>
+                <div class="method">include_router(mcp_router)</div>
+                <div class="method">include_router(skills_router)</div>
+                <div class="method">include_router(storage_router)</div>
+                <div class="method">include_router(health_router)</div>
+                <div class="method">include_router(tasks_router)</div>
+                <div class="method">@lifespan startup / shutdown</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Imports</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">fastapi</span>
+              <span class="imp b-py c-py">uvicorn</span>
+              <span class="imp b-cfg c-cfg">config</span>
+              <span class="imp b-py c-py">api.*</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>config.py</div>
+          <div class="mod-section">
+            <div class="mod-section-title">Settings (Pydantic BaseSettings)</div>
+            <div class="class-block">
+              <div class="class-name c-py">Settings</div>
+              <div class="method-list">
+                <div class="method">DATABASE_URL: str</div>
+                <div class="method">REDIS_URL: str</div>
+                <div class="method">LLM_API_KEY: str</div>
+                <div class="method">CORS_ORIGINS: list</div>
+                <div class="method">DEBUG: bool</div>
+                <div class="method">SECRET_KEY: str</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Imports</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">pydantic-settings</span>
+              <span class="imp b-cfg c-cfg">.env</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>dependencies.py</div>
+          <div class="mod-section">
+            <div class="mod-section-title">DI Providers</div>
+            <div class="class-block">
+              <div class="class-name c-py">Depends() factories</div>
+              <div class="method-list">
+                <div class="method">get_db() → Session</div>
+                <div class="method">get_redis() → Redis</div>
+                <div class="method">get_agent_runtime()</div>
+                <div class="method">get_supervisor_engine()</div>
+                <div class="method">get_skill_loader()</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="arrow-row">
+      <svg width="100%" height="24" viewBox="0 0 600 24">
+        <defs>
+          <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#1c2738"/>
+          </marker>
+        </defs>
+        <line x1="300" y1="0" x2="300" y2="20" stroke="#1c2738" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="308" y="14" font-family="JetBrains Mono" font-size="9" fill="#4a5a72" letter-spacing="0.1em">ROUTER INJECTION</text>
+      </svg>
+    </div>
+
+    <!-- API ROUTERS -->
+    <div class="mod-group">
+      <div class="mg-header">
+        <span class="mg-label c-py">backend/api/ — Route Handlers</span>
+        <span class="mg-path">APIRouter · Pydantic schemas · HTTP handlers</span>
+      </div>
+      <div class="mg-body">
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>agents.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">router <span>= APIRouter(prefix="/agents")</span></div>
+              <div class="method-list">
+                <div class="method">GET  / → list_agents()</div>
+                <div class="method">POST / → create_agent()</div>
+                <div class="method">GET  /{id} → get_agent()</div>
+                <div class="method">PUT  /{id} → update_agent()</div>
+                <div class="method">DELETE /{id} → delete_agent()</div>
+                <div class="method">POST /{id}/tools/{tid}</div>
+                <div class="method">DELETE /{id}/tools/{tid}</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Deps</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">core.models</span>
+              <span class="imp b-db c-db">db Session</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>conversations.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">router <span>prefix="/conversations"</span></div>
+              <div class="method-list">
+                <div class="method">GET / · POST / · GET /{id}</div>
+                <div class="method">PUT /{id} · DELETE /{id}</div>
+                <div class="method">GET /{id}/messages</div>
+                <div class="method">POST /{id}/messages</div>
+                <div class="method">POST /{id}/chat → sync</div>
+                <div class="method">POST /{id}/chat/stream → SSE</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Deps</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">agent_runtime</span>
+              <span class="imp b-db c-db">db</span>
+              <span class="imp b-db c-db">redis</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>supervisor.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">router <span>prefix="/supervisor"</span></div>
+              <div class="method-list">
+                <div class="method">GET /workflows</div>
+                <div class="method">POST /workflows → start</div>
+                <div class="method">GET /workflows/{id}</div>
+                <div class="method">POST /workflows/{id}/pause</div>
+                <div class="method">GET /approvals</div>
+                <div class="method">GET /approvals/{id}</div>
+                <div class="method">POST /approvals/{id}/respond</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Deps</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">supervisor_engine</span>
+              <span class="imp b-db c-db">db</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>mcp_servers.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">router <span>prefix="/mcp-servers"</span></div>
+              <div class="method-list">
+                <div class="method">GET / · POST / · GET /{id}</div>
+                <div class="method">PUT /{id} · DELETE /{id}</div>
+                <div class="method">GET /{id}/tools</div>
+                <div class="method">POST /{id}/tools</div>
+                <div class="method">DELETE /{id}/tools/{tid}</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Deps</div>
+            <div class="import-list">
+              <span class="imp b-mcp c-mcp">MCP models</span>
+              <span class="imp b-db c-db">db</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>skills.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">router <span>prefix="/skills"</span></div>
+              <div class="method-list">
+                <div class="method">GET / → L1 metadata list</div>
+                <div class="method">GET /{id} → L2 instructions</div>
+                <div class="method">GET /{id}/resources/{path}</div>
+                <div class="method">           → L3 resource file</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Deps</div>
+            <div class="import-list">
+              <span class="imp b-sk c-sk">skill_loader</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>storage.py · health.py · tasks.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">storage_router <span>prefix="/storage"</span></div>
+              <div class="method-list">
+                <div class="method">POST /upload · GET /files/{key}</div>
+                <div class="method">GET /urls/{key} · DELETE /files/{key}</div>
+              </div>
+            </div>
+            <div class="class-block" style="margin-top:6px">
+              <div class="class-name c-py">health_router · tasks_router</div>
+              <div class="method-list">
+                <div class="method">GET /health · GET /health/ready</div>
+                <div class="method">POST /tasks → queue task</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="arrow-row">
+      <svg width="100%" height="24" viewBox="0 0 600 24">
+        <line x1="300" y1="0" x2="300" y2="20" stroke="#1c2738" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="308" y="14" font-family="JetBrains Mono" font-size="9" fill="#4a5a72" letter-spacing="0.1em">CORE SERVICE CALLS</text>
+      </svg>
+    </div>
+
+    <!-- CORE -->
+    <div class="mod-group">
+      <div class="mg-header">
+        <span class="mg-label c-py">backend/core/ — Business Logic</span>
+        <span class="mg-path">Engines · Runtime · Adapters · Pydantic models</span>
+      </div>
+      <div class="mg-body">
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>agent_runtime.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">AgentRuntime</div>
+              <div class="method-list">
+                <div class="method">__init__(db, redis, config)</div>
+                <div class="method">run(agent_id, message, history)</div>
+                <div class="method">_build_context(agent) → dict</div>
+                <div class="method">_call_llm(ctx) → str</div>
+                <div class="method">_invoke_tool(tool_id, args)</div>
+                <div class="method">stream(agent_id, msg) → AsyncGen</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Imports</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">models</span>
+              <span class="imp b-mcp c-mcp">mcp tools</span>
+              <span class="imp b-sk c-sk">skill_loader</span>
+              <span class="imp b-db c-db">redis</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>supervisor_engine.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">SupervisorEngine</div>
+              <div class="method-list">
+                <div class="method">start_workflow(definition) → Workflow</div>
+                <div class="method">get_workflow(id) → WorkflowState</div>
+                <div class="method">pause_for_approval(wf_id) → Approval</div>
+                <div class="method">resume(approval_id, decision)</div>
+                <div class="method">list_pending_approvals() → list</div>
+                <div class="method">_execute_node(node, ctx)</div>
+              </div>
+            </div>
+            <div class="class-block" style="margin-top:6px">
+              <div class="class-name c-py">WorkflowState <span>(Pydantic)</span></div>
+              <div class="method-list">
+                <div class="method">id · status · current_node</div>
+                <div class="method">steps: list[StepResult]</div>
+                <div class="method">pending_approvals: list</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>crew_manager.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">CrewManager</div>
+              <div class="method-list">
+                <div class="method">create_crew(name, agent_ids) → Crew</div>
+                <div class="method">assign_agent(crew_id, agent_id)</div>
+                <div class="method">get_crew_agents(crew_id) → list</div>
+                <div class="method">delegate(crew_id, task) → result</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>skill_loader.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">SkillLoader</div>
+              <div class="method-list">
+                <div class="method">list_skills() → [SkillMeta]  ← L1</div>
+                <div class="method">get_skill(id) → SkillDetail  ← L2</div>
+                <div class="method">get_resource(id, path) → bytes ← L3</div>
+                <div class="method">_parse_metadata(path) → dict</div>
+                <div class="method">_read_skill_md(path) → str</div>
+              </div>
+            </div>
+            <div class="class-block" style="margin-top:6px">
+              <div class="class-name c-py">SkillMeta / SkillDetail <span>(Pydantic)</span></div>
+              <div class="method-list">
+                <div class="method">id · name · description · tags</div>
+                <div class="method">instructions · tool_requirements</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>models.py</div>
+          <div class="mod-section">
+            <div class="mod-section-title">Pydantic Domain Models</div>
+            <div class="class-block">
+              <div class="class-name c-py">Agent · Crew · Conversation</div>
+              <div class="method-list">
+                <div class="method">Message · MCPServer · Tool</div>
+                <div class="method">Workflow · Approval · Task</div>
+                <div class="method">StorageFile · HealthStatus</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="mod-section-title">Imports</div>
+            <div class="import-list">
+              <span class="imp b-py c-py">pydantic</span>
+              <span class="imp b-db c-db">SQLAlchemy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod py-mod">
+          <div class="mod-file"><span class="mod-file-icon">🐍</span>storage_adapter.py</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-py">StorageAdapter</div>
+              <div class="method-list">
+                <div class="method">upload(key, data) → StorageFile</div>
+                <div class="method">download(key) → bytes</div>
+                <div class="method">presigned_url(key) → str</div>
+                <div class="method">delete(key) → bool</div>
+                <div class="method">list() → [StorageFile]</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="arrow-row">
+      <svg width="100%" height="24" viewBox="0 0 600 24">
+        <line x1="300" y1="0" x2="300" y2="20" stroke="#1c2738" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="308" y="14" font-family="JetBrains Mono" font-size="9" fill="#4a5a72" letter-spacing="0.1em">DB QUERIES · REDIS OPS · FILE I/O</text>
+      </svg>
+    </div>
+
+    <!-- DATA -->
+    <div class="mod-group">
+      <div class="mg-header">
+        <span class="mg-label c-db">Data Layer — PostgreSQL · Redis · File Storage</span>
+        <span class="mg-path">docker-compose.yml services: postgres · redis</span>
+      </div>
+      <div class="mg-body">
+        <div class="mod db-mod">
+          <div class="mod-file"><span class="mod-file-icon">🗄</span>PostgreSQL :5432</div>
+          <div class="mod-section">
+            <div class="mod-section-title">Tables (inferred from models)</div>
+            <div class="class-block">
+              <div class="class-name c-db">agents · crews · crew_agents</div>
+              <div class="method-list">
+                <div class="method">conversations · messages</div>
+                <div class="method">workflows · workflow_steps</div>
+                <div class="method">approvals</div>
+                <div class="method">mcp_servers · tools · agent_tools</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="import-list">
+              <span class="imp b-db c-db">SQLAlchemy ORM</span>
+              <span class="imp b-db c-db">alembic migrations</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod db-mod">
+          <div class="mod-file"><span class="mod-file-icon">⚡</span>Redis :6379</div>
+          <div class="mod-section">
+            <div class="mod-section-title">Key namespaces</div>
+            <div class="class-block">
+              <div class="class-name c-db">session:{conv_id}</div>
+              <div class="method-list">
+                <div class="method">Active conversation cache</div>
+              </div>
+            </div>
+            <div class="class-block" style="margin-top:4px">
+              <div class="class-name c-db">task:queue</div>
+              <div class="method-list"><div class="method">Goal-based task queue (RPUSH/BLPOP)</div></div>
+            </div>
+            <div class="class-block" style="margin-top:4px">
+              <div class="class-name c-db">stream:sse:{conv_id}</div>
+              <div class="method-list"><div class="method">Pub/Sub channel for SSE push to frontend</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod db-mod">
+          <div class="mod-file"><span class="mod-file-icon">📦</span>File Storage</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-db">StorageAdapter interface</div>
+              <div class="method-list">
+                <div class="method">Local FS / S3-compatible backend</div>
+                <div class="method">Key-based object addressing</div>
+                <div class="method">Presigned URL generation (TTL)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS + TEST row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+      <div class="mod-group">
+        <div class="mg-header">
+          <span class="mg-label c-sk">skills/web_research/ — Skill Package</span>
+          <span class="mg-path">Progressive Disclosure template</span>
+        </div>
+        <div class="mg-body">
+          <div class="mod sk-mod" style="min-width:unset">
+            <div class="mod-file"><span class="mod-file-icon">📄</span>metadata.json (Level 1)</div>
+            <div class="mod-section">
+              <div class="class-block">
+                <div class="class-name c-sk">SkillMeta</div>
+                <div class="method-list">
+                  <div class="method">id · name · description</div>
+                  <div class="method">version · tags · tool_requirements</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mod sk-mod" style="min-width:unset">
+            <div class="mod-file"><span class="mod-file-icon">📄</span>SKILL.md (Level 2)</div>
+            <div class="mod-section">
+              <div class="class-block">
+                <div class="class-name c-sk">Full Instructions</div>
+                <div class="method-list">
+                  <div class="method">Agent prompt · tool usage guide</div>
+                  <div class="method">Output format · examples</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mod sk-mod" style="min-width:unset">
+            <div class="mod-file"><span class="mod-file-icon">📁</span>resources/ (Level 3)</div>
+            <div class="mod-section">
+              <div class="class-block">
+                <div class="class-name c-sk">Binary/text assets</div>
+                <div class="method-list">
+                  <div class="method">Prompt templates · config files</div>
+                  <div class="method">Few-shot examples · schemas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mod-group">
+        <div class="mg-header">
+          <span class="mg-label c-test">backend/tests/ — Test Suite</span>
+          <span class="mg-path">pytest · conftest fixtures</span>
+        </div>
+        <div class="mg-body">
+          <div class="mod test-mod" style="min-width:unset">
+            <div class="mod-file"><span class="mod-file-icon">🐍</span>conftest.py</div>
+            <div class="mod-section">
+              <div class="class-block">
+                <div class="class-name c-test">Fixtures</div>
+                <div class="method-list">
+                  <div class="method">test_db() → Session</div>
+                  <div class="method">test_redis() → Redis</div>
+                  <div class="method">test_client() → TestClient</div>
+                  <div class="method">sample_agent() → Agent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mod test-mod" style="min-width:unset">
+            <div class="mod-file"><span class="mod-file-icon">🐍</span>test_agents · test_crews · test_supervisor</div>
+            <div class="mod-section">
+              <div class="class-block">
+                <div class="class-name c-test">Test Cases</div>
+                <div class="method-list">
+                  <div class="method">test_create_agent()</div>
+                  <div class="method">test_assign_tool()</div>
+                  <div class="method">test_workflow_pause()</div>
+                  <div class="method">test_approval_respond()</div>
+                </div>
+              </div>
+            </div>
+            <div class="mod-section">
+              <div class="import-list">
+                <span class="imp b-test c-test">pytest</span>
+                <span class="imp b-test c-test">httpx TestClient</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end skills+test grid -->
+
+    <!-- FRONTEND MODULE -->
+    <div class="mod-group">
+      <div class="mg-header">
+        <span class="mg-label c-ts">frontend/agentos-ui/ — Next.js App</span>
+        <span class="mg-path">Next.js 16 App Router · React 19 · Tailwind v4 · TypeScript</span>
+      </div>
+      <div class="mg-body">
+        <div class="mod ts-mod">
+          <div class="mod-file"><span class="mod-file-icon">📄</span>app/layout.tsx</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-ts">RootLayout <span>(Server Component)</span></div>
+              <div class="method-list">
+                <div class="method">Providers wrap (theme, query)</div>
+                <div class="method">Global nav · sidebar structure</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mod ts-mod">
+          <div class="mod-file"><span class="mod-file-icon">📄</span>components/</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-ts">AgentTable · CrewPanel</div>
+              <div class="method-list">
+                <div class="method">ChatWindow · MessageStream</div>
+                <div class="method">SupervisorQueue · ApprovalCard</div>
+                <div class="method">SkillBrowser · MCPServerList</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mod ts-mod">
+          <div class="mod-file"><span class="mod-file-icon">📄</span>lib/api.ts</div>
+          <div class="mod-section">
+            <div class="class-block">
+              <div class="class-name c-ts">API Client</div>
+              <div class="method-list">
+                <div class="method">fetchAgents() · createAgent()</div>
+                <div class="method">chat(convId, msg) → Promise</div>
+                <div class="method">streamChat(convId, msg) → SSE</div>
+                <div class="method">respondApproval(id, decision)</div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-section">
+            <div class="import-list">
+              <span class="imp b-ts c-ts">fetch API</span>
+              <span class="imp b-ts c-ts">EventSource (SSE)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEP FLOW -->
+    <div class="dep-section">
+      <div class="dep-title">Import Dependency Chain — Chat Request</div>
+      <div class="dep-flow">
+        <div class="dep-node">
+          <div class="dep-icon">🖥</div>
+          <div class="dep-name" style="color:var(--ts)">lib/api.ts</div>
+          <div class="dep-sub">SSE fetch<br>POST /chat/stream</div>
+        </div>
+        <div class="dep-node">
+          <div class="dep-icon">⚡</div>
+          <div class="dep-name" style="color:var(--py)">api/conversations.py</div>
+          <div class="dep-sub">FastAPI route<br>StreamingResponse</div>
+        </div>
+        <div class="dep-node">
+          <div class="dep-icon">🧠</div>
+          <div class="dep-name" style="color:var(--py)">core/agent_runtime.py</div>
+          <div class="dep-sub">AgentRuntime<br>.stream()</div>
+        </div>
+        <div class="dep-node">
+          <div class="dep-icon">🔧</div>
+          <div class="dep-name" style="color:var(--mcp)">MCP Tools</div>
+          <div class="dep-sub">_invoke_tool()<br>external APIs</div>
+        </div>
+        <div class="dep-node">
+          <div class="dep-icon">🗄</div>
+          <div class="dep-name" style="color:var(--db)">PostgreSQL</div>
+          <div class="dep-sub">persist message<br>update conv</div>
+        </div>
+        <div class="dep-node">
+          <div class="dep-icon">⚡</div>
+          <div class="dep-name" style="color:var(--db)">Redis Pub/Sub</div>
+          <div class="dep-sub">publish chunks<br>→ SSE push</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /centre -->
+
+  <!-- RIGHT: API ROUTES QUICK REF -->
+  <div class="routes-panel">
+    <div class="panel-title">
+      <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="3" x2="6" y2="6.5" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="9" r=".7" fill="currentColor"/></svg>
+      API Quick Reference  /api/v1
+    </div>
+
+    <div class="route-group-title">AGENTS &amp; CREWS</div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/agents</div><div class="route-desc">List all agents</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/agents</div><div class="route-desc">Create agent</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/agents/{id}</div><div class="route-desc">Get agent detail</div></div></div>
+    <div class="route"><span class="method-badge PUT">PUT</span><div class="route-info"><div class="route-path">/agents/{id}</div><div class="route-desc">Update agent</div></div></div>
+    <div class="route"><span class="method-badge DELETE">DELETE</span><div class="route-info"><div class="route-path">/agents/{id}</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/agents/{id}/tools/{tid}</div><div class="route-desc">Assign tool</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/crews</div><div class="route-desc">List crews</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/crews</div></div></div>
+
+    <div class="route-group-title">CONVERSATIONS</div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/conversations</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/conversations/{id}/chat</div><div class="route-desc">Sync response</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/conversations/{id}/chat/stream</div><div class="route-desc">SSE stream</div></div></div>
+
+    <div class="route-group-title">SUPERVISOR / HITL</div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/supervisor/workflows</div><div class="route-desc">Start workflow</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/supervisor/workflows/{id}/pause</div><div class="route-desc">Pause for human</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/supervisor/approvals</div><div class="route-desc">Pending list</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/supervisor/approvals/{id}/respond</div><div class="route-desc">Submit decision</div></div></div>
+
+    <div class="route-group-title">MCP SERVERS</div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/mcp-servers</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/mcp-servers</div><div class="route-desc">Register server</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/mcp-servers/{id}/tools</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/mcp-servers/{id}/tools</div><div class="route-desc">Add tool</div></div></div>
+
+    <div class="route-group-title">SKILLS</div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/skills</div><div class="route-desc">Level 1 metadata</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/skills/{id}</div><div class="route-desc">Level 2 instructions</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/skills/{id}/resources/{path}</div><div class="route-desc">Level 3 file</div></div></div>
+
+    <div class="route-group-title">STORAGE &amp; HEALTH</div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/storage/upload</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/storage/urls/{key}</div><div class="route-desc">Presigned URL</div></div></div>
+    <div class="route"><span class="method-badge POST">POST</span><div class="route-info"><div class="route-path">/tasks</div><div class="route-desc">Queue task</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/health</div><div class="route-desc">Liveness probe</div></div></div>
+    <div class="route"><span class="method-badge GET">GET</span><div class="route-info"><div class="route-path">/health/ready</div><div class="route-desc">Readiness probe</div></div></div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  <span>AgentOS v1.0 · Code Diagram · <a href="https://github.com/ajitit/agent-os">github.com/ajitit/agent-os</a> · MIT License</span>
+  <span>Python 99.5% · TypeScript 0.3% · 9 commits · main branch</span>
+</footer>
+
+</div>
+</body>
+</html>
