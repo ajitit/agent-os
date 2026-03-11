@@ -19,8 +19,12 @@ class UserPreferencesUpdate(BaseModel):
     theme: str | None = Field(None, pattern="^(light|dark|system)$")
     accentColor: str | None = None
     fontSize: str | None = Field(None, pattern="^(sm|md|lg)$")
+    defaultPriority: str | None = Field(None, pattern="^(low|normal|high|urgent)$")
     streamingEnabled: bool | None = None
     showAgentThinking: bool | None = None
+    defaultSupervisorBehavior: str | None = Field(None, pattern="^(auto_route|confirm_routing|manual_select)$")
+    emailOnFailure: bool | None = None
+    emailDigestFrequency: str | None = Field(None, pattern="^(never|daily|weekly)$")
 
 @router.get("", response_model=APIResponse[dict])
 async def get_preferences(user: Annotated[dict, Depends(get_current_user)]):

@@ -23,7 +23,7 @@ import Home from "./page";
 
 vi.mock("next/image", () => ({
   default: (props: React.ComponentProps<"img">) => (
-    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text -- mock
+    // eslint-disable-next-line @next/next/no-img-element -- mock
     <img {...props} alt={props.alt ?? ""} />
   ),
 }));

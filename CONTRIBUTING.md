@@ -62,3 +62,18 @@ pre-commit install
 
 - Use conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, etc.
 - Example: `feat(api): add rate limiting to task endpoints`
+
+## Push the Chnages
+```bash
+#1️⃣ Check current status
+git status
+#2️⃣ Add changes to staging
+git add .
+#3️⃣ Commit the changes
+git commit -m "Your commit message"
+#4️⃣ Push to remote repository
+git push origin main or branch_name
+
+
+
+```

@@ -11,6 +11,8 @@ class OpenAIAdapter(BaseLLMAdapter):
     def __init__(self, api_key: str | None = None):
         self.settings = get_settings()
         self.api_key = api_key or self.settings.openai_api_key
+        if not self.api_key:
+            raise ValueError("OpenAI API Key is not configured")
         self.base_url = "https://api.openai.com/v1/chat/completions"
 
     async def generate(self, request: LLMRequest) -> LLMResponse:
@@ -19,6 +21,10 @@ class OpenAIAdapter(BaseLLMAdapter):
             "messages": [{"role": "user", "content": request.prompt}],
             "temperature": request.temperature,
         }
+        
+        if not isinstance(payload["messages"], list):
+            payload["messages"] = [{"role": "user", "content": request.prompt}]
+
         if request.system_prompt:
             payload["messages"].insert(0, {"role": "system", "content": request.system_prompt})
 
@@ -43,6 +49,11 @@ class OpenAIAdapter(BaseLLMAdapter):
             "messages": [{"role": "user", "content": request.prompt}],
             "stream": True,
         }
+        if not isinstance(payload["messages"], list):
+            payload["messages"] = [{"role": "user", "content": request.prompt}]
+            
+        if request.system_prompt:
+            payload["messages"].insert(0, {"role": "system", "content": request.system_prompt})
         async with httpx.AsyncClient() as client:
             async with client.stream("POST", self.base_url, json=payload, headers={"Authorization": f"Bearer {self.api_key}"}) as response:
                 async for line in response.aiter_lines():

@@ -5,8 +5,8 @@ Unit tests for the OpenAIAdapter.
 import pytest
 import respx
 from httpx import Response
-from backend.app.adapters.llm.openai import OpenAIAdapter
-from backend.app.adapters.llm.base import LLMRequest
+from backend.adapters.llm.openai import OpenAIAdapter
+from backend.adapters.llm.base import LLMRequest
 
 @pytest.mark.asyncio
 async def test_openai_adapter_generate_success():

@@ -7,7 +7,7 @@ Defines the REST API endpoints for user authentication.
 
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPPasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
 
 from backend.api.stores import user_create, user_get_by_email
@@ -25,6 +25,16 @@ class UserRegister(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    role: str = "operator"
+
+class APIKeyCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+
+class APIKeyResponse(BaseModel):
+    id: str
+    name: str
+    key: str
+    createdAt: str
 
 @router.post("/register", response_model=APIResponse[dict])
 async def register(payload: UserRegister):
@@ -38,12 +48,35 @@ async def register(payload: UserRegister):
     return APIResponse(data=display_user)
 
 @router.post("/login", response_model=APIResponse[Token])
-async def login(form_data: Annotated[HTTPPasswordRequestForm, Depends()]):
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = user_get_by_email(form_data.username)
     if not user or not verify_password(form_data.password, user.get("hashed_password")):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
     access_token = create_access_token(data={"sub": user["id"]})
-    return APIResponse(data=Token(access_token=access_token))
+    return APIResponse(data=Token(access_token=access_token, role=user.get("role", "operator")))
+
+@router.get("/keys", response_model=APIResponse[list[APIKeyResponse]])
+async def list_keys(user: Annotated[dict, Depends(get_current_user)]):
+    from backend.api.stores import api_key_list
+    keys = api_key_list(user["id"])
+    return APIResponse(data=keys)
+
+@router.post("/keys", response_model=APIResponse[APIKeyResponse])
+async def create_key(payload: APIKeyCreate, user: Annotated[dict, Depends(get_current_user)]):
+    from backend.api.stores import api_key_create
+    key = api_key_create(user["id"], payload.name)
+    return APIResponse(data=key)
+
+@router.delete("/keys/{key_id}", response_model=APIResponse[dict])
+async def delete_key(key_id: str, user: Annotated[dict, Depends(get_current_user)]):
+    from backend.api.stores import api_key_delete, api_key_list
+    # Verify ownership before delete
+    user_keys = api_key_list(user["id"])
+    if not any(k["id"] == key_id for k in user_keys):
+        raise HTTPException(status_code=404, detail="API Key not found or access denied")
+    
+    success = api_key_delete(key_id)
+    return APIResponse(data={"success": success})
 
 @router.get("/me", response_model=APIResponse[dict])
 async def get_me(user: Annotated[dict, Depends(get_current_user)]):

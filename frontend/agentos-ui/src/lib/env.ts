@@ -22,11 +22,17 @@
 
 const REQUIRED_KEYS = ["NEXT_PUBLIC_API_URL"] as const;
 
+// Ensure all required keys are present during initialization
+if (process.env.NODE_ENV === "production") {
+  REQUIRED_KEYS.forEach((key) => {
+    if (!process.env[key]) {
+      throw new Error(`Missing required env: ${key}`);
+    }
+  });
+}
+
 function getEnv(key: (typeof REQUIRED_KEYS)[number]): string {
   const value = process.env[key];
-  if (!value && process.env.NODE_ENV === "production") {
-    throw new Error(`Missing required env: ${key}`);
-  }
   return value || "http://localhost:8000";
 }
 

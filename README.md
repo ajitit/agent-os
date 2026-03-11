@@ -218,15 +218,15 @@ docker compose up postgres redis
 ## Testing
 
 ### Backend
+# Ensure venv is activated and deps installed
 
 ```bash
-# Ensure venv is activated and deps installed
-#cd backend
-#python -m venv venv
+cd backend
+python -m venv venv
 .\venv\Scripts\activate
 python -m pip install -r requirements.txt
 
-#pytest tests/ -v
+pytest tests/ -v
 ```
 
 ### Frontend

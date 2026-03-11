@@ -169,3 +169,36 @@ export type AgentEvaluation = {
   total_tokens?: number;
   created_at: string;
 };
+export type User = {
+  id: string;
+  email: string;
+  full_name?: string;
+  role: "admin" | "developer" | "operator" | "viewer";
+};
+
+export type UserPreferences = {
+  theme: "light" | "dark" | "system";
+  accentColor: string;
+  fontSize: "sm" | "md" | "lg";
+  defaultPriority: "low" | "normal" | "high" | "urgent";
+  streamingEnabled: boolean;
+  showAgentThinking: boolean;
+  defaultSupervisorBehavior: "auto_route" | "confirm_routing" | "manual_select";
+  emailOnFailure: boolean;
+  emailDigestFrequency: "never" | "daily" | "weekly";
+};
+
+export type APIKey = {
+  id: string;
+  name: string;
+  key: string;
+  createdAt: string;
+};
+
+export type APIResponse<T> = {
+  data: T;
+  meta?: {
+    version: string;
+    timestamp: string;
+  };
+};

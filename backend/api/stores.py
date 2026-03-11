@@ -416,8 +416,12 @@ def user_create(data: dict) -> dict:
             "theme": "system",
             "accentColor": "#007bff",
             "fontSize": "md",
+            "defaultPriority": "normal",
             "streamingEnabled": True,
             "showAgentThinking": True,
+            "defaultSupervisorBehavior": "auto_route",
+            "emailOnFailure": True,
+            "emailDigestFrequency": "daily",
         },
     )
     return user
