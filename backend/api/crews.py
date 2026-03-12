@@ -19,11 +19,7 @@ Interacting Files / Modules:
 - backend.core.exceptions
 """
 
-<<<<<<< HEAD
-from fastapi import APIRouter, HTTPException
-=======
 from fastapi import APIRouter
->>>>>>> c952205 (Initial upload of AgentOS code)
 from pydantic import BaseModel, Field
 
 from backend.api.stores import crew_create, crew_delete, crew_get, crew_list, crew_update

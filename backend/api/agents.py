@@ -1,31 +1,4 @@
 """
-<<<<<<< HEAD
-File: agents.py
-
-Purpose:
-Defines the REST API endpoints for managing the lifecycle of agents, including
-creation, retrieval, updating, deletion, and tool assignment.
-
-Key Functionalities:
-- CRUD operations for agents
-- Assigning and removing tools from agents
-- Pydantic models for request validation (AgentCreate, AgentUpdate)
-
-Inputs:
-- HTTP requests with agent configuration data
-- Tool IDs for assignment operations
-
-Outputs:
-- JSON responses containing agent metadata
-- HTTP status codes for operation results
-
-Interacting Files / Modules:
-- backend.api.stores
-- backend.core.exceptions
-"""
-
-from fastapi import APIRouter
-=======
 File: api/agents.py
 
 Agent management — full CRUD for AI agent configurations with audit instrumentation.
@@ -40,7 +13,6 @@ import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
->>>>>>> c952205 (Initial upload of AgentOS code)
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -51,10 +23,6 @@ from backend.api.stores import (
     agent_list,
     agent_remove_tool,
     agent_update,
-<<<<<<< HEAD
-)
-from backend.core.exceptions import NotFoundError
-=======
     audit_log,
 )
 from backend.core.exceptions import NotFoundError
@@ -62,15 +30,11 @@ from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
 
 logger = logging.getLogger(__name__)
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
 
 class AgentCreate(BaseModel):
-<<<<<<< HEAD
-    """Request to create an agent."""
-=======
     """Request to create an agent.
 
     Attributes:
@@ -82,25 +46,17 @@ class AgentCreate(BaseModel):
         temperature: Sampling temperature 0–2.
         assigned_tools: Tool IDs to assign on creation.
     """
->>>>>>> c952205 (Initial upload of AgentOS code)
 
     name: str = Field(..., min_length=1, max_length=200)
     description: str | None = None
     role: str | None = None
-<<<<<<< HEAD
-    model: str | None = Field(None, description="LLM model e.g. gpt-4, claude-3-5-sonnet")
-=======
     model: str | None = Field(None, description="LLM model e.g. gpt-4o, claude-sonnet-4-6")
->>>>>>> c952205 (Initial upload of AgentOS code)
     system_prompt: str | None = None
     temperature: float | None = Field(None, ge=0, le=2)
     assigned_tools: list[str] | None = Field(None, alias="tool_ids")
 
 
 class AgentUpdate(BaseModel):
-<<<<<<< HEAD
-    """Request to update an agent."""
-=======
     """Request to update an agent.
 
     Attributes:
@@ -113,7 +69,6 @@ class AgentUpdate(BaseModel):
         status: Lifecycle status.
         assigned_tools: Updated tool ID list.
     """
->>>>>>> c952205 (Initial upload of AgentOS code)
 
     name: str | None = Field(None, min_length=1, max_length=200)
     description: str | None = None
@@ -125,47 +80,6 @@ class AgentUpdate(BaseModel):
     assigned_tools: list[str] | None = Field(None, alias="tool_ids")
 
 
-<<<<<<< HEAD
-@router.get("")
-def get_all_agents():
-    """Get all agents."""
-    return agent_list()
-
-
-@router.post("")
-def create_agent(payload: AgentCreate):
-    """Create a new agent."""
-    data = payload.model_dump(exclude_none=True, by_alias=True)
-    tool_ids = data.pop("assigned_tools", data.pop("tool_ids", None)) or []
-    agent = agent_create({**data, "status": data.get("status", "active")})
-    for tid in tool_ids:
-        agent_add_tool(agent["id"], tid)
-    return agent_get(agent["id"])
-
-
-@router.get("/{agent_id}")
-def get_agent(agent_id: str):
-    """Get a specific agent."""
-    agent = agent_get(agent_id)
-    if not agent:
-        raise NotFoundError("Agent not found")
-    return agent
-
-
-@router.put("/{agent_id}")
-def update_agent(agent_id: str, payload: AgentUpdate):
-    """Update an agent."""
-    data = payload.model_dump(exclude_none=True, by_alias=True)
-    tool_ids = data.pop("assigned_tools", data.pop("tool_ids", None))
-    if data:
-        agent = agent_update(agent_id, data)
-        if not agent:
-            raise NotFoundError("Agent not found")
-    if tool_ids is not None:
-        current_agent = agent_get(agent_id)
-        current = set(current_agent.get("tool_ids", [])) if current_agent else set()
-        desired = set(tool_ids)
-=======
 @router.get("", response_model=APIResponse[list[dict[str, Any]]])
 async def get_all_agents(
     user: Annotated[dict[str, Any], Depends(get_current_user)],
@@ -268,34 +182,10 @@ async def update_agent(
         current_agent = agent_get(agent_id)
         current: set[str] = set(current_agent.get("tool_ids", [])) if current_agent else set()
         desired: set[str] = set(tool_ids)
->>>>>>> c952205 (Initial upload of AgentOS code)
         for tid in desired - current:
             agent_add_tool(agent_id, tid)
         for tid in current - desired:
             agent_remove_tool(agent_id, tid)
-<<<<<<< HEAD
-    return get_agent(agent_id)
-
-
-@router.delete("/{agent_id}", status_code=204)
-def delete_agent(agent_id: str):
-    """Delete an agent."""
-    if not agent_delete(agent_id):
-        raise NotFoundError("Agent not found")
-
-
-@router.post("/{agent_id}/tools/{tool_id}", status_code=204)
-def assign_tool_to_agent(agent_id: str, tool_id: str):
-    """Assign a tool to an agent."""
-    if not agent_add_tool(agent_id, tool_id):
-        raise NotFoundError("Agent not found")
-
-
-@router.delete("/{agent_id}/tools/{tool_id}", status_code=204)
-def remove_tool_from_agent(agent_id: str, tool_id: str):
-    """Remove a tool from an agent."""
-    agent_remove_tool(agent_id, tool_id)
-=======
 
     audit_log({
         "actorType": "human",
@@ -387,4 +277,3 @@ async def remove_tool_from_agent(
         "action": "agent.tool_removed", "resourceType": "agent", "resourceId": agent_id,
         "details": {"toolId": tool_id}, "outcome": "success",
     })
->>>>>>> c952205 (Initial upload of AgentOS code)

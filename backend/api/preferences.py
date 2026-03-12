@@ -6,21 +6,13 @@ Defines the REST API endpoints for user preferences.
 """
 
 from typing import Annotated
-<<<<<<< HEAD
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from backend.api.stores import preference_get, preference_update
-<<<<<<< HEAD
-from backend.core.security import get_current_user
-from backend.core.schemas import APIResponse
-=======
 from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 router = APIRouter(prefix="/preferences", tags=["Preferences"])
 

@@ -15,8 +15,4 @@ Outputs:
 
 Interacting Files / Modules:
 - None
-<<<<<<< HEAD
 """
-=======
-"""
->>>>>>> c952205 (Initial upload of AgentOS code)

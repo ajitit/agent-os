@@ -2,11 +2,7 @@
 File: test_api.py
 
 Purpose:
-<<<<<<< HEAD
-Comprehensive integration tests for the FastAPI application routes, encompassing 
-=======
 Comprehensive integration tests for the FastAPI application routes, encompassing
->>>>>>> c952205 (Initial upload of AgentOS code)
 all primary modules like agents, crews, storage, supervisor, and chat.
 
 Key Functionalities:
@@ -27,19 +23,13 @@ Interacting Files / Modules:
 
 from fastapi.testclient import TestClient
 
-<<<<<<< HEAD
-from backend.app.main import app
-=======
 from backend.api.stores import user_create
 from backend.app.main import app
 from backend.core.security import create_access_token, hash_password
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 client = TestClient(app)
 API_PREFIX = "/api/v1"
 
-<<<<<<< HEAD
-=======
 # ── Module-level auth — created once for the whole test file ─────────────────
 
 def _make_auth_headers() -> dict[str, str]:
@@ -60,7 +50,6 @@ def _make_auth_headers() -> dict[str, str]:
 
 _AUTH = _make_auth_headers()
 
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 def test_root():
     response = client.get("/")
@@ -123,44 +112,13 @@ def test_crews_crud():
 # Agents
 def test_agents_crud():
     # Create
-<<<<<<< HEAD
-    r = client.post(f"{API_PREFIX}/agents", json={"name": "Research Agent"})
-    assert r.status_code == 200
-    agent = r.json()
-=======
     r = client.post(f"{API_PREFIX}/agents", json={"name": "Research Agent"}, headers=_AUTH)
     assert r.status_code == 200
     agent = r.json().get("data") or r.json()
->>>>>>> c952205 (Initial upload of AgentOS code)
     assert agent["name"] == "Research Agent"
     agent_id = agent["id"]
 
     # List
-<<<<<<< HEAD
-    r = client.get(f"{API_PREFIX}/agents")
-    assert r.status_code == 200
-    assert isinstance(r.json(), list)
-
-    # Get
-    r = client.get(f"{API_PREFIX}/agents/{agent_id}")
-    assert r.status_code == 200
-    assert r.json()["tool_ids"] == []
-
-    # Assign tool
-    r = client.post(f"{API_PREFIX}/agents/{agent_id}/tools/{'tool-1'}")
-    assert r.status_code == 204
-
-    # Remove tool
-    r = client.delete(f"{API_PREFIX}/agents/{agent_id}/tools/tool-1")
-    assert r.status_code == 204
-
-    # Update
-    r = client.put(f"{API_PREFIX}/agents/{agent_id}", json={"name": "Coding Agent"})
-    assert r.status_code == 200
-
-    # Delete
-    r = client.delete(f"{API_PREFIX}/agents/{agent_id}")
-=======
     r = client.get(f"{API_PREFIX}/agents", headers=_AUTH)
     assert r.status_code == 200
     body = r.json()
@@ -187,7 +145,6 @@ def test_agents_crud():
 
     # Delete
     r = client.delete(f"{API_PREFIX}/agents/{agent_id}", headers=_AUTH)
->>>>>>> c952205 (Initial upload of AgentOS code)
     assert r.status_code == 204
 
 
@@ -287,16 +244,9 @@ def test_create_task():
 
 
 def test_chat_stream():
-<<<<<<< HEAD
-    r = client.get(f"{API_PREFIX}/chat/stream")
-    assert r.status_code == 200
-    assert "text/plain" in r.headers.get("content-type", "")
-    assert "Agent thinking" in r.text or "Done" in r.text
-=======
     """Chat stream SSE endpoint returns 404 for unknown run ID (no JWT required for SSE)."""
     r = client.get(f"{API_PREFIX}/chat/stream/nonexistent-run-id")
     assert r.status_code == 404
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 
 def test_request_id_header():
@@ -306,11 +256,7 @@ def test_request_id_header():
 
 
 def test_not_found():
-<<<<<<< HEAD
-    r = client.get(f"{API_PREFIX}/agents/nonexistent-id")
-=======
     r = client.get(f"{API_PREFIX}/agents/nonexistent-id", headers=_AUTH)
->>>>>>> c952205 (Initial upload of AgentOS code)
     assert r.status_code == 404
     assert r.json()["error"] == "NOT_FOUND"
 

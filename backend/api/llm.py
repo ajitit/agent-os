@@ -2,13 +2,9 @@
 File: llm.py
 """
 from typing import Annotated
-<<<<<<< HEAD
-from fastapi import APIRouter, Depends
-=======
 
 from fastapi import APIRouter, Depends
 
->>>>>>> c952205 (Initial upload of AgentOS code)
 from backend.adapters.llm.base import BaseLLMAdapter, LLMRequest, LLMResponse
 from backend.adapters.llm.openai import OpenAIAdapter
 from backend.core.schemas import APIResponse

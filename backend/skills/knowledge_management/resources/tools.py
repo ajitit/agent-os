@@ -9,20 +9,12 @@ from backend.api.knowledge import manager, vector_engine
 async def knowledge_search(query: str, top_k: int = 5, doc_type: str = None) -> list[dict]:
     """
     Search the knowledge base for factual information, code examples, or documentation.
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     Args:
         query: The search query string.
         top_k: Number of most relevant results to return (default 5).
         doc_type: Optional filter (e.g. 'web', 'pdf', 'docx', 'markdown', 'txt').
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     Returns:
         List of dictionaries containing matched text chunks, scores, and metadata.
     """
@@ -34,38 +26,23 @@ async def knowledge_search(query: str, top_k: int = 5, doc_type: str = None) -> 
 async def knowledge_ingest(name: str, source_type: str, url: str = None, file_path: str = None) -> dict:
     """
     Ingest a new knowledge source into the system.
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     Args:
         name: A human-readable name for the source.
         source_type: One of 'web', 'pdf', 'docx', 'markdown', or 'txt'.
         url: The URL to crawl (if source_type corresponds to 'web').
         file_path: The local file path (if source_type corresponds to a document).
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     Returns:
         Status dictionary reflecting the progress.
     """
     # Create the source record
     source = await manager.add_source(name=name, source_type=source_type, url=url)
     source_id = source["id"]
-<<<<<<< HEAD
-    
-    # Process synchronously within the tool call so the agent knows it completed
-    await manager.process_source(source_id=source_id, file_path=file_path)
-    
-=======
 
     # Process synchronously within the tool call so the agent knows it completed
     await manager.process_source(source_id=source_id, file_path=file_path)
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     return {
         "status": "success",
         "message": f"Source '{name}' successfully ingested.",
@@ -76,17 +53,10 @@ async def knowledge_ingest(name: str, source_type: str, url: str = None, file_pa
 async def knowledge_list_sources(source_type: str = None) -> list[dict]:
     """
     List currently ingested knowledge sources.
-<<<<<<< HEAD
-    
-    Args:
-        source_type: Optional string to filter by type ('web', 'pdf', 'docx', etc.)
-        
-=======
 
     Args:
         source_type: Optional string to filter by type ('web', 'pdf', 'docx', etc.)
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     Returns:
         List of source metadata dictionaries (id, name, type, chunkCount, status, etc.)
     """

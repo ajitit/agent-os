@@ -28,10 +28,6 @@ from pathlib import Path
 import pytest
 
 from backend.skills.loader import SkillLoader
-<<<<<<< HEAD
-from backend.skills.models import SkillMetadata
-=======
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 
 @pytest.fixture

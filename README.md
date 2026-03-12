@@ -233,10 +233,7 @@ pytest tests/ -v
 
 ```bash
 cd frontend/agentos-ui
-<<<<<<< HEAD
-=======
 npm install
->>>>>>> c952205 (Initial upload of AgentOS code)
 npm run lint
 npm run test
 npm run build

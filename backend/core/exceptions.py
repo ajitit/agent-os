@@ -63,11 +63,7 @@ class ValidationError(AgentOSException):
     """Validation error."""
 
     def __init__(self, message: str = "Validation failed"):
-<<<<<<< HEAD
-        super().__init__(message, status.HTTP_422_UNPROCESSABLE_ENTITY, "VALIDATION_ERROR")
-=======
         super().__init__(message, status.HTTP_422_UNPROCESSABLE_CONTENT, "VALIDATION_ERROR")
->>>>>>> c952205 (Initial upload of AgentOS code)
 
 
 async def agentos_exception_handler(request: Request, exc: AgentOSException) -> JSONResponse:
@@ -95,11 +91,7 @@ async def validation_exception_handler(
         f"{e['loc'][-1]}: {e['msg']}" for e in errors if e.get("loc")
     ) or "Validation failed"
     return JSONResponse(
-<<<<<<< HEAD
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-=======
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
->>>>>>> c952205 (Initial upload of AgentOS code)
         content=APIError(
             error="VALIDATION_ERROR",
             detail=detail,
@@ -110,17 +102,10 @@ async def validation_exception_handler(
 
 async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle unexpected exceptions."""
-<<<<<<< HEAD
-    from backend.core.logging_config import request_id_ctx
-
-    import logging
-
-=======
     import logging
 
     from backend.core.logging_config import request_id_ctx
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     logging.getLogger("backend").exception("Unhandled exception")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
