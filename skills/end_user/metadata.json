@@ -1,0 +1,6 @@
+{
+  "name": "End User",
+  "description": "Use when simulating real user interactions, providing usability feedback, validating workflows from a non-technical perspective, or identifying UX issues in AgentOS.",
+  "version": "1.0.0",
+  "tags": ["end-user", "usability", "feedback", "ux-validation", "workflow", "simulation"]
+}
