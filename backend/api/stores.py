@@ -1340,3 +1340,518 @@ def tool_registry_install(tool_id: str) -> dict[str, Any] | None:
         return None
     _tool_registry[tool_id]["installs"] = _tool_registry[tool_id].get("installs", 0) + 1
     return _tool_registry[tool_id]
+
+
+# ─── Registry Groups & Assignments ───────────────────────────────────────────
+
+# Skill groups
+_skill_groups: dict[str, dict[str, Any]] = {}
+_skill_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_skills: dict[str, set[str]] = defaultdict(set)
+
+
+def skill_group_list() -> list[dict[str, Any]]:
+    return list(_skill_groups.values())
+
+
+def skill_group_get(group_id: str) -> dict[str, Any] | None:
+    return _skill_groups.get(group_id)
+
+
+def skill_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _skill_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _skill_groups[group_id]
+
+
+def skill_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _skill_groups:
+        return None
+    _skill_groups[group_id].update(data)
+    return _skill_groups[group_id]
+
+
+def skill_group_delete(group_id: str) -> bool:
+    if group_id not in _skill_groups:
+        return False
+    del _skill_groups[group_id]
+    _skill_group_members.pop(group_id, None)
+    return True
+
+
+def skill_group_add_member(group_id: str, skill_id: str) -> bool:
+    if group_id not in _skill_groups:
+        return False
+    _skill_group_members[group_id].add(skill_id)
+    return True
+
+
+def skill_group_remove_member(group_id: str, skill_id: str) -> bool:
+    _skill_group_members[group_id].discard(skill_id)
+    return True
+
+
+def skill_group_members(group_id: str) -> list[str]:
+    return list(_skill_group_members.get(group_id, set()))
+
+
+def agent_skill_list(agent_id: str) -> list[str]:
+    return list(_agent_skills.get(agent_id, set()))
+
+
+def agent_skill_assign(agent_id: str, skill_id: str) -> bool:
+    _agent_skills[agent_id].add(skill_id)
+    return True
+
+
+def agent_skill_remove(agent_id: str, skill_id: str) -> bool:
+    _agent_skills[agent_id].discard(skill_id)
+    return True
+
+
+# Model groups
+_model_groups: dict[str, dict[str, Any]] = {}
+_model_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_models: dict[str, set[str]] = defaultdict(set)
+
+
+def model_group_list() -> list[dict[str, Any]]:
+    return list(_model_groups.values())
+
+
+def model_group_get(group_id: str) -> dict[str, Any] | None:
+    return _model_groups.get(group_id)
+
+
+def model_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _model_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _model_groups[group_id]
+
+
+def model_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _model_groups:
+        return None
+    _model_groups[group_id].update(data)
+    return _model_groups[group_id]
+
+
+def model_group_delete(group_id: str) -> bool:
+    if group_id not in _model_groups:
+        return False
+    del _model_groups[group_id]
+    _model_group_members.pop(group_id, None)
+    return True
+
+
+def model_group_add_member(group_id: str, model_id: str) -> bool:
+    if group_id not in _model_groups:
+        return False
+    _model_group_members[group_id].add(model_id)
+    return True
+
+
+def model_group_remove_member(group_id: str, model_id: str) -> bool:
+    _model_group_members[group_id].discard(model_id)
+    return True
+
+
+def model_group_members(group_id: str) -> list[str]:
+    return list(_model_group_members.get(group_id, set()))
+
+
+def agent_model_list(agent_id: str) -> list[str]:
+    return list(_agent_models.get(agent_id, set()))
+
+
+def agent_model_assign(agent_id: str, model_id: str) -> bool:
+    _agent_models[agent_id].add(model_id)
+    return True
+
+
+def agent_model_remove(agent_id: str, model_id: str) -> bool:
+    _agent_models[agent_id].discard(model_id)
+    return True
+
+
+# Knowledge Graphs
+_knowledge_graphs: dict[str, dict[str, Any]] = {}
+_kg_groups: dict[str, dict[str, Any]] = {}
+_kg_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_knowledge_graphs: dict[str, set[str]] = defaultdict(set)
+
+
+def kg_list(category: str | None = None) -> list[dict[str, Any]]:
+    result = list(_knowledge_graphs.values())
+    if category:
+        result = [k for k in result if k.get("category") == category]
+    result.sort(key=lambda k: k.get("name", ""))
+    return result
+
+
+def kg_get(kg_id: str) -> dict[str, Any] | None:
+    return _knowledge_graphs.get(kg_id)
+
+
+def kg_create(data: dict[str, Any]) -> dict[str, Any]:
+    kg_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _knowledge_graphs[kg_id] = {"id": kg_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _knowledge_graphs[kg_id]
+
+
+def kg_update(kg_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if kg_id not in _knowledge_graphs:
+        return None
+    _knowledge_graphs[kg_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _knowledge_graphs[kg_id]
+
+
+def kg_delete(kg_id: str) -> bool:
+    if kg_id not in _knowledge_graphs:
+        return False
+    del _knowledge_graphs[kg_id]
+    return True
+
+
+def kg_group_list() -> list[dict[str, Any]]:
+    return list(_kg_groups.values())
+
+
+def kg_group_get(group_id: str) -> dict[str, Any] | None:
+    return _kg_groups.get(group_id)
+
+
+def kg_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _kg_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _kg_groups[group_id]
+
+
+def kg_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _kg_groups:
+        return None
+    _kg_groups[group_id].update(data)
+    return _kg_groups[group_id]
+
+
+def kg_group_delete(group_id: str) -> bool:
+    if group_id not in _kg_groups:
+        return False
+    del _kg_groups[group_id]
+    _kg_group_members.pop(group_id, None)
+    return True
+
+
+def kg_group_add_member(group_id: str, kg_id: str) -> bool:
+    if group_id not in _kg_groups:
+        return False
+    _kg_group_members[group_id].add(kg_id)
+    return True
+
+
+def kg_group_remove_member(group_id: str, kg_id: str) -> bool:
+    _kg_group_members[group_id].discard(kg_id)
+    return True
+
+
+def kg_group_members(group_id: str) -> list[str]:
+    return list(_kg_group_members.get(group_id, set()))
+
+
+def agent_kg_list(agent_id: str) -> list[str]:
+    return list(_agent_knowledge_graphs.get(agent_id, set()))
+
+
+def agent_kg_assign(agent_id: str, kg_id: str) -> bool:
+    _agent_knowledge_graphs[agent_id].add(kg_id)
+    return True
+
+
+def agent_kg_remove(agent_id: str, kg_id: str) -> bool:
+    _agent_knowledge_graphs[agent_id].discard(kg_id)
+    return True
+
+
+# Tool groups
+_tool_groups: dict[str, dict[str, Any]] = {}
+_tool_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_tool_registry: dict[str, set[str]] = defaultdict(set)
+_tool_mcp_servers: dict[str, set[str]] = defaultdict(set)
+
+
+def tool_group_list() -> list[dict[str, Any]]:
+    return list(_tool_groups.values())
+
+
+def tool_group_get(group_id: str) -> dict[str, Any] | None:
+    return _tool_groups.get(group_id)
+
+
+def tool_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _tool_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _tool_groups[group_id]
+
+
+def tool_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _tool_groups:
+        return None
+    _tool_groups[group_id].update(data)
+    return _tool_groups[group_id]
+
+
+def tool_group_delete(group_id: str) -> bool:
+    if group_id not in _tool_groups:
+        return False
+    del _tool_groups[group_id]
+    _tool_group_members.pop(group_id, None)
+    return True
+
+
+def tool_group_add_member(group_id: str, tool_id: str) -> bool:
+    if group_id not in _tool_groups:
+        return False
+    _tool_group_members[group_id].add(tool_id)
+    return True
+
+
+def tool_group_remove_member(group_id: str, tool_id: str) -> bool:
+    _tool_group_members[group_id].discard(tool_id)
+    return True
+
+
+def tool_group_members(group_id: str) -> list[str]:
+    return list(_tool_group_members.get(group_id, set()))
+
+
+def agent_tool_registry_list(agent_id: str) -> list[str]:
+    return list(_agent_tool_registry.get(agent_id, set()))
+
+
+def agent_tool_registry_assign(agent_id: str, tool_id: str) -> bool:
+    _agent_tool_registry[agent_id].add(tool_id)
+    return True
+
+
+def agent_tool_registry_remove(agent_id: str, tool_id: str) -> bool:
+    _agent_tool_registry[agent_id].discard(tool_id)
+    return True
+
+
+def tool_mcp_list(tool_id: str) -> list[str]:
+    return list(_tool_mcp_servers.get(tool_id, set()))
+
+
+def tool_mcp_assign(tool_id: str, server_id: str) -> bool:
+    _tool_mcp_servers[tool_id].add(server_id)
+    return True
+
+
+def tool_mcp_remove(tool_id: str, server_id: str) -> bool:
+    _tool_mcp_servers[tool_id].discard(server_id)
+    return True
+
+
+# Remote APIs
+_remote_apis: dict[str, dict[str, Any]] = {}
+_api_groups: dict[str, dict[str, Any]] = {}
+_api_group_members: dict[str, set[str]] = defaultdict(set)
+_tool_remote_apis: dict[str, set[str]] = defaultdict(set)
+
+
+def remote_api_list(category: str | None = None) -> list[dict[str, Any]]:
+    result = list(_remote_apis.values())
+    if category:
+        result = [a for a in result if a.get("category") == category]
+    result.sort(key=lambda a: a.get("name", ""))
+    return result
+
+
+def remote_api_get(api_id: str) -> dict[str, Any] | None:
+    return _remote_apis.get(api_id)
+
+
+def remote_api_create(data: dict[str, Any]) -> dict[str, Any]:
+    api_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _remote_apis[api_id] = {"id": api_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _remote_apis[api_id]
+
+
+def remote_api_update(api_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if api_id not in _remote_apis:
+        return None
+    _remote_apis[api_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _remote_apis[api_id]
+
+
+def remote_api_delete(api_id: str) -> bool:
+    if api_id not in _remote_apis:
+        return False
+    del _remote_apis[api_id]
+    return True
+
+
+def api_group_list() -> list[dict[str, Any]]:
+    return list(_api_groups.values())
+
+
+def api_group_get(group_id: str) -> dict[str, Any] | None:
+    return _api_groups.get(group_id)
+
+
+def api_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _api_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _api_groups[group_id]
+
+
+def api_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _api_groups:
+        return None
+    _api_groups[group_id].update(data)
+    return _api_groups[group_id]
+
+
+def api_group_delete(group_id: str) -> bool:
+    if group_id not in _api_groups:
+        return False
+    del _api_groups[group_id]
+    _api_group_members.pop(group_id, None)
+    return True
+
+
+def api_group_add_member(group_id: str, api_id: str) -> bool:
+    if group_id not in _api_groups:
+        return False
+    _api_group_members[group_id].add(api_id)
+    return True
+
+
+def api_group_remove_member(group_id: str, api_id: str) -> bool:
+    _api_group_members[group_id].discard(api_id)
+    return True
+
+
+def api_group_members(group_id: str) -> list[str]:
+    return list(_api_group_members.get(group_id, set()))
+
+
+def tool_remote_api_list(tool_id: str) -> list[str]:
+    return list(_tool_remote_apis.get(tool_id, set()))
+
+
+def tool_remote_api_assign(tool_id: str, api_id: str) -> bool:
+    _tool_remote_apis[tool_id].add(api_id)
+    return True
+
+
+def tool_remote_api_remove(tool_id: str, api_id: str) -> bool:
+    _tool_remote_apis[tool_id].discard(api_id)
+    return True
+
+
+# Data Sources
+_data_sources: dict[str, dict[str, Any]] = {}
+_ds_groups: dict[str, dict[str, Any]] = {}
+_ds_group_members: dict[str, set[str]] = defaultdict(set)
+_tool_data_sources: dict[str, set[str]] = defaultdict(set)
+
+
+def data_source_list(source_type: str | None = None) -> list[dict[str, Any]]:
+    result = list(_data_sources.values())
+    if source_type:
+        result = [d for d in result if d.get("type") == source_type]
+    result.sort(key=lambda d: d.get("name", ""))
+    return result
+
+
+def data_source_get(ds_id: str) -> dict[str, Any] | None:
+    return _data_sources.get(ds_id)
+
+
+def data_source_create(data: dict[str, Any]) -> dict[str, Any]:
+    ds_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _data_sources[ds_id] = {"id": ds_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _data_sources[ds_id]
+
+
+def data_source_update(ds_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if ds_id not in _data_sources:
+        return None
+    _data_sources[ds_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _data_sources[ds_id]
+
+
+def data_source_delete(ds_id: str) -> bool:
+    if ds_id not in _data_sources:
+        return False
+    del _data_sources[ds_id]
+    return True
+
+
+def ds_group_list() -> list[dict[str, Any]]:
+    return list(_ds_groups.values())
+
+
+def ds_group_get(group_id: str) -> dict[str, Any] | None:
+    return _ds_groups.get(group_id)
+
+
+def ds_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _ds_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _ds_groups[group_id]
+
+
+def ds_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _ds_groups:
+        return None
+    _ds_groups[group_id].update(data)
+    return _ds_groups[group_id]
+
+
+def ds_group_delete(group_id: str) -> bool:
+    if group_id not in _ds_groups:
+        return False
+    del _ds_groups[group_id]
+    _ds_group_members.pop(group_id, None)
+    return True
+
+
+def ds_group_add_member(group_id: str, ds_id: str) -> bool:
+    if group_id not in _ds_groups:
+        return False
+    _ds_group_members[group_id].add(ds_id)
+    return True
+
+
+def ds_group_remove_member(group_id: str, ds_id: str) -> bool:
+    _ds_group_members[group_id].discard(ds_id)
+    return True
+
+
+def ds_group_members(group_id: str) -> list[str]:
+    return list(_ds_group_members.get(group_id, set()))
+
+
+def tool_data_source_list(tool_id: str) -> list[str]:
+    return list(_tool_data_sources.get(tool_id, set()))
+
+
+def tool_data_source_assign(tool_id: str, ds_id: str) -> bool:
+    _tool_data_sources[tool_id].add(ds_id)
+    return True
+
+
+def tool_data_source_remove(tool_id: str, ds_id: str) -> bool:
+    _tool_data_sources[tool_id].discard(ds_id)
+    return True

@@ -34,6 +34,18 @@ const GROUPS: NavLinkGroup[] = [
     ],
   },
   {
+    label: "Registry",
+    items: [
+      { href: "/registry/skills", label: "Skills" },
+      { href: "/registry/models", label: "Models" },
+      { href: "/registry/knowledge-graphs", label: "Knowledge Graphs" },
+      { href: "/registry/tools", label: "Tools" },
+      { href: "/registry/mcp-servers", label: "MCP Servers" },
+      { href: "/registry/remote-apis", label: "Remote APIs" },
+      { href: "/registry/data-sources", label: "Data Sources" },
+    ],
+  },
+  {
     label: "Observe",
     items: [
       { href: "/observability", label: "Observability" },

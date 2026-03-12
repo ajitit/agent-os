@@ -24,19 +24,25 @@ from backend.api import (
     chat,
     conversations,
     crews,
+    data_sources,
     health,
     knowledge,
+    knowledge_graphs,
     llm,
     marketplace,
     mcp_servers,
+    model_registry,
     observability,
     pipeline,
     plans,
     preferences,
+    remote_apis,
+    skill_registry,
     skills,
     storage,
     supervisor,
     tasks,
+    tool_registry,
     workflows,
 )
 from backend.api import (
@@ -141,6 +147,14 @@ def create_app() -> FastAPI:
 
     # Marketplace
     app.include_router(marketplace.router, prefix=prefix)
+
+    # Registry
+    app.include_router(skill_registry.router, prefix=prefix)
+    app.include_router(model_registry.router, prefix=prefix)
+    app.include_router(knowledge_graphs.router, prefix=prefix)
+    app.include_router(tool_registry.router, prefix=prefix)
+    app.include_router(remote_apis.router, prefix=prefix)
+    app.include_router(data_sources.router, prefix=prefix)
 
     # ── Built-in utility routes ───────────────────────────────────────────────
     @app.get("/api/health")
