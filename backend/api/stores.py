@@ -24,14 +24,10 @@ Interacting Files / Modules:
 - None
 """
 
-<<<<<<< HEAD
-from collections import defaultdict
-=======
 from __future__ import annotations
 
 from collections import defaultdict
 from datetime import UTC, datetime
->>>>>>> c952205 (Initial upload of AgentOS code)
 from typing import Any
 from uuid import uuid4
 
@@ -55,17 +51,6 @@ def generate_id() -> str:
 
 
 # Crews
-<<<<<<< HEAD
-def crew_list() -> list[dict]:
-    return list(_crews.values())
-
-
-def crew_get(crew_id: str) -> dict | None:
-    return _crews.get(crew_id)
-
-
-def crew_create(data: dict) -> dict:
-=======
 def crew_list() -> list[dict[str, Any]]:
     return list(_crews.values())
 
@@ -75,17 +60,12 @@ def crew_get(crew_id: str) -> dict[str, Any] | None:
 
 
 def crew_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     crew_id = generate_id()
     _crews[crew_id] = {"id": crew_id, **data}
     return _crews[crew_id]
 
 
-<<<<<<< HEAD
-def crew_update(crew_id: str, data: dict) -> dict | None:
-=======
 def crew_update(crew_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if crew_id not in _crews:
         return None
     _crews[crew_id].update(data)
@@ -100,11 +80,7 @@ def crew_delete(crew_id: str) -> bool:
 
 
 # Agents
-<<<<<<< HEAD
-def agent_list() -> list[dict]:
-=======
 def agent_list() -> list[dict[str, Any]]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     result = []
     for a in _agents.values():
         r = dict(a)
@@ -113,11 +89,7 @@ def agent_list() -> list[dict[str, Any]]:
     return result
 
 
-<<<<<<< HEAD
-def agent_get(agent_id: str) -> dict | None:
-=======
 def agent_get(agent_id: str) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if agent_id not in _agents:
         return None
     a = dict(_agents[agent_id])
@@ -125,22 +97,14 @@ def agent_get(agent_id: str) -> dict[str, Any] | None:
     return a
 
 
-<<<<<<< HEAD
-def agent_create(data: dict) -> dict:
-=======
 def agent_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     agent_id = generate_id()
     defaults = {"model": "gpt-4", "status": "active", "temperature": 0.7}
     _agents[agent_id] = {"id": agent_id, **defaults, **data}
     return _agents[agent_id]
 
 
-<<<<<<< HEAD
-def agent_update(agent_id: str, data: dict) -> dict | None:
-=======
 def agent_update(agent_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if agent_id not in _agents:
         return None
     _agents[agent_id].update(data)
@@ -170,17 +134,6 @@ def agent_remove_tool(agent_id: str, tool_id: str) -> bool:
 
 
 # MCP Servers
-<<<<<<< HEAD
-def mcp_server_list() -> list[dict]:
-    return list(_mcp_servers.values())
-
-
-def mcp_server_get(server_id: str) -> dict | None:
-    return _mcp_servers.get(server_id)
-
-
-def mcp_server_create(data: dict) -> dict:
-=======
 def mcp_server_list() -> list[dict[str, Any]]:
     return list(_mcp_servers.values())
 
@@ -190,17 +143,12 @@ def mcp_server_get(server_id: str) -> dict[str, Any] | None:
 
 
 def mcp_server_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     server_id = generate_id()
     _mcp_servers[server_id] = {"id": server_id, **data}
     return _mcp_servers[server_id]
 
 
-<<<<<<< HEAD
-def mcp_server_update(server_id: str, data: dict) -> dict | None:
-=======
 def mcp_server_update(server_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if server_id not in _mcp_servers:
         return None
     _mcp_servers[server_id].update(data)
@@ -216,19 +164,11 @@ def mcp_server_delete(server_id: str) -> bool:
     return True
 
 
-<<<<<<< HEAD
-def mcp_server_tool_list(server_id: str) -> list[dict]:
-    return list(_mcp_tools.get(server_id, {}).values())
-
-
-def mcp_server_tool_add(server_id: str, data: dict) -> dict | None:
-=======
 def mcp_server_tool_list(server_id: str) -> list[dict[str, Any]]:
     return list(_mcp_tools.get(server_id, {}).values())
 
 
 def mcp_server_tool_add(server_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if server_id not in _mcp_servers:
         return None
     tool_id = generate_id()
@@ -236,11 +176,7 @@ def mcp_server_tool_add(server_id: str, data: dict[str, Any]) -> dict[str, Any] 
     return _mcp_tools[server_id][tool_id]
 
 
-<<<<<<< HEAD
-def mcp_server_tool_update(server_id: str, tool_id: str, data: dict) -> dict | None:
-=======
 def mcp_server_tool_update(server_id: str, tool_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if server_id not in _mcp_tools or tool_id not in _mcp_tools[server_id]:
         return None
     _mcp_tools[server_id][tool_id].update(data)
@@ -255,17 +191,6 @@ def mcp_server_tool_remove(server_id: str, tool_id: str) -> bool:
 
 
 # Conversations
-<<<<<<< HEAD
-def conversation_list() -> list[dict]:
-    return list(_conversations.values())
-
-
-def conversation_get(conv_id: str) -> dict | None:
-    return _conversations.get(conv_id)
-
-
-def conversation_create(data: dict) -> dict:
-=======
 def conversation_list() -> list[dict[str, Any]]:
     return list(_conversations.values())
 
@@ -275,17 +200,12 @@ def conversation_get(conv_id: str) -> dict[str, Any] | None:
 
 
 def conversation_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     conv_id = generate_id()
     _conversations[conv_id] = {"id": conv_id, **data}
     return _conversations[conv_id]
 
 
-<<<<<<< HEAD
-def conversation_update(conv_id: str, data: dict) -> dict | None:
-=======
 def conversation_update(conv_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if conv_id not in _conversations:
         return None
     _conversations[conv_id].update(data)
@@ -301,19 +221,11 @@ def conversation_delete(conv_id: str) -> bool:
     return True
 
 
-<<<<<<< HEAD
-def conversation_message_list(conv_id: str) -> list[dict]:
-    return _conversation_messages.get(conv_id, [])[:]
-
-
-def conversation_message_add(conv_id: str, data: dict) -> dict | None:
-=======
 def conversation_message_list(conv_id: str) -> list[dict[str, Any]]:
     return _conversation_messages.get(conv_id, [])[:]
 
 
 def conversation_message_add(conv_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if conv_id not in _conversations:
         return None
     msg_id = generate_id()
@@ -323,11 +235,7 @@ def conversation_message_add(conv_id: str, data: dict[str, Any]) -> dict[str, An
 
 
 # Storage
-<<<<<<< HEAD
-def storage_list() -> list[dict]:
-=======
 def storage_list() -> list[dict[str, Any]]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     return [{"key": k} for k in _storage_files]
 
 
@@ -347,17 +255,6 @@ def storage_delete(key: str) -> bool:
 
 
 # Knowledge Sources
-<<<<<<< HEAD
-def source_list() -> list[dict]:
-    return list(_sources.values())
-
-
-def source_get(source_id: str) -> dict | None:
-    return _sources.get(source_id)
-
-
-def source_create(data: dict) -> dict:
-=======
 def source_list() -> list[dict[str, Any]]:
     return list(_sources.values())
 
@@ -367,17 +264,12 @@ def source_get(source_id: str) -> dict[str, Any] | None:
 
 
 def source_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     source_id = data.get("id") or generate_id()
     _sources[source_id] = {"id": source_id, **data}
     return _sources[source_id]
 
 
-<<<<<<< HEAD
-def source_update(source_id: str, data: dict) -> dict | None:
-=======
 def source_update(source_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if source_id not in _sources:
         return None
     _sources[source_id].update(data)
@@ -388,11 +280,7 @@ def source_delete(source_id: str) -> bool:
     if source_id not in _sources:
         return False
     del _sources[source_id]
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> c952205 (Initial upload of AgentOS code)
     # Cascade delete code examples
     code_ids = [c["id"] for c in _code_examples.values() if c.get("sourceId") == source_id]
     for cid in code_ids:
@@ -401,17 +289,6 @@ def source_delete(source_id: str) -> bool:
 
 
 # Code Examples
-<<<<<<< HEAD
-def code_example_list() -> list[dict]:
-    return list(_code_examples.values())
-
-
-def code_example_get(code_id: str) -> dict | None:
-    return _code_examples.get(code_id)
-
-
-def code_example_create(data: dict) -> dict:
-=======
 def code_example_list() -> list[dict[str, Any]]:
     return list(_code_examples.values())
 
@@ -421,7 +298,6 @@ def code_example_get(code_id: str) -> dict[str, Any] | None:
 
 
 def code_example_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     code_id = data.get("id") or generate_id()
     _code_examples[code_id] = {"id": code_id, **data}
     return _code_examples[code_id]
@@ -439,17 +315,6 @@ _approval_requests: dict[str, dict[str, Any]] = {}
 _workflow_approvals: dict[str, list[str]] = defaultdict(list)
 
 
-<<<<<<< HEAD
-def workflow_list() -> list[dict]:
-    return list(_workflows.values())
-
-
-def workflow_get(workflow_id: str) -> dict | None:
-    return _workflows.get(workflow_id)
-
-
-def workflow_create(data: dict) -> dict:
-=======
 def workflow_list() -> list[dict[str, Any]]:
     return list(_workflows.values())
 
@@ -459,7 +324,6 @@ def workflow_get(workflow_id: str) -> dict[str, Any] | None:
 
 
 def workflow_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     wf_id = generate_id()
     _workflows[wf_id] = {
         "id": wf_id,
@@ -471,22 +335,14 @@ def workflow_create(data: dict[str, Any]) -> dict[str, Any]:
     return _workflows[wf_id]
 
 
-<<<<<<< HEAD
-def workflow_update(workflow_id: str, data: dict) -> dict | None:
-=======
 def workflow_update(workflow_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if workflow_id not in _workflows:
         return None
     _workflows[workflow_id].update(data)
     return _workflows[workflow_id]
 
 
-<<<<<<< HEAD
-def workflow_add_history(workflow_id: str, entry: dict) -> bool:
-=======
 def workflow_add_history(workflow_id: str, entry: dict[str, Any]) -> bool:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if workflow_id not in _workflows:
         return False
     _workflows[workflow_id].setdefault("history", []).append(entry)
@@ -505,11 +361,7 @@ def workflow_delete(workflow_id: str) -> bool:
     return True
 
 
-<<<<<<< HEAD
-def approval_create(data: dict) -> dict:
-=======
 def approval_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     apr_id = generate_id()
     _approval_requests[apr_id] = {"id": apr_id, "status": "pending", **data}
     wf_id = data.get("workflow_id")
@@ -518,41 +370,25 @@ def approval_create(data: dict[str, Any]) -> dict[str, Any]:
     return _approval_requests[apr_id]
 
 
-<<<<<<< HEAD
-def approval_get(approval_id: str) -> dict | None:
-    return _approval_requests.get(approval_id)
-
-
-def approval_list_pending(workflow_id: str | None = None) -> list[dict]:
-=======
 def approval_get(approval_id: str) -> dict[str, Any] | None:
     return _approval_requests.get(approval_id)
 
 
 def approval_list_pending(workflow_id: str | None = None) -> list[dict[str, Any]]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     result = [a for a in _approval_requests.values() if a.get("status") == "pending"]
     if workflow_id:
         result = [a for a in result if a.get("workflow_id") == workflow_id]
     return result
 
 
-<<<<<<< HEAD
-def approval_update(approval_id: str, data: dict) -> dict | None:
-=======
 def approval_update(approval_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if approval_id not in _approval_requests:
         return None
     _approval_requests[approval_id].update(data)
     return _approval_requests[approval_id]
 
 
-<<<<<<< HEAD
-def approval_list_by_workflow(workflow_id: str) -> list[dict]:
-=======
 def approval_list_by_workflow(workflow_id: str) -> list[dict[str, Any]]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     return [
         _approval_requests[aid]
         for aid in _workflow_approvals.get(workflow_id, [])
@@ -561,30 +397,18 @@ def approval_list_by_workflow(workflow_id: str) -> list[dict[str, Any]]:
 
 
 # Users
-<<<<<<< HEAD
-def user_get_by_email(email: str) -> dict | None:
-=======
 def user_get_by_email(email: str) -> dict[str, Any] | None:
->>>>>>> c952205 (Initial upload of AgentOS code)
     for u in _users.values():
         if u.get("email") == email:
             return u
     return None
 
 
-<<<<<<< HEAD
-def user_get(user_id: str) -> dict | None:
-    return _users.get(user_id)
-
-
-def user_create(data: dict) -> dict:
-=======
 def user_get(user_id: str) -> dict[str, Any] | None:
     return _users.get(user_id)
 
 
 def user_create(data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     user_id = generate_id()
     user = {"id": user_id, **data}
     _users[user_id] = user
@@ -607,19 +431,11 @@ def user_create(data: dict[str, Any]) -> dict[str, Any]:
 
 
 # Preferences
-<<<<<<< HEAD
-def preference_get(user_id: str) -> dict | None:
-    return _preferences.get(user_id)
-
-
-def preference_update(user_id: str, data: dict) -> dict:
-=======
 def preference_get(user_id: str) -> dict[str, Any] | None:
     return _preferences.get(user_id)
 
 
 def preference_update(user_id: str, data: dict[str, Any]) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     if user_id not in _preferences:
         _preferences[user_id] = {"userId": user_id}
     _preferences[user_id].update(data)
@@ -627,11 +443,7 @@ def preference_update(user_id: str, data: dict[str, Any]) -> dict[str, Any]:
 
 
 # API Keys
-<<<<<<< HEAD
-def api_key_create(user_id: str, name: str) -> dict:
-=======
 def api_key_create(user_id: str, name: str) -> dict[str, Any]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     key_id = generate_id()
     # In a real app, internal_key would be hashed
     key = {
@@ -645,11 +457,7 @@ def api_key_create(user_id: str, name: str) -> dict[str, Any]:
     return key
 
 
-<<<<<<< HEAD
-def api_key_list(user_id: str) -> list[dict]:
-=======
 def api_key_list(user_id: str) -> list[dict[str, Any]]:
->>>>>>> c952205 (Initial upload of AgentOS code)
     return [k for k in _api_keys.values() if k.get("userId") == user_id]
 
 
@@ -658,8 +466,6 @@ def api_key_delete(key_id: str) -> bool:
         del _api_keys[key_id]
         return True
     return False
-<<<<<<< HEAD
-=======
 
 
 # ─── Observability / Tracing ─────────────────────────────────────────────────
@@ -1534,4 +1340,518 @@ def tool_registry_install(tool_id: str) -> dict[str, Any] | None:
         return None
     _tool_registry[tool_id]["installs"] = _tool_registry[tool_id].get("installs", 0) + 1
     return _tool_registry[tool_id]
->>>>>>> c952205 (Initial upload of AgentOS code)
+
+
+# ─── Registry Groups & Assignments ───────────────────────────────────────────
+
+# Skill groups
+_skill_groups: dict[str, dict[str, Any]] = {}
+_skill_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_skills: dict[str, set[str]] = defaultdict(set)
+
+
+def skill_group_list() -> list[dict[str, Any]]:
+    return list(_skill_groups.values())
+
+
+def skill_group_get(group_id: str) -> dict[str, Any] | None:
+    return _skill_groups.get(group_id)
+
+
+def skill_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _skill_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _skill_groups[group_id]
+
+
+def skill_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _skill_groups:
+        return None
+    _skill_groups[group_id].update(data)
+    return _skill_groups[group_id]
+
+
+def skill_group_delete(group_id: str) -> bool:
+    if group_id not in _skill_groups:
+        return False
+    del _skill_groups[group_id]
+    _skill_group_members.pop(group_id, None)
+    return True
+
+
+def skill_group_add_member(group_id: str, skill_id: str) -> bool:
+    if group_id not in _skill_groups:
+        return False
+    _skill_group_members[group_id].add(skill_id)
+    return True
+
+
+def skill_group_remove_member(group_id: str, skill_id: str) -> bool:
+    _skill_group_members[group_id].discard(skill_id)
+    return True
+
+
+def skill_group_members(group_id: str) -> list[str]:
+    return list(_skill_group_members.get(group_id, set()))
+
+
+def agent_skill_list(agent_id: str) -> list[str]:
+    return list(_agent_skills.get(agent_id, set()))
+
+
+def agent_skill_assign(agent_id: str, skill_id: str) -> bool:
+    _agent_skills[agent_id].add(skill_id)
+    return True
+
+
+def agent_skill_remove(agent_id: str, skill_id: str) -> bool:
+    _agent_skills[agent_id].discard(skill_id)
+    return True
+
+
+# Model groups
+_model_groups: dict[str, dict[str, Any]] = {}
+_model_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_models: dict[str, set[str]] = defaultdict(set)
+
+
+def model_group_list() -> list[dict[str, Any]]:
+    return list(_model_groups.values())
+
+
+def model_group_get(group_id: str) -> dict[str, Any] | None:
+    return _model_groups.get(group_id)
+
+
+def model_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _model_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _model_groups[group_id]
+
+
+def model_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _model_groups:
+        return None
+    _model_groups[group_id].update(data)
+    return _model_groups[group_id]
+
+
+def model_group_delete(group_id: str) -> bool:
+    if group_id not in _model_groups:
+        return False
+    del _model_groups[group_id]
+    _model_group_members.pop(group_id, None)
+    return True
+
+
+def model_group_add_member(group_id: str, model_id: str) -> bool:
+    if group_id not in _model_groups:
+        return False
+    _model_group_members[group_id].add(model_id)
+    return True
+
+
+def model_group_remove_member(group_id: str, model_id: str) -> bool:
+    _model_group_members[group_id].discard(model_id)
+    return True
+
+
+def model_group_members(group_id: str) -> list[str]:
+    return list(_model_group_members.get(group_id, set()))
+
+
+def agent_model_list(agent_id: str) -> list[str]:
+    return list(_agent_models.get(agent_id, set()))
+
+
+def agent_model_assign(agent_id: str, model_id: str) -> bool:
+    _agent_models[agent_id].add(model_id)
+    return True
+
+
+def agent_model_remove(agent_id: str, model_id: str) -> bool:
+    _agent_models[agent_id].discard(model_id)
+    return True
+
+
+# Knowledge Graphs
+_knowledge_graphs: dict[str, dict[str, Any]] = {}
+_kg_groups: dict[str, dict[str, Any]] = {}
+_kg_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_knowledge_graphs: dict[str, set[str]] = defaultdict(set)
+
+
+def kg_list(category: str | None = None) -> list[dict[str, Any]]:
+    result = list(_knowledge_graphs.values())
+    if category:
+        result = [k for k in result if k.get("category") == category]
+    result.sort(key=lambda k: k.get("name", ""))
+    return result
+
+
+def kg_get(kg_id: str) -> dict[str, Any] | None:
+    return _knowledge_graphs.get(kg_id)
+
+
+def kg_create(data: dict[str, Any]) -> dict[str, Any]:
+    kg_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _knowledge_graphs[kg_id] = {"id": kg_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _knowledge_graphs[kg_id]
+
+
+def kg_update(kg_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if kg_id not in _knowledge_graphs:
+        return None
+    _knowledge_graphs[kg_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _knowledge_graphs[kg_id]
+
+
+def kg_delete(kg_id: str) -> bool:
+    if kg_id not in _knowledge_graphs:
+        return False
+    del _knowledge_graphs[kg_id]
+    return True
+
+
+def kg_group_list() -> list[dict[str, Any]]:
+    return list(_kg_groups.values())
+
+
+def kg_group_get(group_id: str) -> dict[str, Any] | None:
+    return _kg_groups.get(group_id)
+
+
+def kg_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _kg_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _kg_groups[group_id]
+
+
+def kg_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _kg_groups:
+        return None
+    _kg_groups[group_id].update(data)
+    return _kg_groups[group_id]
+
+
+def kg_group_delete(group_id: str) -> bool:
+    if group_id not in _kg_groups:
+        return False
+    del _kg_groups[group_id]
+    _kg_group_members.pop(group_id, None)
+    return True
+
+
+def kg_group_add_member(group_id: str, kg_id: str) -> bool:
+    if group_id not in _kg_groups:
+        return False
+    _kg_group_members[group_id].add(kg_id)
+    return True
+
+
+def kg_group_remove_member(group_id: str, kg_id: str) -> bool:
+    _kg_group_members[group_id].discard(kg_id)
+    return True
+
+
+def kg_group_members(group_id: str) -> list[str]:
+    return list(_kg_group_members.get(group_id, set()))
+
+
+def agent_kg_list(agent_id: str) -> list[str]:
+    return list(_agent_knowledge_graphs.get(agent_id, set()))
+
+
+def agent_kg_assign(agent_id: str, kg_id: str) -> bool:
+    _agent_knowledge_graphs[agent_id].add(kg_id)
+    return True
+
+
+def agent_kg_remove(agent_id: str, kg_id: str) -> bool:
+    _agent_knowledge_graphs[agent_id].discard(kg_id)
+    return True
+
+
+# Tool groups
+_tool_groups: dict[str, dict[str, Any]] = {}
+_tool_group_members: dict[str, set[str]] = defaultdict(set)
+_agent_tool_registry: dict[str, set[str]] = defaultdict(set)
+_tool_mcp_servers: dict[str, set[str]] = defaultdict(set)
+
+
+def tool_group_list() -> list[dict[str, Any]]:
+    return list(_tool_groups.values())
+
+
+def tool_group_get(group_id: str) -> dict[str, Any] | None:
+    return _tool_groups.get(group_id)
+
+
+def tool_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _tool_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _tool_groups[group_id]
+
+
+def tool_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _tool_groups:
+        return None
+    _tool_groups[group_id].update(data)
+    return _tool_groups[group_id]
+
+
+def tool_group_delete(group_id: str) -> bool:
+    if group_id not in _tool_groups:
+        return False
+    del _tool_groups[group_id]
+    _tool_group_members.pop(group_id, None)
+    return True
+
+
+def tool_group_add_member(group_id: str, tool_id: str) -> bool:
+    if group_id not in _tool_groups:
+        return False
+    _tool_group_members[group_id].add(tool_id)
+    return True
+
+
+def tool_group_remove_member(group_id: str, tool_id: str) -> bool:
+    _tool_group_members[group_id].discard(tool_id)
+    return True
+
+
+def tool_group_members(group_id: str) -> list[str]:
+    return list(_tool_group_members.get(group_id, set()))
+
+
+def agent_tool_registry_list(agent_id: str) -> list[str]:
+    return list(_agent_tool_registry.get(agent_id, set()))
+
+
+def agent_tool_registry_assign(agent_id: str, tool_id: str) -> bool:
+    _agent_tool_registry[agent_id].add(tool_id)
+    return True
+
+
+def agent_tool_registry_remove(agent_id: str, tool_id: str) -> bool:
+    _agent_tool_registry[agent_id].discard(tool_id)
+    return True
+
+
+def tool_mcp_list(tool_id: str) -> list[str]:
+    return list(_tool_mcp_servers.get(tool_id, set()))
+
+
+def tool_mcp_assign(tool_id: str, server_id: str) -> bool:
+    _tool_mcp_servers[tool_id].add(server_id)
+    return True
+
+
+def tool_mcp_remove(tool_id: str, server_id: str) -> bool:
+    _tool_mcp_servers[tool_id].discard(server_id)
+    return True
+
+
+# Remote APIs
+_remote_apis: dict[str, dict[str, Any]] = {}
+_api_groups: dict[str, dict[str, Any]] = {}
+_api_group_members: dict[str, set[str]] = defaultdict(set)
+_tool_remote_apis: dict[str, set[str]] = defaultdict(set)
+
+
+def remote_api_list(category: str | None = None) -> list[dict[str, Any]]:
+    result = list(_remote_apis.values())
+    if category:
+        result = [a for a in result if a.get("category") == category]
+    result.sort(key=lambda a: a.get("name", ""))
+    return result
+
+
+def remote_api_get(api_id: str) -> dict[str, Any] | None:
+    return _remote_apis.get(api_id)
+
+
+def remote_api_create(data: dict[str, Any]) -> dict[str, Any]:
+    api_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _remote_apis[api_id] = {"id": api_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _remote_apis[api_id]
+
+
+def remote_api_update(api_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if api_id not in _remote_apis:
+        return None
+    _remote_apis[api_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _remote_apis[api_id]
+
+
+def remote_api_delete(api_id: str) -> bool:
+    if api_id not in _remote_apis:
+        return False
+    del _remote_apis[api_id]
+    return True
+
+
+def api_group_list() -> list[dict[str, Any]]:
+    return list(_api_groups.values())
+
+
+def api_group_get(group_id: str) -> dict[str, Any] | None:
+    return _api_groups.get(group_id)
+
+
+def api_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _api_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _api_groups[group_id]
+
+
+def api_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _api_groups:
+        return None
+    _api_groups[group_id].update(data)
+    return _api_groups[group_id]
+
+
+def api_group_delete(group_id: str) -> bool:
+    if group_id not in _api_groups:
+        return False
+    del _api_groups[group_id]
+    _api_group_members.pop(group_id, None)
+    return True
+
+
+def api_group_add_member(group_id: str, api_id: str) -> bool:
+    if group_id not in _api_groups:
+        return False
+    _api_group_members[group_id].add(api_id)
+    return True
+
+
+def api_group_remove_member(group_id: str, api_id: str) -> bool:
+    _api_group_members[group_id].discard(api_id)
+    return True
+
+
+def api_group_members(group_id: str) -> list[str]:
+    return list(_api_group_members.get(group_id, set()))
+
+
+def tool_remote_api_list(tool_id: str) -> list[str]:
+    return list(_tool_remote_apis.get(tool_id, set()))
+
+
+def tool_remote_api_assign(tool_id: str, api_id: str) -> bool:
+    _tool_remote_apis[tool_id].add(api_id)
+    return True
+
+
+def tool_remote_api_remove(tool_id: str, api_id: str) -> bool:
+    _tool_remote_apis[tool_id].discard(api_id)
+    return True
+
+
+# Data Sources
+_data_sources: dict[str, dict[str, Any]] = {}
+_ds_groups: dict[str, dict[str, Any]] = {}
+_ds_group_members: dict[str, set[str]] = defaultdict(set)
+_tool_data_sources: dict[str, set[str]] = defaultdict(set)
+
+
+def data_source_list(source_type: str | None = None) -> list[dict[str, Any]]:
+    result = list(_data_sources.values())
+    if source_type:
+        result = [d for d in result if d.get("type") == source_type]
+    result.sort(key=lambda d: d.get("name", ""))
+    return result
+
+
+def data_source_get(ds_id: str) -> dict[str, Any] | None:
+    return _data_sources.get(ds_id)
+
+
+def data_source_create(data: dict[str, Any]) -> dict[str, Any]:
+    ds_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _data_sources[ds_id] = {"id": ds_id, "createdAt": now, "updatedAt": now, "status": "active", **data}
+    return _data_sources[ds_id]
+
+
+def data_source_update(ds_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if ds_id not in _data_sources:
+        return None
+    _data_sources[ds_id].update({**data, "updatedAt": datetime.now(UTC).isoformat()})
+    return _data_sources[ds_id]
+
+
+def data_source_delete(ds_id: str) -> bool:
+    if ds_id not in _data_sources:
+        return False
+    del _data_sources[ds_id]
+    return True
+
+
+def ds_group_list() -> list[dict[str, Any]]:
+    return list(_ds_groups.values())
+
+
+def ds_group_get(group_id: str) -> dict[str, Any] | None:
+    return _ds_groups.get(group_id)
+
+
+def ds_group_create(data: dict[str, Any]) -> dict[str, Any]:
+    group_id = generate_id()
+    now = datetime.now(UTC).isoformat()
+    _ds_groups[group_id] = {"id": group_id, "createdAt": now, **data}
+    return _ds_groups[group_id]
+
+
+def ds_group_update(group_id: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    if group_id not in _ds_groups:
+        return None
+    _ds_groups[group_id].update(data)
+    return _ds_groups[group_id]
+
+
+def ds_group_delete(group_id: str) -> bool:
+    if group_id not in _ds_groups:
+        return False
+    del _ds_groups[group_id]
+    _ds_group_members.pop(group_id, None)
+    return True
+
+
+def ds_group_add_member(group_id: str, ds_id: str) -> bool:
+    if group_id not in _ds_groups:
+        return False
+    _ds_group_members[group_id].add(ds_id)
+    return True
+
+
+def ds_group_remove_member(group_id: str, ds_id: str) -> bool:
+    _ds_group_members[group_id].discard(ds_id)
+    return True
+
+
+def ds_group_members(group_id: str) -> list[str]:
+    return list(_ds_group_members.get(group_id, set()))
+
+
+def tool_data_source_list(tool_id: str) -> list[str]:
+    return list(_tool_data_sources.get(tool_id, set()))
+
+
+def tool_data_source_assign(tool_id: str, ds_id: str) -> bool:
+    _tool_data_sources[tool_id].add(ds_id)
+    return True
+
+
+def tool_data_source_remove(tool_id: str, ds_id: str) -> bool:
+    _tool_data_sources[tool_id].discard(ds_id)
+    return True

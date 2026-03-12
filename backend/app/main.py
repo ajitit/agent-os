@@ -1,35 +1,4 @@
 """
-<<<<<<< HEAD
-File: main.py
-
-Purpose:
-Serves as the main entry point for the AgentOS FastAPI application, initializing
-the app, configuring middleware, and routing all API endpoints.
-
-Key Functionalities:
-- Initialize FastAPI application instance
-- Configure CORS and request ID middleware
-- Register exception handlers
-- Include all API routers
-- Define health and root endpoints
-
-Inputs:
-- HTTP requests
-- Environment variables via configuration settings
-
-Outputs:
-- Configured FastAPI application instance
-- HTTP responses for all registered routes
-
-Interacting Files / Modules:
-- backend.api.*
-- backend.core.config
-- backend.core.exceptions
-- backend.core.logging_config
-- backend.core.middleware
-"""
-
-=======
 Module: app/main.py
 
 Application factory for the AgentOS FastAPI application.
@@ -43,7 +12,6 @@ from __future__ import annotations
 
 import logging
 from collections.abc import AsyncGenerator
->>>>>>> c952205 (Initial upload of AgentOS code)
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -51,42 +19,34 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api import (
     agents,
-<<<<<<< HEAD
-=======
     audit,
->>>>>>> c952205 (Initial upload of AgentOS code)
     auth,
     chat,
     conversations,
     crews,
+    data_sources,
     health,
-<<<<<<< HEAD
-    mcp_servers,
-    settings as settings_api,
-=======
     knowledge,
+    knowledge_graphs,
     llm,
     marketplace,
     mcp_servers,
+    model_registry,
     observability,
     pipeline,
     plans,
     preferences,
->>>>>>> c952205 (Initial upload of AgentOS code)
+    remote_apis,
+    skill_registry,
     skills,
     storage,
     supervisor,
     tasks,
-<<<<<<< HEAD
-    knowledge,
-    llm,
-    preferences,
-=======
+    tool_registry,
     workflows,
 )
 from backend.api import (
     settings as settings_api,
->>>>>>> c952205 (Initial upload of AgentOS code)
 )
 from backend.core.config import get_settings
 from backend.core.exceptions import (
@@ -98,24 +58,6 @@ from backend.core.exceptions import (
 from backend.core.logging_config import configure_logging
 from backend.core.middleware import RequestIDMiddleware
 
-<<<<<<< HEAD
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan events."""
-    cfg = get_settings()
-    configure_logging(cfg.log_level)
-    yield
-    # Shutdown: close connections, flush logs, etc.
-
-
-def create_app() -> FastAPI:
-    """Create and configure the FastAPI application."""
-    cfg = get_settings()
-    app = FastAPI(
-        title=cfg.app_name,
-        description="Enterprise Multi-Agent AI Operating System - API",
-=======
 logger = logging.getLogger(__name__)
 
 
@@ -146,7 +88,6 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=cfg.app_name,
         description="Enterprise Multi-Agent AI Operating System — API",
->>>>>>> c952205 (Initial upload of AgentOS code)
         version="1.0.0",
         docs_url="/api/docs",
         redoc_url="/api/redoc",
@@ -154,11 +95,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-<<<<<<< HEAD
-    # Middleware
-=======
     # ── Middleware ────────────────────────────────────────────────────────────
->>>>>>> c952205 (Initial upload of AgentOS code)
     app.add_middleware(RequestIDMiddleware)
     app.add_middleware(
         CORSMiddleware,
@@ -168,17 +105,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-<<<<<<< HEAD
-    # Exception handlers
-    app.add_exception_handler(AgentOSException, agentos_exception_handler)
-    app.add_exception_handler(Exception, generic_exception_handler)
-    from fastapi.exceptions import RequestValidationError
-
-    app.add_exception_handler(RequestValidationError, validation_exception_handler)
-
-    # API v1 routes
-    prefix = cfg.api_v1_prefix
-=======
     # ── Exception handlers ────────────────────────────────────────────────────
     from fastapi.exceptions import RequestValidationError
 
@@ -190,16 +116,12 @@ def create_app() -> FastAPI:
     prefix = cfg.api_v1_prefix
 
     # Infrastructure & auth
->>>>>>> c952205 (Initial upload of AgentOS code)
     app.include_router(health.router, prefix=prefix)
     app.include_router(auth.router, prefix=prefix)
     app.include_router(preferences.router, prefix=prefix)
     app.include_router(settings_api.router, prefix=prefix)
-<<<<<<< HEAD
-=======
 
     # Core resources
->>>>>>> c952205 (Initial upload of AgentOS code)
     app.include_router(crews.router, prefix=prefix)
     app.include_router(agents.router, prefix=prefix)
     app.include_router(mcp_servers.router, prefix=prefix)
@@ -207,19 +129,6 @@ def create_app() -> FastAPI:
     app.include_router(storage.router, prefix=prefix)
     app.include_router(knowledge.router, prefix=prefix)
     app.include_router(skills.router, prefix=prefix)
-<<<<<<< HEAD
-    app.include_router(supervisor.router, prefix=prefix)
-    app.include_router(tasks.router, prefix=prefix)
-    app.include_router(chat.router, prefix=prefix)
-    app.include_router(llm.router, prefix=prefix)
-
-    @app.get("/api/health")
-    def api_health_alias():
-        return {"status": "ok", "version": "1.0.0", "environment": cfg.environment}
-
-    @app.get("/")
-    def root():
-=======
     app.include_router(tasks.router, prefix=prefix)
     app.include_router(llm.router, prefix=prefix)
 
@@ -239,6 +148,14 @@ def create_app() -> FastAPI:
     # Marketplace
     app.include_router(marketplace.router, prefix=prefix)
 
+    # Registry
+    app.include_router(skill_registry.router, prefix=prefix)
+    app.include_router(model_registry.router, prefix=prefix)
+    app.include_router(knowledge_graphs.router, prefix=prefix)
+    app.include_router(tool_registry.router, prefix=prefix)
+    app.include_router(remote_apis.router, prefix=prefix)
+    app.include_router(data_sources.router, prefix=prefix)
+
     # ── Built-in utility routes ───────────────────────────────────────────────
     @app.get("/api/health")
     def api_health_alias() -> dict[str, str]:
@@ -248,7 +165,6 @@ def create_app() -> FastAPI:
     @app.get("/")
     def root() -> dict[str, str]:
         """Root — returns app name and docs URL."""
->>>>>>> c952205 (Initial upload of AgentOS code)
         return {"status": f"{cfg.app_name} running", "docs": "/api/docs"}
 
     return app
