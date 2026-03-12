@@ -1,0 +1,6 @@
+{
+  "name": "Quality & Compliance",
+  "description": "Use when auditing coding standards compliance, documentation completeness, API consistency, governance checks, or regulatory requirements in AgentOS.",
+  "version": "1.0.0",
+  "tags": ["quality", "compliance", "standards", "governance", "documentation", "audit"]
+}
