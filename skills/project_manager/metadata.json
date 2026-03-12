@@ -1,0 +1,6 @@
+{
+  "name": "Project Manager",
+  "description": "Use when creating user stories, epics, task breakdowns, sprint plans, or release roadmaps for AgentOS feature development.",
+  "version": "1.0.0",
+  "tags": ["project-management", "user-stories", "epics", "sprint", "backlog", "planning"]
+}

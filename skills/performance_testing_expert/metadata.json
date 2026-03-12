@@ -1,0 +1,6 @@
+{
+  "name": "Performance Testing Expert",
+  "description": "Use when performing load testing, benchmarking, scalability validation, or identifying performance bottlenecks in AgentOS API, pipeline, or LLM flows.",
+  "version": "1.0.0",
+  "tags": ["performance", "load-testing", "benchmarking", "scalability", "bottleneck"]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Security Testing Expert",
+  "description": "Use when performing vulnerability testing, API security validation, authentication audits, or OWASP security checks on AgentOS.",
+  "version": "1.0.0",
+  "tags": ["security", "owasp", "vulnerability", "auth", "penetration-testing", "api-security"]
+}
