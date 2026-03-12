@@ -163,6 +163,8 @@ backend\venv\Scripts\activate
 source backend/venv/bin/activate
 
 pip install -r backend/requirements.txt
+# getting pip install error
+python -m pip install -r backend/requirements.txt
 ```
 
 ### 2. Frontend Setup
