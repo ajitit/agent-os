@@ -8,7 +8,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
+import { api, APIResponse } from "@/lib/api";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

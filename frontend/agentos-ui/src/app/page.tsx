@@ -2,6 +2,7 @@
  * File: page.tsx — AgentOS Dashboard / Landing Page
  *
  * Shows all platform capabilities as a navigable card grid.
+ * Updated to include Plans, Marketplace, Audit, and Pipeline.
  */
 import Link from "next/link";
 
@@ -43,7 +44,7 @@ const PRIMARY_CARDS: DashCard[] = [
     href: "/pipeline",
     icon: "⚗️",
     title: "Input Pipeline",
-    description: "9-stage input processing: filter → extract → map → mask → route → classify → aggregate → result → review.",
+    description: "9-stage input processing: filter → extract → map → mask → route → classify → aggregate → result → review. Full long-term memory and ontology stores.",
     color: "from-teal-800/40 to-emerald-900/40",
   },
 ];

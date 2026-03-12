@@ -21,6 +21,7 @@ class MockLLMAdapter(BaseLLMAdapter):
     async def stream(self, request):
         yield "Mocked response"
 
+
 def get_mock_llm_adapter():
     return MockLLMAdapter()
 

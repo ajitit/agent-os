@@ -183,6 +183,7 @@ class VectorSearchEngine:
             logger.error("vector_engine=delete_by_source_failed source=%s error=%s", source_id, exc)
             return False
 
+
     @property
     def available(self) -> bool:
         """Return True if the vector engine is operational.
