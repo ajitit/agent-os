@@ -6,7 +6,8 @@ FROM python:3.11-slim as builder
 WORKDIR /app
 
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --user --timeout=300 --retries=5 -r requirements.txt
 
 # Runtime
 FROM python:3.11-slim as runtime
