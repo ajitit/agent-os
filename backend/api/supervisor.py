@@ -22,7 +22,9 @@ Interacting Files / Modules:
 - backend.core.exceptions
 """
 
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -37,6 +39,8 @@ from backend.api.stores import (
     workflow_update,
 )
 from backend.core.exceptions import NotFoundError, ValidationError
+from backend.core.schemas import APIResponse
+from backend.core.security import get_current_user
 
 router = APIRouter(prefix="/supervisor", tags=["Supervisor & Human-in-the-Loop"])
 
@@ -66,30 +70,42 @@ class HumanDecision(BaseModel):
     modification: dict | None = Field(None, description="Structured modification when decision is modify")
 
 
-@router.get("/workflows")
-def list_workflows():
+@router.get("/workflows", response_model=APIResponse[list])
+async def list_workflows(
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """List all supervised workflows."""
-    return workflow_list()
+    return APIResponse(data=workflow_list())
 
 
-@router.post("/workflows")
-def create_workflow(payload: WorkflowCreate):
+@router.post("/workflows", response_model=APIResponse[dict], status_code=201)
+async def create_workflow(
+    payload: WorkflowCreate,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """Start a new supervised workflow. Supervisor will delegate to agents and may pause for human approval."""
-    return workflow_create(payload.model_dump())
+    return APIResponse(data=workflow_create(payload.model_dump()))
 
 
-@router.get("/workflows/{workflow_id}")
-def get_workflow(workflow_id: str):
+@router.get("/workflows/{workflow_id}", response_model=APIResponse[dict])
+async def get_workflow(
+    workflow_id: str,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """Get workflow status and history."""
     wf = workflow_get(workflow_id)
     if not wf:
         raise NotFoundError("Workflow not found")
     approvals = approval_list_by_workflow(workflow_id)
-    return {**wf, "approvals": approvals}
+    return APIResponse(data={**wf, "approvals": approvals})
 
 
-@router.post("/workflows/{workflow_id}/pause")
-def pause_for_approval(workflow_id: str, payload: ApprovalRequestCreate):
+@router.post("/workflows/{workflow_id}/pause", response_model=APIResponse[dict], status_code=201)
+async def pause_for_approval(
+    workflow_id: str,
+    payload: ApprovalRequestCreate,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """
     Human-in-the-Loop: Create an approval checkpoint.
     Supervisor pauses execution until human responds.
@@ -100,26 +116,36 @@ def pause_for_approval(workflow_id: str, payload: ApprovalRequestCreate):
     data["workflow_id"] = workflow_id
     approval = approval_create(data)
     workflow_update(workflow_id, {"status": "waiting_approval", "pending_approval_id": approval["id"]})
-    return approval
+    return APIResponse(data=approval)
 
 
-@router.get("/approvals")
-def list_pending_approvals(workflow_id: str | None = None):
+@router.get("/approvals", response_model=APIResponse[list])
+async def list_pending_approvals(
+    user: Annotated[dict, Depends(get_current_user)],
+    workflow_id: str | None = None,
+):
     """List approval requests awaiting human decision (Human-in-the-Loop queue)."""
-    return approval_list_pending(workflow_id)
+    return APIResponse(data=approval_list_pending(workflow_id))
 
 
-@router.get("/approvals/{approval_id}")
-def get_approval(approval_id: str):
+@router.get("/approvals/{approval_id}", response_model=APIResponse[dict])
+async def get_approval(
+    approval_id: str,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """Get an approval request details."""
     apr = approval_get(approval_id)
     if not apr:
         raise NotFoundError("Approval not found")
-    return apr
+    return APIResponse(data=apr)
 
 
-@router.post("/approvals/{approval_id}/respond")
-def respond_to_approval(approval_id: str, payload: HumanDecision):
+@router.post("/approvals/{approval_id}/respond", response_model=APIResponse[dict])
+async def respond_to_approval(
+    approval_id: str,
+    payload: HumanDecision,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """
     Human-in-the-Loop: Submit human decision.
     Workflow resumes after approve; stops or branches on reject/modify.
@@ -143,4 +169,4 @@ def respond_to_approval(approval_id: str, payload: HumanDecision):
     wf_id = apr.get("workflow_id")
     if wf_id:
         workflow_update(wf_id, {"status": "running", "pending_approval_id": None})
-    return {"status": "ok", "decision": payload.decision}
+    return APIResponse(data={"status": "ok", "decision": payload.decision})

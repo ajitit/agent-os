@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -32,6 +32,7 @@ from backend.api.stores import (
     tool_data_source_list,
     tool_data_source_remove,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -121,7 +122,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = ds_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = ds_group_members(group_id)
     return APIResponse(data=group)
 
@@ -129,7 +130,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not ds_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -138,7 +139,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not ds_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     ds_group_add_member(group_id, payload.ds_id)
     return APIResponse(data={"group_id": group_id, "ds_id": payload.ds_id})
 
@@ -175,7 +176,7 @@ async def remove_from_tool(tool_id: str, ds_id: str,
 async def get_data_source(ds_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     ds = data_source_get(ds_id)
     if not ds:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data source not found")
+        raise NotFoundError("Data source not found")
     return APIResponse(data=ds)
 
 
@@ -185,7 +186,7 @@ async def update_data_source(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not data_source_get(ds_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data source not found")
+        raise NotFoundError("Data source not found")
     updated = data_source_update(ds_id, payload.model_dump(exclude_none=True))
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.data_source.updated",
                "resourceType": "data_source", "resourceId": ds_id, "outcome": "success"})
@@ -195,6 +196,6 @@ async def update_data_source(
 @router.delete("/{ds_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_data_source(ds_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not data_source_delete(ds_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data source not found")
+        raise NotFoundError("Data source not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.data_source.deleted",
                "resourceType": "data_source", "resourceId": ds_id, "outcome": "success"})

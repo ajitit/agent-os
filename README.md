@@ -35,7 +35,7 @@ AgentOS is a **full-stack AI agent platform** designed to run autonomous multi-a
 ```
 agent-os/
 ├── backend/
-│   ├── api/              # Route handlers
+│   ├── api/              # Route handlers (27 modules)
 │   ├── app/
 │   ├── core/
 │   ├── skills/           # Progressive disclosure loader (Level 1–3)
@@ -53,6 +53,27 @@ agent-os/
 ## API Endpoints
 
 All API routes are prefixed with `/api/v1`. Interactive docs: **http://localhost:8000/api/docs**
+
+### Authentication
+
+JWT Bearer token authentication is **required on all endpoints** except:
+- `GET /api/v1/health` — health check (unauthenticated)
+- `POST /api/v1/auth/login` — obtain token
+- `POST /api/v1/auth/register` — create account
+
+Include the token in the `Authorization` header:
+```
+Authorization: Bearer <token>
+```
+
+Requests without a valid token receive `401 Unauthorized` via the `UnauthorizedError` exception handler.
+
+### Auth
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | /api/v1/auth/login | Obtain JWT token |
+| POST | /api/v1/auth/register | Register new user |
 
 ### Crews & Agents
 
@@ -135,9 +156,24 @@ See [docs/skills/QUICKSTART.md](docs/skills/QUICKSTART.md) for the Progressive D
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
 | POST | /api/v1/tasks | Create task |
-| GET | /api/v1/health | Health check |
+| GET | /api/v1/health | Health check (no auth required) |
 | GET | /api/v1/health/ready | Readiness check |
 | GET | /api/health | Health alias (no version prefix) |
+
+---
+
+## Error Handling
+
+All errors return a consistent `APIError` JSON body with `error`, `detail`, `request_id`, and `code` fields.
+
+| Exception | HTTP Status | When Used |
+| --------- | ----------- | --------- |
+| `UnauthorizedError` | 401 | Missing or invalid JWT token |
+| `NotFoundError` | 404 | Resource not found |
+| `AgentOSValidationError` | 422 | Request validation failure |
+| `AgentOSException` | 500 | Unexpected application error |
+
+`HTTPException` is only used directly for `409 Conflict` cases (e.g., duplicate resource creation).
 
 ---
 
@@ -181,6 +217,8 @@ cp .env.example .env
 # Edit .env as needed
 ```
 
+**Important:** The `JWT_SECRET_KEY` environment variable must be set to a strong secret before deploying to production. If the value remains at its default (`"change-me-in-production"`) in a production environment, the application will raise a `ValueError` on startup and refuse to start. In development and staging environments, a warning is logged if the insecure default is detected.
+
 ---
 
 ## Running the Project
@@ -188,10 +226,14 @@ cp .env.example .env
 ### Option A: Docker (full stack)
 
 ```bash
+### if building new image
+docker-compose build
+
+### if using existing image
 docker compose up
 ```
 
-- Backend: http://localhost:8000  
+- Backend: http://localhost:8000
 - API docs: http://localhost:8000/api/docs
 
 ### Option B: Local development
@@ -262,7 +304,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and code standards.
 
 ## License
 
-MIT License
+Proprietary
 
 ---
 

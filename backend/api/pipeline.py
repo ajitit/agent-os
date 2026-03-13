@@ -33,9 +33,10 @@ from __future__ import annotations
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 from backend.pipeline.dependencies import (
@@ -309,7 +310,7 @@ async def get_run(
     """
     record = orchestrator.run_store.get(run_id)
     if not record:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
+        raise NotFoundError("Run not found")
     return APIResponse(data=record)
 
 
@@ -362,10 +363,7 @@ async def respond_to_review(
     )
     success = orchestrator.resume_review(run_id, feedback)
     if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Run not found or already resolved",
-        )
+        raise NotFoundError("Run not found or already resolved")
     return APIResponse(data={"run_id": run_id, "approved": payload.approved})
 
 
@@ -433,7 +431,7 @@ async def update_filter_pattern(
     """
     updated = store.update(pattern_id, payload.model_dump(exclude_none=True))
     if not updated:
-        raise HTTPException(status_code=404, detail="Filter pattern not found")
+        raise NotFoundError("Filter pattern not found")
     return APIResponse(data=updated.model_dump())
 
 
@@ -457,7 +455,7 @@ async def delete_filter_pattern(
         HTTPException: 404 if pattern_id not found.
     """
     if not store.delete(pattern_id):
-        raise HTTPException(status_code=404, detail="Filter pattern not found")
+        raise NotFoundError("Filter pattern not found")
     return APIResponse(data={"deleted": True})
 
 
@@ -525,7 +523,7 @@ async def update_mask_pattern(
     """
     updated = store.update(pattern_id, payload.model_dump(exclude_none=True))
     if not updated:
-        raise HTTPException(status_code=404, detail="Mask pattern not found")
+        raise NotFoundError("Mask pattern not found")
     return APIResponse(data=updated.model_dump())
 
 
@@ -549,7 +547,7 @@ async def delete_mask_pattern(
         HTTPException: 404 if pattern_id not found.
     """
     if not store.delete(pattern_id):
-        raise HTTPException(status_code=404, detail="Mask pattern not found")
+        raise NotFoundError("Mask pattern not found")
     return APIResponse(data={"deleted": True})
 
 
@@ -620,7 +618,7 @@ async def get_concept(
     """
     concept = store.get(concept_id)
     if not concept:
-        raise HTTPException(status_code=404, detail="Ontology concept not found")
+        raise NotFoundError("Ontology concept not found")
     return APIResponse(data=concept.model_dump())
 
 
@@ -647,7 +645,7 @@ async def update_concept(
     """
     updated = store.update(concept_id, payload.model_dump(exclude_none=True))
     if not updated:
-        raise HTTPException(status_code=404, detail="Ontology concept not found")
+        raise NotFoundError("Ontology concept not found")
     return APIResponse(data=updated.model_dump())
 
 
@@ -671,5 +669,5 @@ async def delete_concept(
         HTTPException: 404 if concept_id not found.
     """
     if not store.delete(concept_id):
-        raise HTTPException(status_code=404, detail="Ontology concept not found")
+        raise NotFoundError("Ontology concept not found")
     return APIResponse(data={"deleted": True})

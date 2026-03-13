@@ -17,7 +17,7 @@ import json
 from collections.abc import AsyncGenerator
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -30,6 +30,8 @@ from backend.api.stores import (
     generate_id,
 )
 from backend.core.engine import get_engine
+from backend.core.exceptions import NotFoundError
+from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
@@ -49,35 +51,35 @@ class ConversationCreate(BaseModel):
     title: str | None = None
 
 
-@router.post("/conversations")
+@router.post("/conversations", response_model=APIResponse[dict])
 async def create_conversation(
     payload: ConversationCreate,
     user: Annotated[dict, Depends(get_current_user)],
 ):
     """Create a new chat conversation."""
     conv = conversation_create({"title": payload.title or "New Chat", "userId": user["id"]})
-    return {"data": conv}
+    return APIResponse(data=conv)
 
 
-@router.get("/conversations")
+@router.get("/conversations", response_model=APIResponse[list])
 async def list_conversations(user: Annotated[dict, Depends(get_current_user)]):
     """List conversations for the current user."""
     convs = conversation_list()
     user_convs = [c for c in convs if c.get("userId") == user["id"]]
-    return {"data": user_convs}
+    return APIResponse(data=user_convs)
 
 
-@router.get("/conversations/{conv_id}/messages")
+@router.get("/conversations/{conv_id}/messages", response_model=APIResponse[list])
 async def get_messages(conv_id: str, user: Annotated[dict, Depends(get_current_user)]):
     """Get message history for a conversation."""
     conv = conversation_get(conv_id)
     if not conv:
-        raise HTTPException(status_code=404, detail="Conversation not found")
+        raise NotFoundError("Conversation not found")
     msgs = conversation_message_list(conv_id)
-    return {"data": msgs}
+    return APIResponse(data=msgs)
 
 
-@router.post("/send")
+@router.post("/send", response_model=APIResponse[dict])
 async def send_message(
     payload: SendMessageRequest,
     user: Annotated[dict, Depends(get_current_user)],
@@ -106,17 +108,20 @@ async def send_message(
         _run_workflow(run_id, payload.message, user["id"], conv_id, q)
     )
 
-    return {"data": {"runId": run_id, "status": "started"}}
+    return APIResponse(data={"runId": run_id, "status": "started"})
 
 
 @router.get("/stream/{run_id}")
-async def stream_run(run_id: str):
+async def stream_run(
+    run_id: str,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """
     SSE endpoint — streams execution events for a given run_id.
     Client subscribes after POST /chat/send.
     """
     if run_id not in _run_queues:
-        raise HTTPException(status_code=404, detail="Run not found")
+        raise NotFoundError("Run not found")
 
     async def event_generator() -> AsyncGenerator[str, None]:
         q = _run_queues[run_id]

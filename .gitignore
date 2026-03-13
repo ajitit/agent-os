@@ -16,11 +16,19 @@ chroma_db/
 #Claude
 .claude/*
 
+#Vscode
+.vscode/*
+
 # node
 node_modules/
 # Temporary output files
-text_out*.txt
-verification_out*.txt
+pytest_err*.txt
 pytest_out*.txt
+pytest_debug*.txt
+text_out*.txt
+test_diagnostics*.txt
+test_res_utf8*.txt
+est_results*.txt
+verification_out*.txt
 code_files.txt
 remove-files.txt

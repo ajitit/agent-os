@@ -22,9 +22,12 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from pydantic import BaseModel, Field
 
+from backend.core.exceptions import NotFoundError
+from backend.core.schemas import APIResponse
+from backend.core.security import get_current_user
 from backend.knowledge.manager import SourceManager
 from backend.knowledge.vector import VectorSearchEngine
 
@@ -109,13 +112,15 @@ async def create_source(
     item: SourceCreateItem,
     background_tasks: BackgroundTasks,
     mgr: Annotated[SourceManager, Depends(get_manager)],
-) -> dict[str, Any]:
+    user: Annotated[dict, Depends(get_current_user)],
+) -> APIResponse[dict]:
     """Ingest a new knowledge source.
 
     Args:
         item: Source creation request.
         background_tasks: FastAPI background task runner.
         mgr: SourceManager dependency.
+        user: Authenticated user (injected by FastAPI).
 
     Returns:
         Created source record.
@@ -129,18 +134,20 @@ async def create_source(
     if item.url:
         background_tasks.add_task(mgr.process_source, source["id"])
     logger.info("knowledge=source_created id=%s type=%s", source["id"], item.type)
-    return source
+    return APIResponse(data=source)
 
 
 @router.get("/sources")
-def list_sources(
+async def list_sources(
     mgr: Annotated[SourceManager, Depends(get_manager)],
+    user: Annotated[dict, Depends(get_current_user)],
     type: str | None = None,
-) -> list[dict[str, Any]]:
+) -> APIResponse[list]:
     """List knowledge sources with optional type filter.
 
     Args:
         mgr: SourceManager dependency.
+        user: Authenticated user (injected by FastAPI).
         type: Optional source type to filter on.
 
     Returns:
@@ -149,25 +156,27 @@ def list_sources(
     filters: dict[str, Any] = {}
     if type:
         filters["type"] = type
-    return mgr.list_sources(filters)  # type: ignore[return-value]
+    return APIResponse(data=mgr.list_sources(filters))  # type: ignore[return-value]
 
 
 @router.delete("/sources/{source_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_source(
+async def delete_source(
     source_id: str,
     mgr: Annotated[SourceManager, Depends(get_manager)],
+    user: Annotated[dict, Depends(get_current_user)],
 ) -> None:
     """Remove a knowledge source and its stored chunks.
 
     Args:
         source_id: Source UUID.
         mgr: SourceManager dependency.
+        user: Authenticated user (injected by FastAPI).
 
     Raises:
-        HTTPException: 404 if source not found.
+        NotFoundError: If source not found.
     """
     if not mgr.delete_source(source_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Source not found")
+        raise NotFoundError("Source not found")
     logger.info("knowledge=source_deleted id=%s", source_id)
 
 
@@ -176,31 +185,35 @@ async def refresh_source(
     source_id: str,
     background_tasks: BackgroundTasks,
     mgr: Annotated[SourceManager, Depends(get_manager)],
-) -> dict[str, str]:
+    user: Annotated[dict, Depends(get_current_user)],
+) -> APIResponse[dict]:
     """Queue a source for re-processing in the background.
 
     Args:
         source_id: Source UUID.
         background_tasks: FastAPI background task runner.
         mgr: SourceManager dependency.
+        user: Authenticated user (injected by FastAPI).
 
     Returns:
         Status message.
     """
     background_tasks.add_task(mgr.process_source, source_id)
-    return {"status": "refreshing"}
+    return APIResponse(data={"status": "refreshing"})
 
 
 @router.post("/search")
-def search_knowledge(
+async def search_knowledge(
     query: SearchQuery,
     engine: Annotated[VectorSearchEngine, Depends(get_vector_engine)],
-) -> dict[str, Any]:
+    user: Annotated[dict, Depends(get_current_user)],
+) -> APIResponse[dict]:
     """Perform semantic search over ingested knowledge chunks.
 
     Args:
         query: Search request with query text and optional filters.
         engine: VectorSearchEngine dependency.
+        user: Authenticated user (injected by FastAPI).
 
     Returns:
         Dict with ``results`` list of matching chunks.
@@ -210,4 +223,4 @@ def search_knowledge(
         n_results=query.top_k,
         where=query.filters,
     )
-    return {"results": results}
+    return APIResponse(data={"results": results})

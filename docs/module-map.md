@@ -35,7 +35,7 @@
 ### Backend Module
 - **Directory:** `backend/`
 - **Key Files:**
-  - `app/main.py` — FastAPI factory + 26 routers
+  - `app/main.py` — FastAPI factory + 27 routers
   - `core/config.py` — Pydantic Settings
   - `core/schemas.py` — APIResponse[T] envelope
   - `core/exceptions.py` — AgentOSException + handlers

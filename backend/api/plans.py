@@ -40,6 +40,7 @@ from backend.api.stores import (
     plan_task_update,
     plan_update,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
 
@@ -149,7 +150,7 @@ def _get_or_404(plan_id: str) -> dict[str, Any]:
     """
     plan = plan_get(plan_id)
     if not plan:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Plan not found")
+        raise NotFoundError("Plan not found")
     return plan
 
 
@@ -448,7 +449,7 @@ async def add_plan_task(
 
     task = plan_task_add(plan_id, task_data)
     if not task:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Plan not found")
+        raise NotFoundError("Plan not found")
 
     audit_log({
         "actorType": "human",
@@ -499,7 +500,7 @@ async def update_plan_task(
 
     task = plan_task_update(plan_id, task_id, remapped)
     if not task:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+        raise NotFoundError("Task not found")
 
     audit_log({
         "actorType": "human",

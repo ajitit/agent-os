@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -32,6 +32,7 @@ from backend.api.stores import (
     kg_list,
     kg_update,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -120,7 +121,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = kg_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = kg_group_members(group_id)
     return APIResponse(data=group)
 
@@ -128,7 +129,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not kg_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -137,7 +138,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not kg_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     kg_group_add_member(group_id, payload.kg_id)
     return APIResponse(data={"group_id": group_id, "kg_id": payload.kg_id})
 
@@ -174,7 +175,7 @@ async def remove_from_agent(agent_id: str, kg_id: str,
 async def get_kg(kg_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     kg = kg_get(kg_id)
     if not kg:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Knowledge graph not found")
+        raise NotFoundError("Knowledge graph not found")
     return APIResponse(data=kg)
 
 
@@ -184,7 +185,7 @@ async def update_kg(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not kg_get(kg_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Knowledge graph not found")
+        raise NotFoundError("Knowledge graph not found")
     data = payload.model_dump(exclude_none=True)
     if "endpoint_url" in data:
         data["endpointUrl"] = data.pop("endpoint_url")
@@ -199,6 +200,6 @@ async def update_kg(
 @router.delete("/{kg_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_kg(kg_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not kg_delete(kg_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Knowledge graph not found")
+        raise NotFoundError("Knowledge graph not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.kg.deleted",
                "resourceType": "knowledge_graph", "resourceId": kg_id, "outcome": "success"})

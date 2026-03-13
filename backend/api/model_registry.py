@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -32,6 +32,7 @@ from backend.api.stores import (
     model_registry_list,
     model_registry_update,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -118,7 +119,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = model_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = model_group_members(group_id)
     return APIResponse(data=group)
 
@@ -126,7 +127,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not model_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -135,7 +136,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not model_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     model_group_add_member(group_id, payload.model_id)
     return APIResponse(data={"group_id": group_id, "model_id": payload.model_id})
 
@@ -172,7 +173,7 @@ async def remove_from_agent(agent_id: str, model_id: str,
 async def get_model(model_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     model = model_registry_get(model_id)
     if not model:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     return APIResponse(data=model)
 
 
@@ -182,7 +183,7 @@ async def update_model(
     user: Annotated[dict[str, Any], Depends(check_role(["admin"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not model_registry_get(model_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     updated = model_registry_update(model_id, payload.model_dump(exclude_none=True))
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.model.updated",
                "resourceType": "model", "resourceId": model_id, "outcome": "success"})
@@ -192,6 +193,6 @@ async def update_model(
 @router.delete("/{model_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_model(model_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not model_registry_delete(model_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.model.deleted",
                "resourceType": "model", "resourceId": model_id, "outcome": "success"})

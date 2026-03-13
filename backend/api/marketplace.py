@@ -40,7 +40,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -64,6 +64,7 @@ from backend.api.stores import (
     tool_registry_list,
     tool_registry_update,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -259,7 +260,7 @@ async def get_skill(
     """
     skill = skill_registry_get(skill_id)
     if not skill:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     return APIResponse(data=skill)
 
 
@@ -283,7 +284,7 @@ async def update_skill(
         HTTPException: 404 if not found.
     """
     if not skill_registry_get(skill_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     data = payload.model_dump(exclude_none=True)
     if "config_schema" in data:
         data["configSchema"] = data.pop("config_schema")
@@ -314,7 +315,7 @@ async def delete_skill(
         HTTPException: 404 if not found.
     """
     if not skill_registry_delete(skill_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],
@@ -344,7 +345,7 @@ async def install_skill(
     """
     updated = skill_registry_install(skill_id)
     if not updated:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],
@@ -428,7 +429,7 @@ async def get_model(
     """
     model = model_registry_get(model_id)
     if not model:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     return APIResponse(data=model)
 
 
@@ -452,7 +453,7 @@ async def update_model(
         HTTPException: 404 if not found.
     """
     if not model_registry_get(model_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     data = payload.model_dump(exclude_none=True)
     if "config_schema" in data:
         data["configSchema"] = data.pop("config_schema")
@@ -483,7 +484,7 @@ async def delete_model(
         HTTPException: 404 if not found.
     """
     if not model_registry_delete(model_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],
@@ -513,7 +514,7 @@ async def install_model(
     """
     updated = model_registry_install(model_id)
     if not updated:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Model not found")
+        raise NotFoundError("Model not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],
@@ -597,7 +598,7 @@ async def get_tool(
     """
     tool = tool_registry_get(tool_id)
     if not tool:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     return APIResponse(data=tool)
 
 
@@ -621,7 +622,7 @@ async def update_tool(
         HTTPException: 404 if not found.
     """
     if not tool_registry_get(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     data = payload.model_dump(exclude_none=True)
     for old, new in [("input_schema", "inputSchema"), ("output_schema", "outputSchema"), ("config_schema", "configSchema")]:
         if old in data:
@@ -653,7 +654,7 @@ async def delete_tool(
         HTTPException: 404 if not found.
     """
     if not tool_registry_delete(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],
@@ -683,7 +684,7 @@ async def install_tool(
     """
     updated = tool_registry_install(tool_id)
     if not updated:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     audit_log({
         "actorType": "human",
         "actorId": user["id"],

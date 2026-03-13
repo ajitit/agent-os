@@ -66,6 +66,13 @@ class ValidationError(AgentOSException):
         super().__init__(message, status.HTTP_422_UNPROCESSABLE_CONTENT, "VALIDATION_ERROR")
 
 
+class UnauthorizedError(AgentOSException):
+    """Unauthorized access."""
+
+    def __init__(self, message: str = "Unauthorized"):
+        super().__init__(message, status.HTTP_401_UNAUTHORIZED, "UNAUTHORIZED")
+
+
 async def agentos_exception_handler(request: Request, exc: AgentOSException) -> JSONResponse:
     """Handle AgentOS exceptions."""
     from backend.core.logging_config import request_id_ctx

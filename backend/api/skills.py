@@ -26,12 +26,15 @@ Interacting Files / Modules:
 """
 
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
 from backend.core.config import Settings, get_settings
 from backend.core.exceptions import NotFoundError
+from backend.core.schemas import APIResponse
+from backend.core.security import get_current_user
 from backend.skills.loader import SkillLoader
 from backend.skills.models import SkillListResponse
 
@@ -46,18 +49,25 @@ def get_skill_loader(settings: Settings = Depends(get_settings)) -> SkillLoader:
     return SkillLoader(base)
 
 
-@router.get("", response_model=SkillListResponse)
-def list_skills(loader: SkillLoader = Depends(get_skill_loader)) -> SkillListResponse:
+@router.get("", response_model=APIResponse[SkillListResponse])
+async def list_skills(
+    user: Annotated[dict, Depends(get_current_user)],
+    loader: SkillLoader = Depends(get_skill_loader),
+) -> APIResponse[SkillListResponse]:
     """
     Level 1: Get metadata for all skills (~100 tokens each).
     Use in system prompt so agent can decide which skill to use.
     """
     skills = loader.list_metadata()
-    return SkillListResponse(skills=skills, total=len(skills))
+    return APIResponse(data=SkillListResponse(skills=skills, total=len(skills)))
 
 
-@router.get("/{skill_id}")
-def get_skill(skill_id: str, loader: SkillLoader = Depends(get_skill_loader)):
+@router.get("/{skill_id}", response_model=APIResponse[dict])
+async def get_skill(
+    skill_id: str,
+    user: Annotated[dict, Depends(get_current_user)],
+    loader: SkillLoader = Depends(get_skill_loader),
+):
     """
     Level 2: Get full skill with instructions (SKILL.md).
     Load when agent chooses to use the skill.
@@ -65,13 +75,14 @@ def get_skill(skill_id: str, loader: SkillLoader = Depends(get_skill_loader)):
     skill = loader.get_skill(skill_id)
     if not skill:
         raise NotFoundError("Skill not found")
-    return skill.model_dump()
+    return APIResponse(data=skill.model_dump())
 
 
 @router.get("/{skill_id}/resources/{resource_path:path}")
-def get_resource(
+async def get_resource(
     skill_id: str,
     resource_path: str,
+    user: Annotated[dict, Depends(get_current_user)],
     loader: SkillLoader = Depends(get_skill_loader),
 ):
     """

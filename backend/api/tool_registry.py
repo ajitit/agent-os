@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -41,6 +41,7 @@ from backend.api.stores import (
     tool_remote_api_list,
     tool_remote_api_remove,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -137,7 +138,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = tool_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = tool_group_members(group_id)
     return APIResponse(data=group)
 
@@ -145,7 +146,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not tool_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -154,7 +155,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not tool_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     tool_group_add_member(group_id, payload.tool_id)
     return APIResponse(data={"group_id": group_id, "tool_id": payload.tool_id})
 
@@ -198,7 +199,7 @@ async def assign_mcp_server(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not tool_registry_get(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     tool_mcp_assign(tool_id, payload.server_id)
     return APIResponse(data={"tool_id": tool_id, "server_id": payload.server_id})
 
@@ -220,7 +221,7 @@ async def assign_remote_api(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not tool_registry_get(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     tool_remote_api_assign(tool_id, payload.api_id)
     return APIResponse(data={"tool_id": tool_id, "api_id": payload.api_id})
 
@@ -242,7 +243,7 @@ async def assign_data_source(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not tool_registry_get(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     tool_data_source_assign(tool_id, payload.ds_id)
     return APIResponse(data={"tool_id": tool_id, "ds_id": payload.ds_id})
 
@@ -257,7 +258,7 @@ async def remove_data_source(tool_id: str, ds_id: str,
 async def get_tool(tool_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     tool = tool_registry_get(tool_id)
     if not tool:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     return APIResponse(data=tool)
 
 
@@ -267,7 +268,7 @@ async def update_tool(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not tool_registry_get(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     updated = tool_registry_update(tool_id, payload.model_dump(exclude_none=True))
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.tool.updated",
                "resourceType": "tool", "resourceId": tool_id, "outcome": "success"})
@@ -277,6 +278,6 @@ async def update_tool(
 @router.delete("/{tool_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tool(tool_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not tool_registry_delete(tool_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tool not found")
+        raise NotFoundError("Tool not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.tool.deleted",
                "resourceType": "tool", "resourceId": tool_id, "outcome": "success"})

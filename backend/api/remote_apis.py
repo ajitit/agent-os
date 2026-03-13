@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -32,6 +32,7 @@ from backend.api.stores import (
     tool_remote_api_list,
     tool_remote_api_remove,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -123,7 +124,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = api_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = api_group_members(group_id)
     return APIResponse(data=group)
 
@@ -131,7 +132,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not api_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -140,7 +141,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not api_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     api_group_add_member(group_id, payload.api_id)
     return APIResponse(data={"group_id": group_id, "api_id": payload.api_id})
 
@@ -177,7 +178,7 @@ async def remove_from_tool(tool_id: str, api_id: str,
 async def get_remote_api(api_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     api_obj = remote_api_get(api_id)
     if not api_obj:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Remote API not found")
+        raise NotFoundError("Remote API not found")
     return APIResponse(data=api_obj)
 
 
@@ -187,7 +188,7 @@ async def update_remote_api(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not remote_api_get(api_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Remote API not found")
+        raise NotFoundError("Remote API not found")
     data = payload.model_dump(exclude_none=True)
     if "base_url" in data:
         data["baseUrl"] = data.pop("base_url")
@@ -204,6 +205,6 @@ async def update_remote_api(
 @router.delete("/{api_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_remote_api(api_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not remote_api_delete(api_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Remote API not found")
+        raise NotFoundError("Remote API not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.remote_api.deleted",
                "resourceType": "remote_api", "resourceId": api_id, "outcome": "success"})

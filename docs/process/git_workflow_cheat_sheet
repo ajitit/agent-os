@@ -1,0 +1,61 @@
+# Git Commands Cheat Sheet for AI + Manual Workflow
+
+This cheat sheet contains the exact Git commands to manage your AI and manual development workflow efficiently.
+
+---
+
+## 1. Agent Feature Branch Creation
+
+```bash
+# Switch to main and pull latest
+git checkout main
+git pull origin main
+
+# Create new agent feature branch
+git checkout -b agent-feature/<feature-name>
+2. AI Commits Code
+git add .
+git commit -m "AI: Implemented <feature-name>"
+git push -u origin agent-feature/<feature-name>
+3. Manual Review Branch
+# Create manual branch from agent branch
+git checkout agent-feature/<feature-name>
+git checkout -b manual-feature/<feature-name>
+4. Manual Review & Testing
+# Make changes, add tests, fix bugs
+git add .
+git commit -m "Manual: Reviewed and tested <feature-name>"
+git push -u origin manual-feature/<feature-name>
+Optional: Rebase if main has changed
+git fetch origin
+git rebase origin/main
+5. Merge Manual Branch into Main
+# Switch to main and pull latest
+git checkout main
+git pull origin main
+
+# Merge manual branch
+git merge manual-feature/<feature-name> --no-ff
+
+# Push main
+git push origin main
+6. Next AI Feature Branch
+# Start new AI feature branch from updated main
+git checkout main
+git pull origin main
+git checkout -b agent-feature/<next-feature>
+7. Cleaning Up Old Branches
+# Delete local branches
+git branch -d agent-feature/<feature-name>
+git branch -d manual-feature/<feature-name>
+
+# Delete remote branches
+git push origin --delete agent-feature/<feature-name>
+git push origin --delete manual-feature/<feature-name>
+
+Tips
+
+Always pull latest main before starting a new branch.
+Keep branches short-lived.
+Test thoroughly on manual branch before merging.
+Use descriptive branch names like agent-feature/login-auth or manual-feature/login-auth-review.

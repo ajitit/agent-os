@@ -23,10 +23,11 @@ import io
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 
 from backend.api.stores import audit_get, audit_list, audit_stats
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
 
@@ -194,8 +195,5 @@ async def get_audit_event(
     """
     event = audit_get(audit_id)
     if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Audit event not found",
-        )
+        raise NotFoundError("Audit event not found")
     return APIResponse(data=event)

@@ -22,6 +22,7 @@ from backend.api.stores import (
     run_list,
     span_list_by_run,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import get_current_user
 
@@ -51,7 +52,6 @@ async def get_run(run_id: str, user: Annotated[dict, Depends(get_current_user)])
     """Get a single run with its spans (trace detail)."""
     run = run_get(run_id)
     if not run:
-        from backend.core.exceptions import NotFoundError
         raise NotFoundError("Run not found")
     spans = span_list_by_run(run_id)
     return APIResponse(data={**run, "spans": spans})

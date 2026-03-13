@@ -7,11 +7,12 @@ Defines the REST API endpoints for user authentication.
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
 
 from backend.api.stores import user_create, user_get_by_email
+from backend.core.exceptions import NotFoundError, UnauthorizedError, ValidationError as AgentOSValidationError
 from backend.core.schemas import APIResponse
 from backend.core.security import (
     create_access_token,
@@ -45,7 +46,7 @@ class APIKeyResponse(BaseModel):
 @router.post("/register", response_model=APIResponse[dict])
 async def register(payload: UserRegister):
     if user_get_by_email(payload.email):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        raise AgentOSValidationError("Email already registered")
     user_data = payload.model_dump()
     user_data["hashed_password"] = hash_password(user_data.pop("password"))
     user = user_create(user_data)
@@ -57,7 +58,7 @@ async def register(payload: UserRegister):
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = user_get_by_email(form_data.username)
     if not user or not verify_password(form_data.password, user.get("hashed_password")):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+        raise UnauthorizedError("Incorrect email or password")
     access_token = create_access_token(data={"sub": user["id"]})
     return APIResponse(data=Token(access_token=access_token, role=user.get("role", "operator")))
 
@@ -79,7 +80,7 @@ async def delete_key(key_id: str, user: Annotated[dict, Depends(get_current_user
     # Verify ownership before delete
     user_keys = api_key_list(user["id"])
     if not any(k["id"] == key_id for k in user_keys):
-        raise HTTPException(status_code=404, detail="API Key not found or access denied")
+        raise NotFoundError("API Key not found or access denied")
 
     success = api_key_delete(key_id)
     return APIResponse(data={"success": success})

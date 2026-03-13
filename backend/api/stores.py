@@ -1855,3 +1855,25 @@ def tool_data_source_assign(tool_id: str, ds_id: str) -> bool:
 def tool_data_source_remove(tool_id: str, ds_id: str) -> bool:
     _tool_data_sources[tool_id].discard(ds_id)
     return True
+
+
+# Settings store
+_settings_store: dict[str, Any] = {
+    "primary_model": "gpt-4",
+    "available_models": [
+        {"id": "gpt-4", "name": "GPT-4", "provider": "OpenAI"},
+        {"id": "gpt-4o", "name": "GPT-4o", "provider": "OpenAI"},
+        {"id": "claude-3-5-sonnet", "name": "Claude 3.5 Sonnet", "provider": "Anthropic"},
+        {"id": "claude-3-opus", "name": "Claude 3 Opus", "provider": "Anthropic"},
+        {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro", "provider": "Google"},
+    ],
+}
+
+
+def settings_get() -> dict[str, Any]:
+    return dict(_settings_store)
+
+
+def settings_update(data: dict[str, Any]) -> dict[str, Any]:
+    _settings_store.update(data)
+    return dict(_settings_store)

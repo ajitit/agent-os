@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from backend.api.stores import (
@@ -32,6 +32,7 @@ from backend.api.stores import (
     skill_registry_list,
     skill_registry_update,
 )
+from backend.core.exceptions import NotFoundError
 from backend.core.schemas import APIResponse
 from backend.core.security import check_role, get_current_user
 
@@ -118,7 +119,7 @@ async def update_group(
 ) -> APIResponse[dict[str, Any]]:
     group = skill_group_update(group_id, payload.model_dump(exclude_none=True))
     if not group:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     group["members"] = skill_group_members(group_id)
     return APIResponse(data=group)
 
@@ -126,7 +127,7 @@ async def update_group(
 @router.delete("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(group_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not skill_group_delete(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
 
 
 @router.post("/groups/{group_id}/members", response_model=APIResponse[dict[str, Any]])
@@ -136,7 +137,7 @@ async def add_member(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not skill_group_get(group_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        raise NotFoundError("Group not found")
     skill_group_add_member(group_id, payload.skill_id)
     return APIResponse(data={"group_id": group_id, "skill_id": payload.skill_id})
 
@@ -174,7 +175,7 @@ async def remove_from_agent(agent_id: str, skill_id: str,
 async def get_skill(skill_id: str, user: Annotated[dict[str, Any], Depends(get_current_user)]) -> APIResponse[dict[str, Any]]:
     skill = skill_registry_get(skill_id)
     if not skill:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     return APIResponse(data=skill)
 
 
@@ -185,7 +186,7 @@ async def update_skill(
     user: Annotated[dict[str, Any], Depends(check_role(["admin", "developer"]))],
 ) -> APIResponse[dict[str, Any]]:
     if not skill_registry_get(skill_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     updated = skill_registry_update(skill_id, payload.model_dump(exclude_none=True))
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.skill.updated",
                "resourceType": "skill", "resourceId": skill_id, "outcome": "success"})
@@ -195,6 +196,6 @@ async def update_skill(
 @router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_skill(skill_id: str, user: Annotated[dict[str, Any], Depends(check_role(["admin"]))]) -> None:
     if not skill_registry_delete(skill_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        raise NotFoundError("Skill not found")
     audit_log({"actorType": "human", "actorId": user["id"], "action": "registry.skill.deleted",
                "resourceType": "skill", "resourceId": skill_id, "outcome": "success"})

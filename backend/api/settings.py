@@ -19,22 +19,16 @@ Interacting Files / Modules:
 - None
 """
 
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
-router = APIRouter(prefix="/settings", tags=["Settings"])
+from backend.api.stores import settings_get, settings_update
+from backend.core.schemas import APIResponse
+from backend.core.security import get_current_user
 
-# In-memory global settings (use DB in production)
-_global_settings: dict = {
-    "primary_model": "gpt-4",
-    "available_models": [
-        {"id": "gpt-4", "name": "GPT-4", "provider": "OpenAI"},
-        {"id": "gpt-4o", "name": "GPT-4o", "provider": "OpenAI"},
-        {"id": "claude-3-5-sonnet", "name": "Claude 3.5 Sonnet", "provider": "Anthropic"},
-        {"id": "claude-3-opus", "name": "Claude 3 Opus", "provider": "Anthropic"},
-        {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro", "provider": "Google"},
-    ],
-}
+router = APIRouter(prefix="/settings", tags=["Settings"])
 
 
 class ModelSettingsUpdate(BaseModel):
@@ -43,14 +37,19 @@ class ModelSettingsUpdate(BaseModel):
     primary_model: str = Field(..., min_length=1, description="Model ID e.g. gpt-4, claude-3-5-sonnet")
 
 
-@router.get("/models")
-def get_model_settings():
+@router.get("/models", response_model=APIResponse[dict])
+async def get_model_settings(
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """Get available models and current primary model."""
-    return _global_settings
+    return APIResponse(data=settings_get())
 
 
-@router.put("/models")
-def update_primary_model(payload: ModelSettingsUpdate):
+@router.put("/models", response_model=APIResponse[dict])
+async def update_primary_model(
+    payload: ModelSettingsUpdate,
+    user: Annotated[dict, Depends(get_current_user)],
+):
     """Set primary orchestration LLM for the system."""
-    _global_settings["primary_model"] = payload.primary_model
-    return _global_settings
+    settings_update({"primary_model": payload.primary_model})
+    return APIResponse(data=settings_get())

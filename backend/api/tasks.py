@@ -17,8 +17,13 @@ Outputs:
 Interacting Files / Modules:
 - None
 """
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+
+from backend.core.schemas import APIResponse
+from backend.core.security import get_current_user
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -36,7 +41,10 @@ class TaskResponse(BaseModel):
     status: str
 
 
-@router.post("", response_model=TaskResponse)
-def create_task(req: TaskRequest) -> TaskResponse:
+@router.post("", response_model=APIResponse[TaskResponse])
+async def create_task(
+    req: TaskRequest,
+    user: Annotated[dict, Depends(get_current_user)],
+) -> APIResponse[TaskResponse]:
     """Create a new agent task."""
-    return TaskResponse(goal=req.goal, status="queued")
+    return APIResponse(data=TaskResponse(goal=req.goal, status="queued"))
