@@ -1,7 +1,7 @@
 /**
  * File: Nav.tsx
  *
- * Top navigation bar for AgentOS UI.
+ * Top navigation bar for Vishwakarma UI.
  * Includes all primary routes: Chat, Pipeline, Workflows, Plans, Marketplace,
  * Audit, Observability, Agents, and Settings dropdown.
  */
@@ -75,7 +75,7 @@ export function Nav() {
           className="flex items-center gap-2 text-white font-bold text-lg tracking-tight shrink-0"
         >
           <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-sm">⚡</span>
-          AgentOS
+          Vishwakarma
         </Link>
 
         {/* Primary links */}

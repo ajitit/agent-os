@@ -48,5 +48,5 @@ Structured review report:
 
 ## Resources
 - `resources/code_review_checklist.md` — complete review checklist
-- `resources/architecture_rules.md` — AgentOS-specific architecture rules
+- `resources/architecture_rules.md` — Vishwakarma-specific architecture rules
 - `resources/clean_code_guidelines.md` — naming, size, complexity guidelines

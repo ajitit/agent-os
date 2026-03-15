@@ -28,7 +28,7 @@ interface Plan {
 const API = "/api/v1";
 
 function getToken(): string {
-  return typeof window !== "undefined" ? localStorage.getItem("agentos_token") ?? "" : "";
+  return typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") ?? "" : "";
 }
 
 async function apiFetch<T>(path: string, opts?: RequestInit): Promise<T> {

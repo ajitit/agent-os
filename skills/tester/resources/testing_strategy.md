@@ -1,4 +1,4 @@
-# AgentOS Testing Strategy
+# Vishwakarma Testing Strategy
 
 ## Test Pyramid
 ```

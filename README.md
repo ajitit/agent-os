@@ -1,8 +1,8 @@
-# AgentOS v1.0
+# Vishwakarma v1.0
 
 ## Enterprise Multi-Agent AI Operating System
 
-AgentOS is a **full-stack AI agent platform** designed to run autonomous multi-agent workflows using modern AI infrastructure. It provides orchestration, crews, agents, MCP tools, conversations, storage, and a web console to build and operate intelligent agents.
+Vishwakarma is a **full-stack AI agent platform** designed to run autonomous multi-agent workflows using modern AI infrastructure. It provides orchestration, crews, agents, MCP tools, conversations, storage, and a web console to build and operate intelligent agents.
 
 ---
 

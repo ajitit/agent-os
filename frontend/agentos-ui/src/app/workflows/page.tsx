@@ -61,7 +61,7 @@ export default function WorkflowsPage() {
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
   useEffect(() => { loadWorkflows(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

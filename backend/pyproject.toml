@@ -1,7 +1,7 @@
 [project]
-name = "agentos-backend"
+name = "vishwakarma-backend"
 version = "1.0.0"
-description = "AgentOS - Enterprise Multi-Agent AI Operating System API"
+description = "Vishwakarma - Enterprise Multi-Agent AI Operating System API"
 license = "Proprietary"
 readme = "README.md"
 requires-python = ">=3.11"

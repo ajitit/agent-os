@@ -13,7 +13,7 @@ export default function APIKeysPage() {
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const [revealed, setRevealed] = useState<string | null>(null);
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
   async function loadKeys() {
     if (!token) return;

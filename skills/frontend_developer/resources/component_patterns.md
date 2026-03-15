@@ -1,4 +1,4 @@
-# React Component Patterns for AgentOS
+# React Component Patterns for Vishwakarma
 
 ## Standard Page Component
 ```tsx

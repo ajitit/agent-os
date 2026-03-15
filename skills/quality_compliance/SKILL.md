@@ -1,7 +1,7 @@
 # Quality & Compliance Skill
 
 ## Purpose
-Use this skill when auditing AgentOS code and documentation for coding standards compliance, documentation completeness, API consistency, and governance requirements.
+Use this skill when auditing Vishwakarma code and documentation for coding standards compliance, documentation completeness, API consistency, and governance requirements.
 
 ## Context Sources
 - `docs/development-rules.md` — all standards and conventions

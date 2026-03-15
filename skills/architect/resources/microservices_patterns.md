@@ -1,7 +1,7 @@
 # Service Decomposition Patterns
 
 ## Current State (Monolith)
-AgentOS backend is a single FastAPI service. All modules in one process.
+Vishwakarma backend is a single FastAPI service. All modules in one process.
 
 ## Decomposition Candidates (Future)
 | Service | Trigger | Boundary |

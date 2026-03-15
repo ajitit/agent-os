@@ -1,7 +1,7 @@
 # Security Testing Expert Skill
 
 ## Purpose
-Use this skill when performing security assessments, vulnerability testing, authentication audits, or OWASP validation on AgentOS API endpoints, authentication flows, and data handling.
+Use this skill when performing security assessments, vulnerability testing, authentication audits, or OWASP validation on Vishwakarma API endpoints, authentication flows, and data handling.
 
 ## Context Sources
 - `docs/ARCHITECTURE.md` — auth layer, external dependencies, deployment model
@@ -47,4 +47,4 @@ Security assessment report:
 
 ## Resources
 - `resources/owasp_top10_checklist.md` — OWASP Top 10 validation checklist
-- `resources/security_testing_methods.md` — test procedures for AgentOS
+- `resources/security_testing_methods.md` — test procedures for Vishwakarma

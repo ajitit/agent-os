@@ -1,6 +1,6 @@
-# Contributing to AgentOS
+# Contributing to Vishwakarma
 
-Thank you for contributing to AgentOS. This document outlines our development workflow and standards.
+Thank you for contributing to Vishwakarma. This document outlines our development workflow and standards.
 
 ## Prerequisites
 

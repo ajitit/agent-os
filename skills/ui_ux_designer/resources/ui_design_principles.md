@@ -1,4 +1,4 @@
-# AgentOS UI Design Principles
+# Vishwakarma UI Design Principles
 
 ## Visual Language
 - **Framework:** Tailwind v4 — use utility classes only; no inline styles

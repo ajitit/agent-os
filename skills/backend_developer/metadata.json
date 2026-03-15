@@ -1,6 +1,6 @@
 {
   "name": "Backend Developer",
-  "description": "Use when implementing API endpoints, service logic, LLM integrations, pipeline stages, knowledge operations, or data store interactions in the AgentOS FastAPI backend.",
+  "description": "Use when implementing API endpoints, service logic, LLM integrations, pipeline stages, knowledge operations, or data store interactions in the Vishwakarma FastAPI backend.",
   "version": "1.0.0",
   "tags": ["backend", "fastapi", "python", "api", "llm", "pipeline"]
 }

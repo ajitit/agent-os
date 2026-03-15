@@ -1,4 +1,4 @@
-# AgentOS Architecture Patterns
+# Vishwakarma Architecture Patterns
 
 ## 1. Registry Pattern
 Used for all manageable resources (tools, models, skills, MCP servers, etc.)

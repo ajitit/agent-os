@@ -2,7 +2,7 @@
 File: schemas.py
 
 Purpose:
-Defines generic Pydantic models for standardizing API responses across the AgentOS project.
+Defines generic Pydantic models for standardizing API responses across the Vishwakarma project.
 
 Key Functionalities:
 - Generic `APIResponse` model for standard envelope structure.

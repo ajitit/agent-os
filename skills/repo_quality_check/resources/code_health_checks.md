@@ -1,4 +1,4 @@
-# Code Health Checks — AgentOS
+# Code Health Checks — Vishwakarma
 
 ## Anti-Pattern Scan Commands
 

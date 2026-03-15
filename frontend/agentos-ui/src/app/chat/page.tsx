@@ -62,7 +62,7 @@ export default function ChatPage() {
   }
 
   useEffect(() => {
-    const t = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+    const t = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(t);
     if (t) loadConversations(t);

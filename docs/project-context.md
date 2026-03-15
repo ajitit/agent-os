@@ -1,7 +1,7 @@
-# AgentOS — Project Context
+# Vishwakarma — Project Context
 
 ## Project Name
-AgentOS v1.0 — Enterprise Multi-Agent AI Operating System
+Vishwakarma v1.0 — Enterprise Multi-Agent AI Operating System
 
 ## Purpose
 Platform for building, orchestrating, and supervising AI agents at enterprise scale. Provides a structured runtime for multi-agent workflows with human oversight.

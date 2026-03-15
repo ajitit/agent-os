@@ -1,7 +1,7 @@
-# Frontend AI Context — AgentOS UI
+# Frontend AI Context — Vishwakarma UI
 
 ## Module Purpose
-Next.js 16 + React 19 frontend for AgentOS. All pages call `/api/v1` via `src/lib/api.ts`.
+Next.js 16 + React 19 frontend for Vishwakarma. All pages call `/api/v1` via `src/lib/api.ts`.
 
 ## Key Files
 - `src/app/layout.tsx` — root layout + Nav

@@ -39,7 +39,7 @@ def _make_auth_headers() -> dict[str, str]:
         Dict with Authorization header.
     """
     user = user_create({
-        "email": "integration-test@agentos.test",
+        "email": "integration-test@vishwakarma.test",
         "hashed_password": hash_password("testpassword123"),
         "full_name": "Integration Tester",
         "role": "admin",
@@ -55,7 +55,7 @@ def test_root():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert "AgentOS" in data["status"]
+    assert "Vishwakarma" in data["status"]
     assert "docs" in data
 
 

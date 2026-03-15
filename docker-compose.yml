@@ -2,7 +2,7 @@
 # 
 # Purpose:
 # Defines the multi-container Docker application environment for local development
-# and deployment of AgentOS.
+# and deployment of Vishwakarma.
 # 
 # Key Functionalities:
 # - Orchestrate the PostgreSQL database, Redis cache, and Python backend services

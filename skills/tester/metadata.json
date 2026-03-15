@@ -1,6 +1,6 @@
 {
   "name": "Tester",
-  "description": "Use when creating test cases, validating test coverage, writing functional or regression tests for AgentOS backend (pytest) or frontend (Vitest).",
+  "description": "Use when creating test cases, validating test coverage, writing functional or regression tests for Vishwakarma backend (pytest) or frontend (Vitest).",
   "version": "1.0.0",
   "tags": ["testing", "pytest", "vitest", "unit-test", "integration", "coverage"]
 }

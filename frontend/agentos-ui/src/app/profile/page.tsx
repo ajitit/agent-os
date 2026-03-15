@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("agentos_token");
+    const token = localStorage.getItem("vishwakarma_token");
     if (token) loadMe(token);
   }, []);
 
@@ -60,7 +60,7 @@ export default function ProfilePage() {
       if (!res.ok) { setError(j.detail || "Login failed"); return; }
       const token = j.data?.access_token;
       if (token) {
-        localStorage.setItem("agentos_token", token);
+        localStorage.setItem("vishwakarma_token", token);
         await loadMe(token);
       }
     } finally { setLoading(false); }
@@ -82,7 +82,7 @@ export default function ProfilePage() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("agentos_token");
+    localStorage.removeItem("vishwakarma_token");
     setUser(null);
     setView("login");
     setEmail(""); setPassword("");

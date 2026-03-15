@@ -36,7 +36,7 @@ def auth_headers() -> dict[str, str]:
         Auth header dict.
     """
     user = user_create({
-        "email": "audit-test@agentos.test",
+        "email": "audit-test@vishwakarma.test",
         "hashed_password": hash_password("testpassword123"),
         "full_name": "Audit Tester",
         "role": "admin",

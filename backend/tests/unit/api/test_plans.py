@@ -38,7 +38,7 @@ def auth_headers() -> dict[str, str]:
         Dict with Authorization header.
     """
     user = user_create({
-        "email": "plans-test@agentos.test",
+        "email": "plans-test@vishwakarma.test",
         "hashed_password": hash_password("testpassword123"),
         "full_name": "Plan Tester",
         "role": "admin",
@@ -55,7 +55,7 @@ def admin_headers() -> dict[str, str]:
         Dict with Authorization header for admin user.
     """
     user = user_create({
-        "email": "plans-admin@agentos.test",
+        "email": "plans-admin@vishwakarma.test",
         "hashed_password": hash_password("adminpass123"),
         "full_name": "Admin User",
         "role": "admin",

@@ -1,4 +1,4 @@
-# Pre-Release / Pre-Merge Checklist — AgentOS
+# Pre-Release / Pre-Merge Checklist — Vishwakarma
 
 Use this checklist before merging to `main` or cutting a release tag.
 Every BLOCKER item must be ✅ before proceeding.

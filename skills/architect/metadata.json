@@ -1,6 +1,6 @@
 {
   "name": "Architect",
-  "description": "Use when designing system architecture, defining module boundaries, selecting technologies, planning scalability, or defining integration strategies for AgentOS components.",
+  "description": "Use when designing system architecture, defining module boundaries, selecting technologies, planning scalability, or defining integration strategies for Vishwakarma components.",
   "version": "1.0.0",
   "tags": ["architecture", "design", "system", "integration", "scalability"]
 }

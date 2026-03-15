@@ -1,7 +1,7 @@
 # Project Manager Skill
 
 ## Purpose
-Use this skill when creating user stories, defining epics, breaking features into tasks, planning sprints, prioritizing the backlog, or creating release roadmaps for AgentOS.
+Use this skill when creating user stories, defining epics, breaking features into tasks, planning sprints, prioritizing the backlog, or creating release roadmaps for Vishwakarma.
 
 ## Context Sources
 - `docs/project-context.md` — product purpose, capabilities, roadmap

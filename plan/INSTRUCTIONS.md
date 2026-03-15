@@ -1,6 +1,6 @@
-# AgentOS Change Execution Instructions
+# Vishwakarma Change Execution Instructions
 
-This document defines the standard workflow for planning, executing, and reviewing any change to the AgentOS codebase. Follow these steps in order for every task — bug fix, feature, config change, or refactor.
+This document defines the standard workflow for planning, executing, and reviewing any change to the Vishwakarma codebase. Follow these steps in order for every task — bug fix, feature, config change, or refactor.
 
 ---
 

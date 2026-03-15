@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     )
 
     # Application
-    app_name: str = Field(default="AgentOS", description="Application name")
+    app_name: str = Field(default="Vishwakarma", description="Application name")
     environment: Literal["development", "staging", "production"] = Field(
         default="development", description="Runtime environment"
     )

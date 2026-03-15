@@ -72,7 +72,7 @@ export default function ObservabilityPage() {
   const [logs, setLogs] = useState<Log[]>([]);
   const [logLevel, setLogLevel] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
   const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 

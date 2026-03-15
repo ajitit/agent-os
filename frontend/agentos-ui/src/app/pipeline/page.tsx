@@ -96,7 +96,7 @@ const STAGES = [
 
 function getToken(): string {
   return typeof window !== "undefined"
-    ? localStorage.getItem("agentos_token") ?? ""
+    ? localStorage.getItem("vishwakarma_token") ?? ""
     : "";
 }
 

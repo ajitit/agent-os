@@ -55,7 +55,7 @@ Overall:     ✅ PASS
 | `W292` missing EOF newline | 1 | Auto-fixed in `tests/conftest.py` |
 | `B008` Depends in defaults | 7 | Added to `pyproject.toml` ignore — standard FastAPI pattern |
 | `N815` camelCase class vars | 9 | Added to `pyproject.toml` ignore — intentional for API schemas matching JS frontend |
-| `N818` exception name suffix | 1 | Added to `pyproject.toml` ignore — `AgentOSException` is project convention |
+| `N818` exception name suffix | 1 | Added to `pyproject.toml` ignore — `VishwakarmaException` is project convention |
 
 ### Code Health Warnings
 - ⚠️ `api/health.py:60` — TODO without issue link: "Add actual DB/Redis connectivity checks"

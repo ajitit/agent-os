@@ -1,4 +1,4 @@
-# OWASP Top 10 Checklist — AgentOS
+# OWASP Top 10 Checklist — Vishwakarma
 
 ## A01 Broken Access Control
 - [ ] All non-public endpoints require valid JWT

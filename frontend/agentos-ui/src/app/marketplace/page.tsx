@@ -81,7 +81,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function getToken(): string {
-  return typeof window !== "undefined" ? localStorage.getItem("agentos_token") ?? "" : "";
+  return typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") ?? "" : "";
 }
 
 async function apiFetch<T>(url: string, opts?: RequestInit): Promise<T> {

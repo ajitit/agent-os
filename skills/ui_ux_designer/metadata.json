@@ -1,6 +1,6 @@
 {
   "name": "UI/UX Designer",
-  "description": "Use when designing user journeys, wireframes, interaction patterns, or improving usability and accessibility in the AgentOS frontend.",
+  "description": "Use when designing user journeys, wireframes, interaction patterns, or improving usability and accessibility in the Vishwakarma frontend.",
   "version": "1.0.0",
   "tags": ["ui", "ux", "design", "accessibility", "wireframe", "usability"]
 }

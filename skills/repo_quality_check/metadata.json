@@ -1,6 +1,6 @@
 {
   "name": "Repo Quality Check",
-  "description": "Use when performing a full repository quality gate: verify all documentation is current, all known issues are resolved, all tests pass, and the codebase meets AgentOS standards before a release or merge.",
+  "description": "Use when performing a full repository quality gate: verify all documentation is current, all known issues are resolved, all tests pass, and the codebase meets Vishwakarma standards before a release or merge.",
   "version": "1.0.0",
   "tags": ["quality-check", "repo-health", "documentation", "tests", "release-gate", "ci"]
 }

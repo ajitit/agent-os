@@ -18,7 +18,7 @@ API_PREFIX = "/api/v1/knowledge"
 def _make_auth_headers() -> dict[str, str]:
     """Create a test admin user and return Bearer auth headers."""
     user = user_create({
-        "email": "knowledge-test@agentos.test",
+        "email": "knowledge-test@vishwakarma.test",
         "hashed_password": hash_password("testpassword123"),
         "full_name": "Knowledge Tester",
         "role": "admin",

@@ -1,7 +1,7 @@
 # Tester Skill
 
 ## Purpose
-Use this skill when creating test cases, validating coverage, writing functional or regression tests, or debugging failing tests in AgentOS.
+Use this skill when creating test cases, validating coverage, writing functional or regression tests, or debugging failing tests in Vishwakarma.
 
 ## Context Sources
 - `docs/modules/testing.md` — test structure, frameworks, run commands, mocking strategy
@@ -37,4 +37,4 @@ Use this skill when creating test cases, validating coverage, writing functional
 
 ## Resources
 - `resources/test_case_templates.md` — templates for unit, integration, API tests
-- `resources/testing_strategy.md` — AgentOS testing strategy and priorities
+- `resources/testing_strategy.md` — Vishwakarma testing strategy and priorities

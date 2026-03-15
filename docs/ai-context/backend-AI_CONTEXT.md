@@ -1,7 +1,7 @@
-# Backend AI Context — AgentOS API
+# Backend AI Context — Vishwakarma API
 
 ## Module Purpose
-FastAPI Python backend. 26 route modules under `/api/v1`. All data flows through `api/stores.py` in-memory dicts (transitioning to PostgreSQL).
+Vishwakarma FastAPI Python backend. 26 route modules under `/api/v1`. All data flows through `api/stores.py` in-memory dicts (transitioning to PostgreSQL).
 
 ## Key Files
 - `app/main.py` — FastAPI factory; registers all 26 routers

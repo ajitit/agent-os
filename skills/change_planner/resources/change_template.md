@@ -139,7 +139,7 @@ _Ordered list of deployment actions:_
 |-------|-------|
 | **Change ID** | AI-CHG-2026-014 |
 | **Date** | 2026-03-10 |
-| **Author** | AgentOS Platform Team |
+| **Author** | Vishwakarma Platform Team |
 | **Reviewer** | Lead Engineer |
 | **Component** | Knowledge Retrieval Agent |
 | **Type** | Bug Fix |
