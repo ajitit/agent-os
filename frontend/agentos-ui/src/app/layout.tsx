@@ -22,7 +22,7 @@
  */
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Nav } from "@/components/Nav";
+import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,10 +48,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-zinc-50 antialiased dark:bg-zinc-950`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen bg-zinc-50 antialiased dark:bg-zinc-950`}
       >
-        <Nav />
-        {children}
+        <Sidebar />
+        <div className="flex-1 min-w-0 overflow-y-auto">
+          {children}
+        </div>
       </body>
     </html>
   );
