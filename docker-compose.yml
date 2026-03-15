@@ -39,7 +39,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s  # Allow full initdb cycle on first run (~32s)
+      start_period: 60s  # initdb takes ~32s under 0.5 CPU limit; 60s gives 2× safety margin
 
   redis:
     image: redis:7-alpine
