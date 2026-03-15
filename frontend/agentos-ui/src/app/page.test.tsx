@@ -37,7 +37,7 @@ describe("Home", () => {
     render(<Home />);
     expect(
       screen.getByRole("heading", {
-        name: /enterprise multi-agent ai platform/i,
+        name: /agentic ai platform/i,
       })
     ).toBeInTheDocument();
   });

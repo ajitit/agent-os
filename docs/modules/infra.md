@@ -1,7 +1,7 @@
 # Infrastructure Module
 
 ## Purpose
-Deployment environment, containerization, CI/CD pipeline, environment configuration, and secrets management for AgentOS.
+Deployment environment, containerization, CI/CD pipeline, environment configuration, and secrets management for Vishwakarma.
 
 ## Deployment Environment
 
@@ -58,7 +58,7 @@ docker-compose up            # Starts postgres + redis + backend
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `APP_NAME` | No | App display name (default: AgentOS) |
+| `APP_NAME` | No | App display name (default: Vishwakarma) |
 | `ENVIRONMENT` | No | `development`/`production` |
 | `API_V1_PREFIX` | No | Route prefix (default: `/api/v1`) |
 | `DATABASE_URL` | Docker | `postgresql://user:pass@host:5432/db` |

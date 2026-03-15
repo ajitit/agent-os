@@ -1,7 +1,7 @@
 # Performance Testing Expert Skill
 
 ## Purpose
-Use this skill when benchmarking AgentOS endpoints, running load tests, validating scalability, or identifying performance bottlenecks in the API, pipeline, or LLM response flows.
+Use this skill when benchmarking Vishwakarma endpoints, running load tests, validating scalability, or identifying performance bottlenecks in the API, pipeline, or LLM response flows.
 
 ## Context Sources
 - `docs/ARCHITECTURE.md` — system layers, external dependencies, deployment model
@@ -46,5 +46,5 @@ Performance report:
 ```
 
 ## Resources
-- `resources/performance_test_strategy.md` — benchmarking approach for AgentOS
+- `resources/performance_test_strategy.md` — benchmarking approach for Vishwakarma
 - `resources/load_testing_patterns.md` — load test scenarios and tools

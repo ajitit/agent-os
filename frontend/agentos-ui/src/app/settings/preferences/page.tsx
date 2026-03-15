@@ -34,7 +34,7 @@ export default function PreferencesPage() {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULTS);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
   useEffect(() => {
     if (!token) return;

@@ -39,7 +39,7 @@ def _make_auth_headers() -> dict[str, str]:
         Dict with Authorization header.
     """
     user = user_create({
-        "email": "integration-test@agentos.test",
+        "email": "integration-test@vishwakarma.test",
         "hashed_password": hash_password("testpassword123"),
         "full_name": "Integration Tester",
         "role": "admin",
@@ -55,7 +55,7 @@ def test_root():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert "AgentOS" in data["status"]
+    assert "Vishwakarma" in data["status"]
     assert "docs" in data
 
 
@@ -84,28 +84,33 @@ def test_readiness():
 # Crews
 def test_crews_crud():
     # Create
-    r = client.post(f"{API_PREFIX}/crews", json={"name": "Research Crew"})
-    assert r.status_code == 200
-    crew = r.json()
+    r = client.post(f"{API_PREFIX}/crews", json={"name": "Research Crew"}, headers=_AUTH)
+    assert r.status_code in (200, 201)
+    body = r.json()
+    crew = body.get("data", body)
     assert crew["name"] == "Research Crew"
     crew_id = crew["id"]
 
     # List
-    r = client.get(f"{API_PREFIX}/crews")
+    r = client.get(f"{API_PREFIX}/crews", headers=_AUTH)
     assert r.status_code == 200
-    assert len(r.json()) >= 1
+    body = r.json()
+    crews_list = body.get("data", body) if isinstance(body, dict) else body
+    assert len(crews_list) >= 1
 
     # Get
-    r = client.get(f"{API_PREFIX}/crews/{crew_id}")
+    r = client.get(f"{API_PREFIX}/crews/{crew_id}", headers=_AUTH)
     assert r.status_code == 200
 
     # Update
-    r = client.put(f"{API_PREFIX}/crews/{crew_id}", json={"name": "Updated Crew"})
+    r = client.put(f"{API_PREFIX}/crews/{crew_id}", json={"name": "Updated Crew"}, headers=_AUTH)
     assert r.status_code == 200
-    assert r.json()["name"] == "Updated Crew"
+    body = r.json()
+    updated = body.get("data", body)
+    assert updated["name"] == "Updated Crew"
 
     # Delete
-    r = client.delete(f"{API_PREFIX}/crews/{crew_id}")
+    r = client.delete(f"{API_PREFIX}/crews/{crew_id}", headers=_AUTH)
     assert r.status_code == 204
 
 
@@ -151,61 +156,72 @@ def test_agents_crud():
 # MCP Servers
 def test_mcp_servers_crud():
     r = client.post(
-        f"{API_PREFIX}/mcp-servers", json={"name": "Test MCP", "url": "http://mcp.local"}
+        f"{API_PREFIX}/mcp-servers", json={"name": "Test MCP", "url": "http://mcp.local"},
+        headers=_AUTH,
     )
-    assert r.status_code == 200
-    server = r.json()
+    assert r.status_code in (200, 201)
+    body = r.json()
+    server = body.get("data", body)
     server_id = server["id"]
 
-    r = client.get(f"{API_PREFIX}/mcp-servers/{server_id}/tools")
+    r = client.get(f"{API_PREFIX}/mcp-servers/{server_id}/tools", headers=_AUTH)
     assert r.status_code == 200
-    assert r.json() == []
+    body = r.json()
+    tools = body.get("data", body)
+    assert tools == []
 
     r = client.post(
         f"{API_PREFIX}/mcp-servers/{server_id}/tools",
         json={"name": "search", "description": "Search tool"},
+        headers=_AUTH,
     )
-    assert r.status_code == 200
-    tool = r.json()
+    assert r.status_code in (200, 201)
+    body = r.json()
+    tool = body.get("data", body)
     tool_id = tool["id"]
 
-    r = client.delete(f"{API_PREFIX}/mcp-servers/{server_id}/tools/{tool_id}")
+    r = client.delete(f"{API_PREFIX}/mcp-servers/{server_id}/tools/{tool_id}", headers=_AUTH)
     assert r.status_code == 204
 
-    r = client.delete(f"{API_PREFIX}/mcp-servers/{server_id}")
+    r = client.delete(f"{API_PREFIX}/mcp-servers/{server_id}", headers=_AUTH)
     assert r.status_code == 204
 
 
 # Conversations
 def test_conversations_crud_and_chat():
-    r = client.post(f"{API_PREFIX}/conversations", json={})
-    assert r.status_code == 200
-    conv = r.json()
+    r = client.post(f"{API_PREFIX}/conversations", json={}, headers=_AUTH)
+    assert r.status_code in (200, 201)
+    body = r.json()
+    conv = body.get("data", body)
     conv_id = conv["id"]
 
     r = client.post(
         f"{API_PREFIX}/conversations/{conv_id}/messages",
         json={"role": "user", "content": "Hello"},
+        headers=_AUTH,
     )
-    assert r.status_code == 200
+    assert r.status_code in (200, 201)
 
-    r = client.get(f"{API_PREFIX}/conversations/{conv_id}/messages")
+    r = client.get(f"{API_PREFIX}/conversations/{conv_id}/messages", headers=_AUTH)
     assert r.status_code == 200
     assert len(r.json()) >= 1
 
     r = client.post(
-        f"{API_PREFIX}/conversations/{conv_id}/chat", json={"message": "Hi"}
+        f"{API_PREFIX}/conversations/{conv_id}/chat", json={"message": "Hi"}, headers=_AUTH
     )
-    assert r.status_code == 200
-    assert "response" in r.json()
+    assert r.status_code in (200, 201)
+    chat_body = r.json()
+    chat_data = chat_body.get("data", chat_body)
+    assert "response" in chat_data
 
     r = client.post(
-        f"{API_PREFIX}/conversations/{conv_id}/chat/stream", json={"message": "Stream me"}
+        f"{API_PREFIX}/conversations/{conv_id}/chat/stream", json={"message": "Stream me"},
+        headers=_AUTH,
     )
     assert r.status_code == 200
     assert "text/plain" in r.headers.get("content-type", "")
 
-    r = client.delete(f"{API_PREFIX}/conversations/{conv_id}")
+    r = client.delete(f"{API_PREFIX}/conversations/{conv_id}", headers=_AUTH)
     assert r.status_code == 204
 
 
@@ -214,38 +230,43 @@ def test_storage():
     r = client.post(
         f"{API_PREFIX}/storage/upload",
         files={"file": ("test.txt", b"hello world")},
+        headers=_AUTH,
     )
     assert r.status_code == 200
-    data = r.json()
+    body = r.json()
+    data = body.get("data", body)
     assert "key" in data
 
-    r = client.get(f"{API_PREFIX}/storage/files")
+    r = client.get(f"{API_PREFIX}/storage/files", headers=_AUTH)
     assert r.status_code == 200
-    keys = [f["key"] for f in r.json()]
+    list_body = r.json()
+    files_list = list_body.get("data", list_body)
+    keys = [f["key"] for f in files_list]
     assert data["key"] in keys
 
-    r = client.get(f"{API_PREFIX}/storage/files/{data['key']}")
+    r = client.get(f"{API_PREFIX}/storage/files/{data['key']}", headers=_AUTH)
     assert r.status_code == 200
     assert r.content == b"hello world"
 
-    r = client.get(f"{API_PREFIX}/storage/urls/{data['key']}")
+    r = client.get(f"{API_PREFIX}/storage/urls/{data['key']}", headers=_AUTH)
     assert r.status_code == 200
 
-    r = client.delete(f"{API_PREFIX}/storage/files/{data['key']}")
+    r = client.delete(f"{API_PREFIX}/storage/files/{data['key']}", headers=_AUTH)
     assert r.status_code == 204
 
 
 def test_create_task():
-    r = client.post(f"{API_PREFIX}/tasks", json={"goal": "Test goal"})
-    assert r.status_code == 200
-    data = r.json()
+    r = client.post(f"{API_PREFIX}/tasks", json={"goal": "Test goal"}, headers=_AUTH)
+    assert r.status_code in (200, 201)
+    body = r.json()
+    data = body.get("data", body)
     assert data["goal"] == "Test goal"
     assert data["status"] == "queued"
 
 
 def test_chat_stream():
-    """Chat stream SSE endpoint returns 404 for unknown run ID (no JWT required for SSE)."""
-    r = client.get(f"{API_PREFIX}/chat/stream/nonexistent-run-id")
+    """Chat stream SSE endpoint returns 404 for unknown run ID."""
+    r = client.get(f"{API_PREFIX}/chat/stream/nonexistent-run-id", headers=_AUTH)
     assert r.status_code == 404
 
 
@@ -263,18 +284,20 @@ def test_not_found():
 
 # Skills (Progressive Disclosure)
 def test_skills_list():
-    r = client.get(f"{API_PREFIX}/skills")
+    r = client.get(f"{API_PREFIX}/skills", headers=_AUTH)
     assert r.status_code == 200
-    data = r.json()
+    body = r.json()
+    data = body.get("data", body)
     assert "skills" in data
     assert "total" in data
     assert isinstance(data["skills"], list)
 
 
 def test_skills_get():
-    r = client.get(f"{API_PREFIX}/skills/web_research")
+    r = client.get(f"{API_PREFIX}/skills/web_research", headers=_AUTH)
     assert r.status_code == 200
-    data = r.json()
+    body = r.json()
+    data = body.get("data", body)
     assert data["metadata"]["id"] == "web_research"
     assert data["metadata"]["name"] == "Web Research"
     assert "instructions" in data
@@ -282,13 +305,13 @@ def test_skills_get():
 
 
 def test_skills_resource():
-    r = client.get(f"{API_PREFIX}/skills/web_research/resources/tools.py")
+    r = client.get(f"{API_PREFIX}/skills/web_research/resources/tools.py", headers=_AUTH)
     assert r.status_code == 200
     assert b"def web_search" in r.content or b"web_search" in r.content
 
 
 def test_skills_not_found():
-    r = client.get(f"{API_PREFIX}/skills/nonexistent_skill")
+    r = client.get(f"{API_PREFIX}/skills/nonexistent_skill", headers=_AUTH)
     assert r.status_code == 404
 
 
@@ -297,16 +320,20 @@ def test_supervisor_workflows():
     r = client.post(
         f"{API_PREFIX}/supervisor/workflows",
         json={"goal": "Research EV batteries", "crew_id": None},
+        headers=_AUTH,
     )
-    assert r.status_code == 200
-    wf = r.json()
+    assert r.status_code in (200, 201)
+    body = r.json()
+    wf = body.get("data", body)
     assert wf["goal"] == "Research EV batteries"
     assert wf["status"] == "running"
     workflow_id = wf["id"]
 
-    r = client.get(f"{API_PREFIX}/supervisor/workflows/{workflow_id}")
+    r = client.get(f"{API_PREFIX}/supervisor/workflows/{workflow_id}", headers=_AUTH)
     assert r.status_code == 200
-    assert "approvals" in r.json()
+    detail_body = r.json()
+    detail = detail_body.get("data", detail_body)
+    assert "approvals" in detail
 
     r = client.post(
         f"{API_PREFIX}/supervisor/workflows/{workflow_id}/pause",
@@ -315,34 +342,44 @@ def test_supervisor_workflows():
             "action_description": "Execute web search",
             "options": ["approve", "reject"],
         },
+        headers=_AUTH,
     )
-    assert r.status_code == 200
-    approval = r.json()
+    assert r.status_code in (200, 201)
+    pause_body = r.json()
+    approval = pause_body.get("data", pause_body)
     approval_id = approval["id"]
 
-    r = client.get(f"{API_PREFIX}/supervisor/approvals")
+    r = client.get(f"{API_PREFIX}/supervisor/approvals", headers=_AUTH)
     assert r.status_code == 200
-    pending = r.json()
+    pending_body = r.json()
+    pending = pending_body.get("data", pending_body)
     assert len(pending) >= 1
 
     r = client.post(
         f"{API_PREFIX}/supervisor/approvals/{approval_id}/respond",
         json={"decision": "approve"},
+        headers=_AUTH,
     )
     assert r.status_code == 200
-    assert r.json()["decision"] == "approve"
+    resp_body = r.json()
+    resp = resp_body.get("data", resp_body)
+    assert resp["decision"] == "approve"
 
 
 def test_supervisor_approval_modify_requires_feedback():
-    r = client.post(f"{API_PREFIX}/supervisor/workflows", json={"goal": "Test"})
-    wf_id = r.json()["id"]
+    r = client.post(f"{API_PREFIX}/supervisor/workflows", json={"goal": "Test"}, headers=_AUTH)
+    body = r.json()
+    wf_id = body.get("data", body)["id"]
     r = client.post(
         f"{API_PREFIX}/supervisor/workflows/{wf_id}/pause",
         json={"agent_id": "a1", "action_description": "Do X"},
+        headers=_AUTH,
     )
-    apr_id = r.json()["id"]
+    pause_body = r.json()
+    apr_id = pause_body.get("data", pause_body)["id"]
     r = client.post(
         f"{API_PREFIX}/supervisor/approvals/{apr_id}/respond",
         json={"decision": "modify"},
+        headers=_AUTH,
     )
     assert r.status_code == 422

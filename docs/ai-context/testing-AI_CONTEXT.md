@@ -1,4 +1,4 @@
-# Testing AI Context — AgentOS
+# Testing AI Context — Vishwakarma
 
 ## Module Purpose
 Backend uses Pytest; frontend uses Vitest. Tests mirror source structure.

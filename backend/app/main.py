@@ -1,7 +1,7 @@
 """
 Module: app/main.py
 
-Application factory for the AgentOS FastAPI application.
+Application factory for the Vishwakarma FastAPI application.
 
 Configures middleware, exception handlers, and registers all API routers
 under the ``/api/v1`` prefix.  Uses the lifespan context manager for
@@ -87,7 +87,7 @@ def create_app() -> FastAPI:
     cfg = get_settings()
     app = FastAPI(
         title=cfg.app_name,
-        description="Enterprise Multi-Agent AI Operating System — API",
+        description="Vishwakarma Enterprise Multi-Agent AI Operating System — API",
         version="1.0.0",
         docs_url="/api/docs",
         redoc_url="/api/redoc",

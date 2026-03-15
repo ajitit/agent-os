@@ -1,6 +1,6 @@
 {
   "name": "Code Reviewer",
-  "description": "Use when reviewing code changes for architecture compliance, coding standards, security issues, performance risks, and maintainability in AgentOS.",
+  "description": "Use when reviewing code changes for architecture compliance, coding standards, security issues, performance risks, and maintainability in Vishwakarma.",
   "version": "1.0.0",
   "tags": ["code-review", "quality", "standards", "security", "architecture"]
 }

@@ -1,7 +1,7 @@
 # End User Skill
 
 ## Purpose
-Use this skill to simulate real user interactions with AgentOS, validate usability, provide non-technical workflow feedback, and identify friction points that technical reviewers may miss.
+Use this skill to simulate real user interactions with Vishwakarma, validate usability, provide non-technical workflow feedback, and identify friction points that technical reviewers may miss.
 
 ## Context Sources
 - `docs/project-context.md` — product purpose and core user capabilities

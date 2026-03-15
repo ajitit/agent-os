@@ -1,4 +1,4 @@
-# AgentOS Architecture Rules for Code Review
+# Vishwakarma Architecture Rules for Code Review
 
 ## Layer Boundary Rules
 ```

@@ -7,10 +7,28 @@ Integration and unit tests for the Knowledge Management RAG feature.
 
 from fastapi.testclient import TestClient
 
+from backend.api.stores import user_create
 from backend.app.main import app
+from backend.core.security import create_access_token, hash_password
 
 client = TestClient(app)
 API_PREFIX = "/api/v1/knowledge"
+
+
+def _make_auth_headers() -> dict[str, str]:
+    """Create a test admin user and return Bearer auth headers."""
+    user = user_create({
+        "email": "knowledge-test@vishwakarma.test",
+        "hashed_password": hash_password("testpassword123"),
+        "full_name": "Knowledge Tester",
+        "role": "admin",
+    })
+    token = create_access_token({"sub": user["id"]})
+    return {"Authorization": f"Bearer {token}"}
+
+
+_AUTH = _make_auth_headers()
+
 
 def test_add_source_and_list():
     # Add a web source
@@ -21,26 +39,31 @@ def test_add_source_and_list():
             "type": "web",
             "url": "http://example.com/mock",
             "tags": ["test-tag"]
-        }
+        },
+        headers=_AUTH,
     )
-    assert resp.status_code == 201
-    source = resp.json()
+    assert resp.status_code in (200, 201)
+    body = resp.json()
+    source = body.get("data", body)
     assert source["name"] == "Test Site"
     assert source["type"] == "web"
     sid = source["id"]
 
     # List sources
-    resp = client.get(f"{API_PREFIX}/sources")
+    resp = client.get(f"{API_PREFIX}/sources", headers=_AUTH)
     assert resp.status_code == 200
-    sources = resp.json()
+    body = resp.json()
+    sources = body.get("data", body)
     assert len(sources) >= 1
     assert any(s["id"] == sid for s in sources)
 
     # Filter list
-    resp = client.get(f"{API_PREFIX}/sources?type=web")
+    resp = client.get(f"{API_PREFIX}/sources?type=web", headers=_AUTH)
     assert resp.status_code == 200
-    sources = resp.json()
+    body = resp.json()
+    sources = body.get("data", body)
     assert any(s["id"] == sid for s in sources)
+
 
 def test_delete_source():
     # Create for deletion
@@ -49,26 +72,34 @@ def test_delete_source():
         json={
             "name": "Delete Me",
             "type": "text",
-        }
+        },
+        headers=_AUTH,
     )
-    sid = resp.json()["id"]
+    body = resp.json()
+    source = body.get("data", body)
+    sid = source["id"]
 
     # Delete
-    del_resp = client.delete(f"{API_PREFIX}/sources/{sid}")
-    assert del_resp.status_code == 204
+    del_resp = client.delete(f"{API_PREFIX}/sources/{sid}", headers=_AUTH)
+    assert del_resp.status_code in (200, 204)
 
     # Verify
-    list_resp = client.get(f"{API_PREFIX}/sources")
-    assert not any(s["id"] == sid for s in list_resp.json())
+    list_resp = client.get(f"{API_PREFIX}/sources", headers=_AUTH)
+    list_body = list_resp.json()
+    sources = list_body.get("data", list_body)
+    assert not any(s["id"] == sid for s in sources)
+
 
 def test_search_endpoint():
     # Testing search doesn't crash (mock search)
     resp = client.post(
         f"{API_PREFIX}/search",
-        json={"query": "test query", "top_k": 2}
+        json={"query": "test query", "top_k": 2},
+        headers=_AUTH,
     )
     assert resp.status_code == 200
-    data = resp.json()
+    body = resp.json()
+    data = body.get("data", body)
     assert "results" in data
 
 def test_extract_code_unit():

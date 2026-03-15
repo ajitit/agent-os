@@ -1,4 +1,4 @@
-# Performance Test Strategy — AgentOS
+# Performance Test Strategy — Vishwakarma
 
 ## Performance Targets
 | Endpoint | p50 | p95 | p99 |

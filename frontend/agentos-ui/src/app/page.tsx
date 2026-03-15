@@ -1,5 +1,5 @@
 /**
- * File: page.tsx — AgentOS Dashboard
+ * File: page.tsx — Vishwakarma Dashboard
  *
  * Landing page reflecting the Agentic AI Platform navigation structure:
  *   Chat · Plan & Workflow · Agent Management · Agent Capabilities ·

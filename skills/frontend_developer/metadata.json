@@ -1,6 +1,6 @@
 {
   "name": "Frontend Developer",
-  "description": "Use when implementing UI components, pages, client-side logic, API integration, or performance optimization in the AgentOS Next.js frontend.",
+  "description": "Use when implementing UI components, pages, client-side logic, API integration, or performance optimization in the Vishwakarma Next.js frontend.",
   "version": "1.0.0",
   "tags": ["frontend", "react", "nextjs", "typescript", "ui", "api-integration"]
 }

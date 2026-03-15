@@ -43,7 +43,7 @@ interface Plan {
 const API = "/api/v1";
 
 function getToken(): string {
-  return typeof window !== "undefined" ? localStorage.getItem("agentos_token") ?? "" : "";
+  return typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") ?? "" : "";
 }
 
 async function apiFetch<T>(path: string, opts?: RequestInit): Promise<T> {
@@ -83,7 +83,7 @@ const PLAN_STATUS_STYLES: Record<string, string> = {
 
 export default function PlanDetailPage() {
   const params = useParams();
-  const router = useRouter();
+  const router = useRouter(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const planId = params?.id as string;
 
   const [plan, setPlan] = useState<Plan | null>(null);

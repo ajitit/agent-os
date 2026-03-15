@@ -40,7 +40,7 @@ def admin_headers() -> dict[str, str]:
         Auth header dict.
     """
     user = user_create({
-        "email": f"mkt-admin-{id(object())}@agentos.test",
+        "email": f"mkt-admin-{id(object())}@vishwakarma.test",
         "hashed_password": hash_password("adminpass123"),
         "full_name": "Marketplace Admin",
         "role": "admin",
@@ -56,7 +56,7 @@ def dev_headers() -> dict[str, str]:
         Auth header dict.
     """
     user = user_create({
-        "email": f"mkt-dev-{id(object())}@agentos.test",
+        "email": f"mkt-dev-{id(object())}@vishwakarma.test",
         "hashed_password": hash_password("devpass123"),
         "full_name": "Marketplace Dev",
         "role": "developer",
@@ -72,7 +72,7 @@ def operator_headers() -> dict[str, str]:
         Auth header dict.
     """
     user = user_create({
-        "email": f"mkt-op-{id(object())}@agentos.test",
+        "email": f"mkt-op-{id(object())}@vishwakarma.test",
         "hashed_password": hash_password("oppass123"),
         "full_name": "Marketplace Operator",
         "role": "operator",

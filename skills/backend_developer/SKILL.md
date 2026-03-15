@@ -1,7 +1,7 @@
 # Backend Developer Skill
 
 ## Purpose
-Use this skill when implementing or modifying API endpoints, business logic, LLM integrations, pipeline stages, knowledge management, or skills in the AgentOS Python backend.
+Use this skill when implementing or modifying API endpoints, business logic, LLM integrations, pipeline stages, knowledge management, or skills in the Vishwakarma Python backend.
 
 ## Context Sources
 - `docs/modules/backend.md` — module structure, key files, data flow
@@ -40,6 +40,6 @@ Use this skill when implementing or modifying API endpoints, business logic, LLM
 - No MyPy errors; Ruff lint passes
 
 ## Resources
-- `resources/api_design_patterns.md` — AgentOS REST API patterns
+- `resources/api_design_patterns.md` — Vishwakarma REST API patterns
 - `resources/service_layer_patterns.md` — business logic organization
 - `resources/database_patterns.md` — store/DB migration patterns

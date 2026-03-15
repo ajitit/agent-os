@@ -28,7 +28,7 @@ interface Plan {
 const API = "/api/v1";
 
 function getToken(): string {
-  return typeof window !== "undefined" ? localStorage.getItem("agentos_token") ?? "" : "";
+  return typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") ?? "" : "";
 }
 
 async function apiFetch<T>(path: string, opts?: RequestInit): Promise<T> {
@@ -58,6 +58,7 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: "bg-red-800 text-red-300",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TASK_STATUS_ICON: Record<string, string> = {
   pending: "○",
   running: "◑",

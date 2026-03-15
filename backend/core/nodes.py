@@ -2,12 +2,12 @@
 File: nodes.py
 
 Purpose:
-Defines LangGraph node functions that wrap AgentOS agents, allowing them to be
+Defines LangGraph node functions that wrap Vishwakarma agents, allowing them to be
 used within a StateGraph.
 
 Key Functionalities:
 - `create_agent_node`: Factory function to create a node for a specific agent.
-- Integration with AgentOS `BaseAgent` and `BaseLLMAdapter`.
+- Integration with Vishwakarma `BaseAgent` and `BaseLLMAdapter`.
 """
 
 from collections.abc import Callable
@@ -21,7 +21,7 @@ from backend.core.engine import AgentState
 
 def create_agent_node(agent_id: str) -> Callable:
     """
-    Creates a LangGraph node function for a given AgentOS agent.
+    Creates a LangGraph node function for a given Vishwakarma agent.
     """
     async def agent_node(state: AgentState) -> dict[str, Any]:
         agent = agent_get(agent_id)

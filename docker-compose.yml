@@ -2,7 +2,7 @@
 # 
 # Purpose:
 # Defines the multi-container Docker application environment for local development
-# and deployment of AgentOS.
+# and deployment of Vishwakarma.
 # 
 # Key Functionalities:
 # - Orchestrate the PostgreSQL database, Redis cache, and Python backend services
@@ -28,23 +28,33 @@ services:
       POSTGRES_DB: agentos
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    # Optimization: Limit resources to prevent laptop slowdown
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U agentos"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s  # Allow full initdb cycle on first run (~32s)
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    # This block is mandatory for the backend's 'depends_on' to work
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   backend:
     build:
@@ -52,6 +62,10 @@ services:
       dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
+    # Volume mount removed: bind mounts from Windows to WSL2 Docker containers
+    # can appear empty, overriding the image files copied by the Dockerfile.
+    # The image already has the backend files via COPY backend/ ./backend/.
+    # For hot-reload during dev, run uvicorn directly outside Docker instead.
     environment:
       DATABASE_URL: postgresql://agentos:agentos@postgres:5432/agentos
       REDIS_URL: redis://redis:6379/0
@@ -62,18 +76,13 @@ services:
       redis:
         condition: service_healthy
 
+  # Recommendation: Run frontend natively on your laptop (npm run dev) 
+  # to save 1GB+ of RAM and massive disk space from node_modules in Docker.
+  # If you must use Docker, use this slimmed version:
   frontend:
     build:
       context: ./frontend/agentos-ui
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: http://backend:8000
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
-    depends_on:
-      - backend
-
-volumes:
-  postgres_data:
+    profiles: ["debug"] # Only starts if you explicitly call it

@@ -1,7 +1,7 @@
 # UI/UX Designer Skill
 
 ## Purpose
-Use this skill when designing new user-facing features, improving existing workflows, defining interaction patterns, or ensuring accessibility compliance in the AgentOS frontend.
+Use this skill when designing new user-facing features, improving existing workflows, defining interaction patterns, or ensuring accessibility compliance in the Vishwakarma frontend.
 
 ## Context Sources
 - `docs/project-context.md` — product purpose and user goals
@@ -33,6 +33,6 @@ Use this skill when designing new user-facing features, improving existing workf
 - Handoff spec for developer implementation
 
 ## Resources
-- `resources/ui_design_principles.md` — AgentOS UI conventions
+- `resources/ui_design_principles.md` — Vishwakarma UI conventions
 - `resources/accessibility_guidelines.md` — WCAG 2.1 AA requirements
 - `resources/design_patterns.md` — reusable interaction patterns

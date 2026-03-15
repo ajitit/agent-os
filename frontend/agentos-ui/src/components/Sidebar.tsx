@@ -1,7 +1,7 @@
 /**
  * File: Sidebar.tsx
  *
- * Left sidebar navigation for AgentOS UI.
+ * Left sidebar navigation for Vishwakarma UI.
  * Implements the Agentic AI Platform navigation structure:
  *   Chat
  *   Plan & Workflow → Plan, Workflow, Output/Feedback, Performance Review
@@ -148,17 +148,15 @@ export function Sidebar() {
 
   // Auto-expand groups when navigating to a child route
   useEffect(() => {
-    setExpanded((prev) => {
-      const auto = getAutoExpanded(pathname);
-      const next = new Set([...prev, ...auto]);
-      return next;
-    });
+    const auto = getAutoExpanded(pathname);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setExpanded((prev) => new Set([...prev, ...auto]));
   }, [pathname]);
 
   const toggleGroup = (label: string) => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      next.has(label) ? next.delete(label) : next.add(label);
+      if (next.has(label)) { next.delete(label); } else { next.add(label); }
       return next;
     });
   };
@@ -260,7 +258,7 @@ export function Sidebar() {
             ⚡
           </span>
           <span>
-            <span className="block text-sm font-bold leading-tight">AgentOS</span>
+            <span className="block text-sm font-bold leading-tight">Vishwakarma</span>
             <span className="block text-xs text-zinc-500 font-normal leading-tight">
               Agentic AI Platform
             </span>
@@ -282,7 +280,7 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-zinc-800 shrink-0">
-        <p className="text-xs text-zinc-600">AgentOS v1.0</p>
+        <p className="text-xs text-zinc-600">Vishwakarma v1.0</p>
       </div>
     </aside>
   );

@@ -38,7 +38,7 @@ class APIError(BaseModel):
 
 
 class AgentOSException(Exception):
-    """Base exception for AgentOS application errors."""
+    """Base exception for Vishwakarma application errors."""
 
     def __init__(
         self,
@@ -74,7 +74,7 @@ class UnauthorizedError(AgentOSException):
 
 
 async def agentos_exception_handler(request: Request, exc: AgentOSException) -> JSONResponse:
-    """Handle AgentOS exceptions."""
+    """Handle Vishwakarma exceptions."""
     from backend.core.logging_config import request_id_ctx
 
     return JSONResponse(

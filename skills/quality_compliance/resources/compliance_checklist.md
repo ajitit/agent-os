@@ -1,4 +1,4 @@
-# AgentOS Compliance Checklist
+# Vishwakarma Compliance Checklist
 
 ## Code Standards — Python
 - [ ] All functions have type annotations (MyPy strict)

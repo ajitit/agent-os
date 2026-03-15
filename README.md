@@ -1,8 +1,8 @@
-# AgentOS v1.0
+# Vishwakarma v1.0
 
 ## Enterprise Multi-Agent AI Operating System
 
-AgentOS is a **full-stack AI agent platform** designed to run autonomous multi-agent workflows using modern AI infrastructure. It provides orchestration, crews, agents, MCP tools, conversations, storage, and a web console to build and operate intelligent agents.
+Vishwakarma is a **full-stack AI agent platform** designed to run autonomous multi-agent workflows using modern AI infrastructure. It provides orchestration, crews, agents, MCP tools, conversations, storage, and a web console to build and operate intelligent agents.
 
 ---
 
@@ -217,7 +217,7 @@ cp .env.example .env
 # Edit .env as needed
 ```
 
-**Important:** The `JWT_SECRET_KEY` environment variable must be set to a strong secret before deploying to production. If the value remains at its default (`"change-me-in-production"`) in a production environment, the application will raise a `ValueError` on startup and refuse to start. In development and staging environments, a warning is logged if the insecure default is detected.
+**Important:** The `JWT_SECRET_KEY` environment variable must be set to a strong secret (32+ characters) before deploying to production. If the value remains at its default in a production environment, the application will raise a `ValueError` on startup and refuse to start. In development and staging environments, a warning is logged if the insecure default is detected.
 
 ---
 
@@ -262,7 +262,8 @@ docker compose up postgres redis
 ## Testing
 
 ### Backend
-# Ensure venv is activated and deps installed
+
+Ensure venv is activated and deps installed before running tests.
 
 ```bash
 cd backend

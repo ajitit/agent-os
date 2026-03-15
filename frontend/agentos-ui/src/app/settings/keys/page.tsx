@@ -13,7 +13,7 @@ export default function APIKeysPage() {
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const [revealed, setRevealed] = useState<string | null>(null);
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
   async function loadKeys() {
     if (!token) return;
@@ -21,7 +21,7 @@ export default function APIKeysPage() {
     if (res.ok) { const j = await res.json(); setKeys(j.data || []); }
   }
 
-  useEffect(() => { loadKeys(); }, [token]);
+  useEffect(() => { loadKeys(); }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function createKey() {
     if (!token || !newName.trim()) return;

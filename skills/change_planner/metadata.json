@@ -1,0 +1,6 @@
+{
+  "name": "Change Planner",
+  "description": "Plans, documents, and validates software change requests. Use when an agent needs to author, review, or process a structured change record (bug fix, feature, hotfix, config change) including root cause analysis, impact assessment, and deployment steps.",
+  "version": "1.0.0",
+  "tags": ["change-management", "planning", "bug-fix", "deployment", "impact-analysis"]
+}

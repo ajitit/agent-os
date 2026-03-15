@@ -1,4 +1,4 @@
-# Security Testing Methods for AgentOS
+# Security Testing Methods for Vishwakarma
 
 ## Authentication Tests
 ```bash
@@ -62,5 +62,5 @@ curl -H "Origin: http://evil.com" \
 git log --all -p | grep -i "api_key\|secret\|password\|token" | grep "^+" | grep -v ".example"
 
 # Check Docker image layers
-docker history --no-trunc agentos-backend | grep -i "secret\|key\|password"
+docker history --no-trunc vishwakarma-backend | grep -i "secret\|key\|password"
 ```

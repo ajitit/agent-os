@@ -1,7 +1,7 @@
 # Frontend Developer Skill
 
 ## Purpose
-Use this skill when implementing or modifying UI components, pages, frontend logic, API integrations, or optimizing frontend performance in AgentOS.
+Use this skill when implementing or modifying UI components, pages, frontend logic, API integrations, or optimizing frontend performance in Vishwakarma.
 
 ## Context Sources
 - `docs/modules/ui.md` — frontend module structure, key files, data flow
@@ -36,6 +36,6 @@ Use this skill when implementing or modifying UI components, pages, frontend log
 - No console errors or TypeScript errors
 
 ## Resources
-- `resources/component_patterns.md` — React component patterns for AgentOS
+- `resources/component_patterns.md` — React component patterns for Vishwakarma
 - `resources/frontend_architecture.md` — page/component organization guide
 - `resources/state_management_patterns.md` — local state and data fetching patterns

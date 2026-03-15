@@ -1,7 +1,7 @@
 # Architect Skill
 
 ## Purpose
-Use this skill when designing or evolving the AgentOS system architecture, defining new module boundaries, selecting technologies, or planning integration strategies.
+Use this skill when designing or evolving the Vishwakarma system architecture, defining new module boundaries, selecting technologies, or planning integration strategies.
 
 ## Context Sources
 - `docs/project-context.md` — project purpose, stack, core capabilities
@@ -33,6 +33,6 @@ Use this skill when designing or evolving the AgentOS system architecture, defin
 - List of affected files requiring changes
 
 ## Resources
-- `resources/architecture_patterns.md` — patterns used in AgentOS
+- `resources/architecture_patterns.md` — patterns used in Vishwakarma
 - `resources/system_design_checklist.md` — validation checklist
 - `resources/microservices_patterns.md` — service decomposition patterns

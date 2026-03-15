@@ -36,7 +36,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgentOS | Enterprise Multi-Agent AI Platform",
+  title: "Vishwakarma | Enterprise Multi-Agent AI Platform",
   description: "Orchestrate autonomous multi-agent workflows with modern AI infrastructure",
 };
 

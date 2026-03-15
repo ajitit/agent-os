@@ -1,4 +1,4 @@
-# AgentOS UI Design Patterns
+# Vishwakarma UI Design Patterns
 
 ## Pattern: Registry Management Page
 ```

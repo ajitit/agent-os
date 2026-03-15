@@ -1,7 +1,7 @@
 # Backend Module
 
 ## Purpose
-FastAPI Python backend exposing all AgentOS capabilities via 26 REST route modules under `/api/v1`.
+FastAPI Python backend exposing all Vishwakarma capabilities via 26 REST route modules under `/api/v1`.
 
 ## Responsibilities
 - Route all API requests with authentication, validation, and error handling

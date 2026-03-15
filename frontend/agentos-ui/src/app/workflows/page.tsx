@@ -61,9 +61,9 @@ export default function WorkflowsPage() {
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
-  const token = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("vishwakarma_token") : null;
 
-  useEffect(() => { loadWorkflows(); }, []);
+  useEffect(() => { loadWorkflows(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadWorkflows() {
     try {
@@ -276,7 +276,7 @@ export default function WorkflowsPage() {
             <div className="ml-auto flex gap-2">
               {edgeFrom && (
                 <span className="rounded-lg bg-yellow-100 px-2 py-1 text-xs text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
-                  Click target node to connect from "{edgeFrom}"
+                  Click target node to connect from &quot;{edgeFrom}&quot;
                 </span>
               )}
               <button

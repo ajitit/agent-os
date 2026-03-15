@@ -12,7 +12,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, Field
 
 from backend.api.stores import user_create, user_get_by_email
-from backend.core.exceptions import NotFoundError, UnauthorizedError, ValidationError as AgentOSValidationError
+from backend.core.exceptions import NotFoundError, UnauthorizedError
+from backend.core.exceptions import ValidationError as AgentOSValidationError
 from backend.core.schemas import APIResponse
 from backend.core.security import (
     create_access_token,

@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     )
 
     # Application
-    app_name: str = Field(default="AgentOS", description="Application name")
+    app_name: str = Field(default="Vishwakarma", description="Application name")
     environment: Literal["development", "staging", "production"] = Field(
         default="development", description="Runtime environment"
     )
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
 
     # Security
     jwt_secret_key: str = Field(
-        default="change-me-in-production",
+        default="change-me-in-production-32chars!!",
         description="JWT secret key — MUST be overridden via JWT_SECRET_KEY env var in production",
     )
     jwt_algorithm: str = Field(default="HS256", description="JWT algorithm")
@@ -79,12 +79,12 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _warn_insecure_defaults(self) -> "Settings":
-        if self.environment == "production" and self.jwt_secret_key == "change-me-in-production":
+        if self.environment == "production" and self.jwt_secret_key == "change-me-in-production-32chars!!":
             raise ValueError(
                 "JWT_SECRET_KEY must be set to a strong secret in production. "
                 "Set the JWT_SECRET_KEY environment variable."
             )
-        if self.jwt_secret_key in ("secret", "change-me-in-production"):
+        if self.jwt_secret_key in ("secret", "change-me-in-production", "change-me-in-production-32chars!!"):
             logging.getLogger("backend.config").warning(
                 "JWT_SECRET_KEY is using an insecure default — set JWT_SECRET_KEY env var before deploying."
             )

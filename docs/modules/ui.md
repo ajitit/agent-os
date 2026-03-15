@@ -1,7 +1,7 @@
 # UI Module
 
 ## Purpose
-Next.js 16 + React 19 frontend for AgentOS. Provides all user-facing interfaces for managing agents, crews, workflows, knowledge, and settings.
+Next.js 16 + React 19 frontend for Vishwakarma. Provides all user-facing interfaces for managing agents, crews, workflows, knowledge, and settings.
 
 ## Responsibilities
 - Render all 28 application pages via App Router
