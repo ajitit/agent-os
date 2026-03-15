@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -689,7 +689,8 @@ function OntologyTab() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]); // eslint-disable-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { load(); }, [load]);
 
   const domainColor: Record<string, string> = {
     healthcare: "bg-emerald-900 text-emerald-300",

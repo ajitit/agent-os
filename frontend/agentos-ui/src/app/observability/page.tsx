@@ -81,7 +81,7 @@ export default function ObservabilityPage() {
       const res = await fetch("/api/v1/observability/metrics", { headers: authHeader });
       if (res.ok) { const j = await res.json(); setMetrics(j.data); }
     } catch {}
-  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const fetchRuns = useCallback(async () => {
     try {
@@ -89,7 +89,7 @@ export default function ObservabilityPage() {
       const res = await fetch(`/api/v1/observability/runs${params}`, { headers: authHeader });
       if (res.ok) { const j = await res.json(); setRuns(j.data || []); }
     } catch {}
-  }, [token, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, statusFilter]);
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -97,7 +97,7 @@ export default function ObservabilityPage() {
       const res = await fetch(`/api/v1/observability/logs${params}`, { headers: authHeader });
       if (res.ok) { const j = await res.json(); setLogs(j.data || []); }
     } catch {}
-  }, [token, logLevel]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, logLevel]);
 
   async function fetchRunDetail(run: Run) {
     setSelectedRun(run);
@@ -112,12 +112,15 @@ export default function ObservabilityPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchMetrics(); fetchRuns();
+    fetchMetrics();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchRuns();
     const interval = setInterval(() => { fetchMetrics(); fetchRuns(); }, 10000);
     return () => clearInterval(interval);
   }, [fetchMetrics, fetchRuns]);
 
-  useEffect(() => { if (tab === "logs") fetchLogs(); }, [tab, fetchLogs]); // eslint-disable-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { if (tab === "logs") fetchLogs(); }, [tab, fetchLogs]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
