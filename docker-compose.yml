@@ -52,7 +52,6 @@ services:
     deploy:
       resources:
         limits:
-          memory: 128M # Keeping your 16GB RAM in mind
 
   backend:
     build:
@@ -61,7 +60,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app # Hot-reloading saves rebuild time/disk
+      - ./backend:/app/backend # Mount preserves backend.* import path
     environment:
       DATABASE_URL: postgresql://agentos:agentos@postgres:5432/agentos
       REDIS_URL: redis://redis:6379/0
