@@ -36,8 +36,10 @@ services:
           memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U agentos"]
-      interval: 10s # Relaxed interval
+      interval: 10s
       timeout: 5s
+      retries: 5
+      start_period: 30s  # Allow full initdb cycle on first run (~32s)
 
   redis:
     image: redis:7-alpine
