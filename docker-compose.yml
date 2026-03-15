@@ -52,6 +52,7 @@ services:
     deploy:
       resources:
         limits:
+          memory: 256M
 
   backend:
     build:
