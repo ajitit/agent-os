@@ -147,7 +147,6 @@ export function Sidebar() {
   const [expanded, setExpanded] = useState<Set<string>>(() => getAutoExpanded(pathname));
 
   // Auto-expand groups when navigating to a child route
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     const auto = getAutoExpanded(pathname);
     // eslint-disable-next-line react-hooks/set-state-in-effect

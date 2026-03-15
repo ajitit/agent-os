@@ -23,7 +23,7 @@ Interacting Files / Modules:
 import uuid
 from typing import Any
 
-from fastapi import Request, Response
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from backend.core.logging_config import request_id_ctx

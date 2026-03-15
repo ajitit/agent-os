@@ -8,7 +8,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, APIResponse } from "@/lib/api";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,6 +63,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     const t = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(t);
     if (t) loadConversations(t);
   }, []);
