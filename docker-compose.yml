@@ -60,8 +60,10 @@ services:
       dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app/backend # Mount preserves backend.* import path
+    # Volume mount removed: bind mounts from Windows to WSL2 Docker containers
+    # can appear empty, overriding the image files copied by the Dockerfile.
+    # The image already has the backend files via COPY backend/ ./backend/.
+    # For hot-reload during dev, run uvicorn directly outside Docker instead.
     environment:
       DATABASE_URL: postgresql://agentos:agentos@postgres:5432/agentos
       REDIS_URL: redis://redis:6379/0
