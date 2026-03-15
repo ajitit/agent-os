@@ -28,23 +28,25 @@ services:
       POSTGRES_DB: agentos
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    # Optimization: Limit resources to prevent laptop slowdown
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U agentos"]
-      interval: 5s
+      interval: 10s # Relaxed interval
       timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   backend:
     build:
@@ -52,6 +54,8 @@ services:
       dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app # Hot-reloading saves rebuild time/disk
     environment:
       DATABASE_URL: postgresql://agentos:agentos@postgres:5432/agentos
       REDIS_URL: redis://redis:6379/0
@@ -62,18 +66,13 @@ services:
       redis:
         condition: service_healthy
 
+  # Recommendation: Run frontend natively on your laptop (npm run dev) 
+  # to save 1GB+ of RAM and massive disk space from node_modules in Docker.
+  # If you must use Docker, use this slimmed version:
   frontend:
     build:
       context: ./frontend/agentos-ui
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: http://backend:8000
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
-    depends_on:
-      - backend
-
-volumes:
-  postgres_data:
+    profiles: ["debug"] # Only starts if you explicitly call it
