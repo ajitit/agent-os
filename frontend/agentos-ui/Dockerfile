@@ -4,8 +4,8 @@
 # Dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package.json ./
-RUN npm install --frozen-lockfile || npm install
+COPY package.json package-lock.json* ./
+RUN npm ci || npm install
 
 # Builder
 FROM node:20-alpine AS builder
