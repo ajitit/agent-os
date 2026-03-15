@@ -39,14 +39,20 @@ services:
       interval: 10s # Relaxed interval
       timeout: 5s
 
-  redis:
+redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    # This block is mandatory for the backend's 'depends_on' to work
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 128M # Keeping your 16GB RAM in mind
 
   backend:
     build:
