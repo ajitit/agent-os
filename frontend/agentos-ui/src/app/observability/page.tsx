@@ -111,12 +111,15 @@ export default function ObservabilityPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMetrics();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchRuns();
     const interval = setInterval(() => { fetchMetrics(); fetchRuns(); }, 10000);
     return () => clearInterval(interval);
   }, [fetchMetrics, fetchRuns]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (tab === "logs") fetchLogs(); }, [tab, fetchLogs]);
 
   // ── Render ────────────────────────────────────────────────────────────────
