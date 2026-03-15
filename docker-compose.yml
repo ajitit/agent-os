@@ -43,15 +43,15 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    # This block is mandatory for the backend's 'depends_on' to work
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     deploy:
       resources:
         limits:
-          memory: 256M
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   backend:
     build:
