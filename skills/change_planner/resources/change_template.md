@@ -8,7 +8,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Change ID** | AI-CHG-YYYY-NNN |
+| **Change ID** | CODE-CHG-YYYY-NNN |
 | **Date** | YYYY-MM-DD |
 | **Author** | Full Name / Team |
 | **Reviewer** | Full Name / Team |

@@ -17,7 +17,7 @@ GET /api/v1/skills/change_planner
 This loads the full `SKILL.md` instructions. Follow the 5-step process defined there:
 
 1. Gather context (component, type, problem statement, root cause)
-2. Assign a Change ID: `AI-CHG-YYYY-NNN`
+2. Assign a Change ID: `CODE-CHG-YYYY-NNN`
 3. Draft the change record using `skills/change_planner/resources/change_template.md`
 4. Validate all required sections are complete
 5. Hold the draft — do not execute until Steps 2–4 below are done
@@ -81,7 +81,7 @@ With the change record, skills, and docs loaded, draft an execution plan:
 
 ```
 plan/
-└── AI-CHG-YYYY-NNN.md    ← one plan file per change
+└── CODE-CHG-YYYY-NNN.md    ← one plan file per change
 ```
 
 The plan file must include:
@@ -142,11 +142,12 @@ When execution is complete, produce a **Change Summary** at the top of the plan 
 
 | Field         | Value |
 |---------------|-------|
-| Change ID     | AI-CHG-YYYY-NNN |
+| Change ID     | CODE-CHG-YYYY-NNN |
 | Files Changed | N files |
 | Tests         | X passing, Y skipped |
 | Lint          | Clean |
 | Risk          | Low / Medium / High |
+| Tokens Used   | Number of tokens |
 
 ### What Changed
 - Brief bullet list of what was done
@@ -216,7 +217,7 @@ Once the reviewer approves the Change Summary (and `repo_quality_check` if reque
 Step 1  →  GET /api/v1/skills/change_planner          Draft change record
 Step 2  →  GET /api/v1/skills/{skill_id}               Load domain skills
 Step 3  →  Read docs/ARCHITECTURE.md + relevant docs   Understand context
-Step 4  →  Create plan/AI-CHG-YYYY-NNN.md              Write execution plan
+Step 4  →  Create plan/CODE-CHG-YYYY-NNN.md             Write execution plan
 Step 5  →  Execute plan, run tests after each step     Implement the change
 Step 6  →  Write Change Summary, ask for review        Get approval
 Step 7  →  Commit → Push → PR → Update change record   Ship it
@@ -230,7 +231,7 @@ Step 7  →  Commit → Push → PR → Update change record   Ship it
 agent-os/
 ├── plan/
 │   ├── INSTRUCTIONS.md          ← this file
-│   └── AI-CHG-YYYY-NNN.md      ← one plan per change
+│   └── CODE-CHG-YYYY-NNN.md    ← one plan per change
 ├── skills/
 │   ├── change_planner/          ← always use first
 │   ├── backend_developer/

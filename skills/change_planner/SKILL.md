@@ -18,11 +18,11 @@ Before drafting a change record, collect the following from the user or codebase
 
 ### Step 2 — Determine Change ID
 
-Use the naming convention: `AI-CHG-YYYY-NNN`
+Use the naming convention: `CODE-CHG-YYYY-NNN`
 - `YYYY` = current year (e.g., 2026)
-- `NNN` = sequential 3-digit number (e.g., 014)
+- `NNN` = sequential 3-digit number (e.g., 019)
 
-If no ID is provided, assign the next available number or leave as `AI-CHG-YYYY-XXX` for the user to fill in.
+If no ID is provided, assign the next available number or leave as `CODE-CHG-YYYY-XXX` for the user to fill in.
 
 ### Step 3 — Draft the Change Record
 
@@ -45,7 +45,7 @@ Key sections to fill:
 
 Before finalising, verify:
 
-- [ ] Change ID follows the `AI-CHG-YYYY-NNN` format
+- [ ] Change ID follows the `CODE-CHG-YYYY-NNN` format
 - [ ] Root cause is specific (not vague like "bug in code")
 - [ ] All affected files are listed under "Changes Made"
 - [ ] Risk level is justified with reasoning
