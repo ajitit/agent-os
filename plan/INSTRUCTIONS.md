@@ -158,15 +158,28 @@ When execution is complete, produce a **Change Summary** at the top of the plan 
 - Any decisions deferred to the reviewer
 ```
 
-Then ask explicitly:
+Then present the following three options explicitly and wait for a selection before proceeding:
 
-> **"Please review the Change Summary above. Should I also apply `repo_quality_check` before committing?"**
+---
 
-The `repo_quality_check` skill (`GET /api/v1/skills/repo_quality_check`) runs a full repository hygiene scan — dead imports, unused variables, lint violations, test coverage gaps. It adds time but catches issues that per-change checks miss. Apply it when:
-- The change touches more than 5 files
-- New dependencies were added
-- A refactor moved or renamed code
-- CI was recently failing
+> **"Please review the Change Summary above and choose one of the following options:"**
+>
+> **Option 1 — Apply change only**
+> Commit and push the change as-is. All declared tests pass and lint is clean. Skips the full repository hygiene scan.
+>
+> **Option 2 — Apply change with `repo_quality_check`**
+> Run the `repo_quality_check` skill first (`GET /api/v1/skills/repo_quality_check`), fix any issues found, then commit and push. Recommended when:
+> - The change touches more than 5 files
+> - New dependencies were added
+> - A refactor moved or renamed code
+> - CI was recently failing
+>
+> **Option 3 — Do not apply change**
+> Discard the change. No commit, no push. The plan file is updated with the reason for rejection.
+
+---
+
+Do not proceed to Step 7 until one of the three options is explicitly selected.
 
 ---
 
