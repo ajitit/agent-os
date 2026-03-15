@@ -1,7 +1,8 @@
 # Web & Logic (Stripped 'standard' extras for smaller footprint)
-fastapi>=0.115.0 
-uvicorn>=0.32.0 
-pydantic-settings>=2.0.0 
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic[email]>=2.0.0
+pydantic-settings>=2.0.0
 python-multipart>=0.0.9 
 python-dotenv 
 
@@ -24,3 +25,7 @@ redis>=5.0.0
 asyncpg>=0.29.0
 sqlalchemy[asyncio]>=2.0.0
 # Note: Removed sentence-transformers to save ~2GB of model disk space
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
