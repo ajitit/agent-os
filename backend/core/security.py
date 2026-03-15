@@ -2,7 +2,7 @@
 Module: core/security.py
 
 Implements security dependencies for FastAPI endpoints: Bearer JWT validation,
-password hashing via passlib/bcrypt, and RBAC role checks.
+password hashing via bcrypt, and RBAC role checks.
 
 All public functions have Google-style docstrings and full type annotations
 to satisfy mypy --strict.
@@ -14,15 +14,14 @@ from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
+import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.context import CryptContext
 
 from backend.api.stores import user_get
 from backend.core.config import get_settings
 
-pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security: HTTPBearer = HTTPBearer()
 
 
@@ -33,10 +32,10 @@ def hash_password(password: str) -> str:
         password: Plain-text password string.
 
     Returns:
-        Bcrypt hash string.
+        Bcrypt hash string (``$2b$`` format).
     """
-    result: str = pwd_context.hash(password)
-    return result
+    hashed: bytes = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -44,13 +43,15 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
     Args:
         plain_password: User-supplied plain-text password.
-        hashed_password: Stored bcrypt hash.
+        hashed_password: Stored bcrypt hash string.
 
     Returns:
         True if passwords match, False otherwise.
     """
-    result: bool = pwd_context.verify(plain_password, hashed_password)
-    return result
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"),
+        hashed_password.encode("utf-8"),
+    )
 
 
 def create_access_token(
