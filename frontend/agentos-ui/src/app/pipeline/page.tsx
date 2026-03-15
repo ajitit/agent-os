@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -497,7 +497,7 @@ function ReviewTab() {
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <span className="text-4xl mb-3">👁️</span>
           <p className="text-slate-400 text-sm">No pipelines awaiting review.</p>
-          <p className="text-slate-600 text-xs mt-1">Run a pipeline with "Require human review" enabled.</p>
+          <p className="text-slate-600 text-xs mt-1">Run a pipeline with &quot;Require human review&quot; enabled.</p>
         </div>
       ) : (
         pending.map((review) => (
@@ -565,6 +565,7 @@ function MemoryTab() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     Promise.all([loadFilters(), loadMasks()]).finally(() => setLoading(false));
   }, [loadFilters, loadMasks]);
 
@@ -688,7 +689,7 @@ function OntologyTab() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); }, [load]); // eslint-disable-line react-hooks/set-state-in-effect
 
   const domainColor: Record<string, string> = {
     healthcare: "bg-emerald-900 text-emerald-300",

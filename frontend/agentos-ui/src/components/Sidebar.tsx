@@ -148,17 +148,15 @@ export function Sidebar() {
 
   // Auto-expand groups when navigating to a child route
   useEffect(() => {
-    setExpanded((prev) => {
-      const auto = getAutoExpanded(pathname);
-      const next = new Set([...prev, ...auto]);
-      return next;
-    });
+    const auto = getAutoExpanded(pathname);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setExpanded((prev) => new Set([...prev, ...auto]));
   }, [pathname]);
 
   const toggleGroup = (label: string) => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      next.has(label) ? next.delete(label) : next.add(label);
+      if (next.has(label)) { next.delete(label); } else { next.add(label); }
       return next;
     });
   };

@@ -8,7 +8,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, APIResponse } from "@/lib/api";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,13 +48,6 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const esRef = useRef<EventSource | null>(null);
 
-  // ── Auth token (localStorage) ─────────────────────────────────────────────
-  useEffect(() => {
-    const t = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
-    setToken(t);
-    if (t) loadConversations(t);
-  }, []);
-
   async function loadConversations(t: string) {
     try {
       const res = await fetch("/api/v1/chat/conversations", {
@@ -67,6 +59,14 @@ export default function ChatPage() {
       }
     } catch {}
   }
+
+  // ── Auth token (localStorage) ─────────────────────────────────────────────
+  useEffect(() => {
+    const t = typeof window !== "undefined" ? localStorage.getItem("agentos_token") : null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setToken(t);
+    if (t) loadConversations(t);
+  }, []);
 
   async function createConversation() {
     if (!token) return null;

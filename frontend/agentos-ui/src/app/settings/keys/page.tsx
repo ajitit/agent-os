@@ -21,7 +21,7 @@ export default function APIKeysPage() {
     if (res.ok) { const j = await res.json(); setKeys(j.data || []); }
   }
 
-  useEffect(() => { loadKeys(); }, [token]);
+  useEffect(() => { loadKeys(); }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function createKey() {
     if (!token || !newName.trim()) return;

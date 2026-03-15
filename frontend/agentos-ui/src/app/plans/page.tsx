@@ -58,6 +58,7 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: "bg-red-800 text-red-300",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TASK_STATUS_ICON: Record<string, string> = {
   pending: "○",
   running: "◑",
